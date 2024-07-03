@@ -9,7 +9,7 @@
     >
       <el-descriptions-item label="中文名称">
         {{ user_info_form.user_name }}
-        <el-tag size="small">{{ user_info_form.department_name }}</el-tag>
+        <el-tag size="small">{{ user_info_form.position}}</el-tag>
       </el-descriptions-item>
       <el-descriptions-item label="账户名称"
         >{{ user_info_form.login_name }}
@@ -19,6 +19,12 @@
       </el-descriptions-item>
       <el-descriptions-item label="账户所属公司"
         >{{ user_info_form.firm }}
+      </el-descriptions-item>
+      <el-descriptions-item label="所属部门"
+        >{{ user_info_form.department }}
+      </el-descriptions-item>
+      <el-descriptions-item label="账户唯一ID"
+        >{{ user_info_form.prefix }}-{{ user_info_form.user_id }}
       </el-descriptions-item>
       <el-descriptions-item label="账户最后变动时间"
         >{{ user_info_form.update_date }}
@@ -104,11 +110,13 @@ export default {
   created() {
     this.loading = true;
     this.getUserInfo();
+    
   },
   methods: {
     // 打开弹窗
     showDialog() {
       this.dialogVisible = !this.dialogVisible;
+
     },
     // 修改密码按钮
     submitForm(formName) {
@@ -146,16 +154,16 @@ export default {
     },
     // 获取用户基本数据，无法获取延期审核人信息，与权限信息
     getUserInfo() {
-      this.user_id = JSON.parse(localStorage.getItem("user_info")).user_id;
       this.$http
-        .get("users/login/", {
-          params: {
-            id: this.user_id,
-          },
-        })
+        .get("users/login/")
         .then((res) => {
           let data = res.data;
-          this.user_info_form = data.data;
+          if(data.code === 200){
+            this.user_info_form = data.data;
+            this.user_id = data.data.id
+          }else{
+            this.$message.error(data.message);
+          }
         })
         .catch((error) => {
           this.$message.error(error.message);
