@@ -154,6 +154,7 @@ export default {
 }
 
 .sidebar {
+  width: 20%;
   margin: 0;
   padding: 0;
   width: 200px;
@@ -166,6 +167,8 @@ export default {
 
 .index .content {
   margin-left: 200px;
+  overflow-y: scroll;
+  max-height: 85dvh;
 }
 
 @media screen and (max-width: 700px) {
@@ -238,10 +241,4 @@ export default {
   }
 }
 
-@media screen and (max-width: 400px) {
-  .sidebar a {
-    background: #101f1c;
-    text-align: center;
-  }
-}
 </style>

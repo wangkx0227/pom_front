@@ -62,7 +62,7 @@ const routes = [
         path: "user_list_info", // 公司部门管理页面
         name: "user_list_info",
         component: () => import("@/views/FunctionMenu/UserListInfoView.vue"),
-        meta: { title: "部门信息" },
+        meta: { title: "用户信息" },
       },
     ],
   },

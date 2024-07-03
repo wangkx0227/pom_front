@@ -1,5 +1,5 @@
 <template>
-  <div class="prefix" v-loading="loading">
+  <div class="position" v-loading="loading">
     <div class="head_search_add">
       <el-button
         type="info"
@@ -9,7 +9,7 @@
         >添加
       </el-button>
       <el-input
-        placeholder="请输入搜索公司名称"
+        placeholder="请输入搜索职位名称"
         v-model="search"
         clearable
         class="input_search"
@@ -34,45 +34,26 @@
         :before-close="handleClose"
       >
         <el-form
-          :model="addPrefixForm"
+          :model="addpositionForm"
           label-position="top"
-          :rules="prefixRules"
-          ref="addPrefixRef"
+          :rules="positionRules"
+          ref="addpositionRef"
         >
-          <el-form-item label="前缀名称" prop="prefix">
-            <el-input v-model="addPrefixForm.prefix"></el-input>
+          <el-form-item label="职位名称" prop="position">
+            <el-input v-model="addpositionForm.position"></el-input>
           </el-form-item>
-          <el-form-item label="选择归属部门" prop="department_id">
-            <el-select
-              v-model="addPrefixForm.department_id"
-              filterable
-              remote
-              reserve-keyword
-              placeholder="请输入关键词"
-              :remote-method="remoteSelect"
-              :loading="selectLoading"
-            >
-              <el-option
-                v-for="item in departmentSearch"
-                :key="item.id"
-                :label="item.department"
-                :value="item.id"
-              >
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="描述信息" prop="description">
+          <el-form-item label="职位描述信息" prop="description">
             <el-input
               type="textarea"
-              v-model="addPrefixForm.description"
+              v-model="addpositionForm.description"
             ></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-          <el-button @click="dialogClose('addPrefixRef')">取 消</el-button>
+          <el-button @click="dialogClose('addpositionRef')">取 消</el-button>
           <el-button
             type="primary"
-            @click="addPrefixData('addPrefixRef')"
+            @click="addpositionData('addpositionRef')"
             :loading="addLoading"
             >立即创建
           </el-button>
@@ -80,21 +61,20 @@
       </el-dialog>
     </div>
     <div class="table_content">
-      <el-table :data="prefixData" style="width: 100%" max-height="580">
+      <el-table :data="positionData" style="width: 100%" max-height="580">
         <el-table-column
           prop="index"
           label="#"
           align="center"
         ></el-table-column>
-        <el-table-column label="前缀名称(非中文)" align="center">
+        <el-table-column label="职位名称" align="center">
           <template slot-scope="{ row }">
-            <span v-if="!row.editable">{{ row.prefix }}</span>
-
-            <el-input v-model="row.prefix" v-else></el-input>
+            <span v-if="!row.editable">{{ row.position }}</span>
+            <el-input v-model="row.position" v-else></el-input>
           </template>
         </el-table-column>
 
-        <el-table-column label="描述信息" align="center">
+        <el-table-column label="职位描述信息" align="center">
           <template slot-scope="{ row }">
             <el-tooltip
               class="item"
@@ -138,33 +118,6 @@
             </el-tooltip>
           </template>
         </el-table-column>
-        <el-table-column label="归属部门" align="center">
-          <template slot-scope="{ row }">
-            <div class="tag-group" v-if="!row.editable">
-              <el-tag style="margin-right: 2px" type="success" effect="plain">
-                {{ row.department }}
-              </el-tag>
-            </div>
-            <el-select
-              v-else
-              v-model="departmentId"
-              filterable
-              remote
-              reserve-keyword
-              placeholder="请输入关键词"
-              :remote-method="remoteSelect"
-              :loading="selectLoading"
-            >
-              <el-option
-                v-for="item in departmentSearch"
-                :key="item.id"
-                :label="item.department"
-                :value="item.id"
-              >
-              </el-option>
-            </el-select>
-          </template>
-        </el-table-column>
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
             <el-button
@@ -200,7 +153,7 @@
                 <el-button
                   type="primary"
                   size="mini"
-                  @click="deleteRow(scope.$index, prefixData, scope.row)"
+                  @click="deleteRow(scope.$index, positionData, scope.row)"
                   >确定
                 </el-button>
               </div>
@@ -243,22 +196,22 @@
 
 <script>
 export default {
-  name: "PrefixModule",
+  name: "positionModule",
   data() {
     let descriptionLen = (rule, value, callback) => {
-      if (this.addPrefixForm.description.length >= 200) {
+      if (this.addpositionForm.description.length >= 200) {
         callback(new Error("长度在不能超出 200 个字符"));
       }
     };
     return {
       search: "",
       loading: false, // 数据加载样式
-      prefixData: [],
+      positionData: [],
       // 弹出框控制变量
       dialogDisplayVar: false,
       //  添加弹出框数据
-      addPrefixForm: {
-        prefix: "",
+      addpositionForm: {
+        position: "",
         description: "",
         department_id: "",
       },
@@ -267,9 +220,9 @@ export default {
       // 控制弹窗创建按钮
       addLoading: false,
       // 弹窗内的表单验证
-      prefixRules: {
-        prefix: [
-          { required: true, message: "请输入前缀", trigger: "blur" },
+      positionRules: {
+        position: [
+          { required: true, message: "请输入职位名称", trigger: "blur" },
           {
             min: 1,
             max: 15,
@@ -283,15 +236,11 @@ export default {
       data_total: 0, // 数据总数
       page_status: 0, // 分页状态变量，当上下一页时进行改变，只有是0时点击数字页码会改变
       page: 1,
-      // 下拉框
-      departmentId: "", // 公司id列表
-      selectLoading: false, // 下来加载变量
-      departmentSearch: [], // 搜索后的列表
     };
   },
   created() {
     this.loading = true;
-    this.getPrefixDate();
+    this.getpositionDate();
     this.loading = false;
   },
   methods: {
@@ -304,14 +253,14 @@ export default {
       let pk = row.id;
       this.loading = true;
       this.$http
-        .delete("foundation/prefix/", {
+        .delete("foundation/position/", {
           data: { pk: pk },
         })
         .then((res) => {
           let data = res.data;
           if (data.code === 200) {
             this.$message.success(data.message);
-            this.getPrefixDate();
+            this.getpositionDate();
             rows.splice(index, 1);
           } else {
             this.$message.error(data.message);
@@ -332,19 +281,16 @@ export default {
     saveRow(row) {
       // 保存的数据 row
       this.loading = true;
-      if (this.departmentId) {
-        row.department_id = this.departmentId;
-      }
       row.editable = false;
       this.$http
-        .put("foundation/prefix/", {
+        .put("foundation/position/", {
           data: row,
         })
         .then((res) => {
           let data = res.data;
           if (data.code === 200) {
             this.$message.success(data.message);
-            this.getPrefixDate();
+            this.getpositionDate();
           } else {
             this.$message.error(data.message);
           }
@@ -364,23 +310,23 @@ export default {
     dialogClose(formName) {
       this.dialogDisplayVar = false;
       this.$refs[formName].resetFields();
-      this.getPrefixDate(); // 进行回调，重新载入一下数据
+      this.getpositionDate(); // 进行回调，重新载入一下数据
     },
     // ×关闭
     handleClose() {
       this.dialogDisplayVar = false;
-      this.getPrefixDate(); // 进行回调，重新载入一下数据
+      this.getpositionDate(); // 进行回调，重新载入一下数据
     },
     // 弹窗内创建按钮
-    addPrefixData(formName) {
+    addpositionData(formName) {
       this.addLoading = true;
-      if (!this.addPrefixForm.prefix) {
+      if (!this.addpositionForm.position) {
         this.$message.error("部门名称属于必填项！");
         this.addLoading = false;
       } else {
         this.$http
-          .post("foundation/prefix/", {
-            data: this.addPrefixForm,
+          .post("foundation/position/", {
+            data: this.addpositionForm,
           })
           .then((res) => {
             let data = res.data;
@@ -388,7 +334,7 @@ export default {
               this.$message.success(data.message);
               data.data.index = 1;
               data.data.department = "新增"; // 给个默认值，进行显示
-              this.prefixData.unshift(data.data);
+              this.positionData.unshift(data.data);
               this.$refs[formName].resetFields();
             } else {
               this.$message.error(data.message);
@@ -403,19 +349,19 @@ export default {
       }
     },
     // 获取数据
-    getPrefixDate() {
+    getpositionDate() {
       let get_url;
       if (this.search) {
-        get_url = `foundation/prefix/?page=${this.page}&search=${this.search}`;
+        get_url = `foundation/position/?page=${this.page}&search=${this.search}`;
       } else {
-        get_url = `foundation/prefix/?page=${this.page}`;
+        get_url = `foundation/position/?page=${this.page}`;
       }
       this.$http
         .get(get_url)
         .then((res) => {
           let data = res.data;
           if (data.code === 200) {
-            this.prefixData = data.data.data;
+            this.positionData = data.data.data;
             this.data_total = data.data.data_total;
           } else {
             this.firmData = [];
@@ -434,7 +380,7 @@ export default {
       this.page_status = page;
       this.page = page;
       // 下一页按钮
-      this.getPrefixDate();
+      this.getpositionDate();
       this.loading = false;
     },
     prevPage(page) {
@@ -442,7 +388,7 @@ export default {
       this.page_status = page;
       this.page = page;
       // 上一页按钮
-      this.getPrefixDate();
+      this.getpositionDate();
       this.loading = false;
     },
     currentPage(page) {
@@ -450,7 +396,7 @@ export default {
       this.page = page;
       // 点击按钮触发
       if (this.page_status === 0) {
-        this.getPrefixDate();
+        this.getpositionDate();
       }
       this.loading = false;
     },
@@ -459,42 +405,16 @@ export default {
       this.loading = true;
       if (this.search) {
         this.page = 1;
-        this.getPrefixDate();
+        this.getpositionDate();
       } else {
-        this.getPrefixDate();
+        this.getpositionDate();
       }
       this.loading = false;
     },
     // 重置
     reloadDate() {
       this.search = "";
-      this.getPrefixDate();
-    },
-    // 下拉框调用api方法
-    getDepartmentData(query) {
-      this.selectLoading = true;
-      this.$http
-        .get(`foundation/department/?status=all&querySelect=${query}`)
-        .then((res) => {
-          let data = res.data;
-          if (data.code === 200) {
-            this.departmentSearch = data.data;
-          } else {
-            this.departmentSearch = [];
-          }
-        })
-        .catch((error) => {
-          this.$message.error(error.message);
-        })
-        .finally(() => {
-          this.selectLoading = false;
-        });
-    },
-    // 下拉框调用方法
-    remoteSelect(query) {
-      if (query !== "") {
-        this.getDepartmentData(query);
-      }
+      this.getpositionDate();
     },
   },
 };
@@ -502,7 +422,7 @@ export default {
 
 <style>
 @media screen and (max-width: 700px) {
-  .prefix .el-tag {
+  .position .el-tag {
     font-size: 9px;
     padding: 1px 4px;
     height: 16px;

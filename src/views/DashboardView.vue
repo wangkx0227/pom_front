@@ -61,7 +61,7 @@
           <div
             ref="columnar"
             class="columnar"
-            style="width: 900px; height: 500px"
+            style="width: 800px; height: 500px"
           ></div>
         </div>
       </el-card>
