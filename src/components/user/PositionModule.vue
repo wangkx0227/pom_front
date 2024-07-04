@@ -49,7 +49,8 @@
             ></el-input>
           </el-form-item>
         </el-form>
-        <div slot="footer" class="dialog-footer">
+        <template v-slot:footer>
+<div  class="dialog-footer">
           <el-button @click="dialogClose('addpositionRef')">取 消</el-button>
           <el-button
             type="primary"
@@ -58,6 +59,7 @@
             >立即创建
           </el-button>
         </div>
+</template>
       </el-dialog>
     </div>
     <div class="table_content">
@@ -68,14 +70,14 @@
           align="center"
         ></el-table-column>
         <el-table-column label="职位名称" align="center">
-          <template slot-scope="{ row }">
+          <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.position }}</span>
             <el-input v-model="row.position" v-else></el-input>
           </template>
         </el-table-column>
 
         <el-table-column label="职位描述信息" align="center">
-          <template slot-scope="{ row }">
+          <template v-slot="{ row }">
             <el-tooltip
               class="item"
               effect="dark"
@@ -93,7 +95,7 @@
           </template>
         </el-table-column>
         <el-table-column label="创建日期" align="center">
-          <template slot-scope="{ row }">
+          <template v-slot="{ row }">
             <el-tooltip
               class="item"
               effect="dark"
@@ -106,7 +108,7 @@
           </template>
         </el-table-column>
         <el-table-column label="修改日期" align="center">
-          <template slot-scope="{ row }">
+          <template v-slot="{ row }">
             <el-tooltip
               class="item"
               effect="dark"
@@ -119,7 +121,7 @@
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center">
-          <template slot-scope="scope">
+          <template v-slot="scope">
             <el-button
               v-if="!scope.row.editable"
               @click="editRow(scope.row)"
@@ -157,13 +159,15 @@
                   >确定
                 </el-button>
               </div>
-              <el-button
-                slot="reference"
+              <template v-slot:reference>
+<el-button
+                
                 size="mini"
                 type="text"
                 @click="deleteDisplay(scope.row)"
                 >删除
               </el-button>
+</template>
             </el-popover>
             <el-button
               style="margin-left: 0"
@@ -187,7 +191,7 @@
         layout="total,prev, pager, next"
         :page-size="10"
         :total="data_total"
-        :current-page.sync="page"
+        v-model:current-page="page"
       >
       </el-pagination>
     </div>

@@ -68,7 +68,8 @@
             ></el-input>
           </el-form-item>
         </el-form>
-        <div slot="footer" class="dialog-footer">
+        <template v-slot:footer>
+<div  class="dialog-footer">
           <el-button @click="dialogClose('addPrefixRef')">取 消</el-button>
           <el-button
             type="primary"
@@ -77,6 +78,7 @@
             >立即创建
           </el-button>
         </div>
+</template>
       </el-dialog>
     </div>
     <div class="table_content">
@@ -87,7 +89,7 @@
           align="center"
         ></el-table-column>
         <el-table-column label="前缀名称(非中文)" align="center">
-          <template slot-scope="{ row }">
+          <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.prefix }}</span>
 
             <el-input v-model="row.prefix" v-else></el-input>
@@ -95,7 +97,7 @@
         </el-table-column>
 
         <el-table-column label="描述信息" align="center">
-          <template slot-scope="{ row }">
+          <template v-slot="{ row }">
             <el-tooltip
               class="item"
               effect="dark"
@@ -113,7 +115,7 @@
           </template>
         </el-table-column>
         <el-table-column label="创建日期" align="center">
-          <template slot-scope="{ row }">
+          <template v-slot="{ row }">
             <el-tooltip
               class="item"
               effect="dark"
@@ -126,7 +128,7 @@
           </template>
         </el-table-column>
         <el-table-column label="修改日期" align="center">
-          <template slot-scope="{ row }">
+          <template v-slot="{ row }">
             <el-tooltip
               class="item"
               effect="dark"
@@ -139,7 +141,7 @@
           </template>
         </el-table-column>
         <el-table-column label="归属部门" align="center">
-          <template slot-scope="{ row }">
+          <template v-slot="{ row }">
             <div class="tag-group" v-if="!row.editable">
               <el-tag style="margin-right: 2px" type="success" effect="plain">
                 {{ row.department }}
@@ -166,7 +168,7 @@
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center">
-          <template slot-scope="scope">
+          <template v-slot="scope">
             <el-button
               v-if="!scope.row.editable"
               @click="editRow(scope.row)"
@@ -204,13 +206,15 @@
                   >确定
                 </el-button>
               </div>
-              <el-button
-                slot="reference"
+              <template v-slot:reference>
+<el-button
+                
                 size="mini"
                 type="text"
                 @click="deleteDisplay(scope.row)"
                 >删除
               </el-button>
+</template>
             </el-popover>
             <el-button
               style="margin-left: 0"
@@ -234,7 +238,7 @@
         layout="total,prev, pager, next"
         :page-size="10"
         :total="data_total"
-        :current-page.sync="page"
+        v-model:current-page="page"
       >
       </el-pagination>
     </div>

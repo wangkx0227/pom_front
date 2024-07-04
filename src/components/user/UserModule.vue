@@ -1,5 +1,5 @@
 <template>
-  <div class="prefix" v-loading="loading">
+  <div class="users" v-loading="loading">
     <div class="head_search_add">
       <el-button
         type="info"
@@ -34,23 +34,23 @@
         :before-close="handleClose"
       >
         <el-form
-          :model="addPrefixForm"
+          :model="addusersForm"
           label-position="top"
-          :rules="prefixRules"
-          ref="addPrefixRef"
+          :rules="usersRules"
+          ref="addusersRef"
         >
-          <el-form-item label="前缀名称" prop="prefix">
-            <el-input v-model="addPrefixForm.prefix"></el-input>
+          <el-form-item label="前缀名称" prop="users">
+            <el-input v-model="addusersForm.users"></el-input>
           </el-form-item>
           <el-form-item label="选择归属部门" prop="department_id">
             <el-select
-              v-model="addPrefixForm.department_id"
+              v-model="addusersForm.department_id"
               filterable
               remote
               reserve-keyword
               placeholder="请输入关键词"
-              :remote-method="remoteSelect"
-              :loading="selectLoading"
+              :remote-method="remoteDepartmentSelect"
+              :loading="selectDepartmentLoading"
             >
               <el-option
                 v-for="item in departmentSearch"
@@ -64,56 +64,86 @@
           <el-form-item label="描述信息" prop="description">
             <el-input
               type="textarea"
-              v-model="addPrefixForm.description"
+              v-model="addusersForm.description"
             ></el-input>
           </el-form-item>
         </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="dialogClose('addPrefixRef')">取 消</el-button>
+        <template v-slot:footer>
+<div  class="dialog-footer">
+          <el-button @click="dialogClose('addusersRef')">取 消</el-button>
           <el-button
             type="primary"
-            @click="addPrefixData('addPrefixRef')"
+            @click="addusersData('addusersRef')"
             :loading="addLoading"
             >立即创建
           </el-button>
         </div>
+</template>
       </el-dialog>
     </div>
     <div class="table_content">
-      <el-table :data="prefixData" style="width: 100%" max-height="580">
+      <el-table :data="usersData" style="width: 100%" max-height="580">
         <el-table-column
           prop="index"
           label="#"
           align="center"
+          width="60"
         ></el-table-column>
-        <el-table-column label="前缀名称(非中文)" align="center">
-          <template slot-scope="{ row }">
-            <span v-if="!row.editable">{{ row.prefix }}</span>
-
-            <el-input v-model="row.prefix" v-else></el-input>
+        <el-table-column label="名称" align="center"
+        width="120"
+        >
+          <template v-slot="{ row }">
+            <span v-if="!row.editable">{{ row.user_name }}</span>
+            <el-input v-model="row.user_name" v-else></el-input>
           </template>
         </el-table-column>
-
-        <el-table-column label="描述信息" align="center">
-          <template slot-scope="{ row }">
-            <el-tooltip
-              class="item"
-              effect="dark"
-              :content="row.description"
-              placement="bottom"
-              v-if="!row.editable"
-            >
-              <div class="cell ellipsis">{{ row.description }}</div>
-            </el-tooltip>
-            <el-input
-              type="textarea"
-              v-model="row.description"
-              v-else
-            ></el-input>
+        <el-table-column label="登录名称" align="center"   prop="login_name"
+        width="80"
+        >
+        </el-table-column>
+        <el-table-column label="密码" align="center" prop="passwd"
+        width="80"
+        >
+        </el-table-column>
+        <el-table-column label="邮箱" align="center"
+        width="200"
+        >
+          <template v-slot="{ row }">
+            <span v-if="!row.editable">{{ row.email }}</span>
+            <el-input v-model="row.email" v-else></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="创建日期" align="center">
-          <template slot-scope="{ row }">
+        <el-table-column label="账户状态" align="center"
+        width="150"
+        >
+          <template v-slot="{ row }">
+            <div class="tag-group" v-if="!row.editable">
+              <el-tag v-if="row.is_show" >正常</el-tag>
+              <el-tag type="danger" v-else>禁用</el-tag>
+            </div>
+            <div v-else>
+              <el-select v-model="is_value" clearable placeholder="请选择">
+              <el-option
+                v-for="item in is_show_list"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+                </el-option>
+              </el-select>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="用户唯一ID" align="center"
+        width="150"
+        >
+          <template v-slot="{ row }">
+            <el-tag>{{ row.prefix }}-{{ row.user_id }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="创建日期" align="center"
+        width="180"
+        >
+          <template v-slot="{ row }">
             <el-tooltip
               class="item"
               effect="dark"
@@ -125,8 +155,10 @@
             </el-tooltip>
           </template>
         </el-table-column>
-        <el-table-column label="修改日期" align="center">
-          <template slot-scope="{ row }">
+        <el-table-column label="修改日期" align="center"
+        width="180"
+        >
+          <template v-slot="{ row }">
             <el-tooltip
               class="item"
               effect="dark"
@@ -138,8 +170,10 @@
             </el-tooltip>
           </template>
         </el-table-column>
-        <el-table-column label="归属部门" align="center">
-          <template slot-scope="{ row }">
+        <el-table-column label="归属部门" align="center"
+        width="180"
+        >
+          <template v-slot="{ row }">
             <div class="tag-group" v-if="!row.editable">
               <el-tag style="margin-right: 2px" type="success" effect="plain">
                 {{ row.department }}
@@ -152,8 +186,8 @@
               remote
               reserve-keyword
               placeholder="请输入关键词"
-              :remote-method="remoteSelect"
-              :loading="selectLoading"
+              :remote-method="remoteDepartmentSelect"
+              :loading="selectDepartmentLoading"
             >
               <el-option
                 v-for="item in departmentSearch"
@@ -165,8 +199,39 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center">
-          <template slot-scope="scope">
+        <el-table-column label="职位/岗位" align="center"
+        width="180"
+        >
+          <template v-slot="{ row }">
+            <div class="tag-group" v-if="!row.editable">
+              <el-tag type="position" effect="plain">
+                {{ row.position }}
+              </el-tag>
+            </div>
+            <el-select
+              v-else
+              v-model="positionId"
+              filterable
+              remote
+              reserve-keyword
+              placeholder="请输入关键词"
+              :remote-method="remotePositionSelect"
+              :loading="selectPositionLoading"
+            >
+              <el-option
+                v-for="item in positionSearch"
+                :key="item.id"
+                :label="item.position"
+                :value="item.id"
+              >
+              </el-option>
+            </el-select>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" align="center"
+        width="100"
+        >
+          <template v-slot="scope">
             <el-button
               v-if="!scope.row.editable"
               @click="editRow(scope.row)"
@@ -200,17 +265,19 @@
                 <el-button
                   type="primary"
                   size="mini"
-                  @click="deleteRow(scope.$index, prefixData, scope.row)"
+                  @click="deleteRow(scope.$index, usersData, scope.row)"
                   >确定
                 </el-button>
               </div>
-              <el-button
-                slot="reference"
+              <template v-slot:reference>
+<el-button
+                
                 size="mini"
                 type="text"
                 @click="deleteDisplay(scope.row)"
                 >删除
               </el-button>
+</template>
             </el-popover>
             <el-button
               style="margin-left: 0"
@@ -234,7 +301,7 @@
         layout="total,prev, pager, next"
         :page-size="10"
         :total="data_total"
-        :current-page.sync="page"
+        v-model:current-page="page"
       >
       </el-pagination>
     </div>
@@ -243,22 +310,34 @@
 
 <script>
 export default {
-  name: "PrefixModule",
+  name: "usersModule",
   data() {
     let descriptionLen = (rule, value, callback) => {
-      if (this.addPrefixForm.description.length >= 200) {
+      if (this.addusersForm.description.length >= 200) {
         callback(new Error("长度在不能超出 200 个字符"));
       }
     };
     return {
+      // 用来控制当前账户是否可以被使用的变量列表与变量值
+      is_show_list:[
+        {
+          value: 0,
+          label: '禁用'
+        },
+        {
+          value: 1,
+          label: '正常'
+        }
+      ],
+      is_value: "未选择",
       search: "",
       loading: false, // 数据加载样式
-      prefixData: [],
+      usersData: [],
       // 弹出框控制变量
       dialogDisplayVar: false,
       //  添加弹出框数据
-      addPrefixForm: {
-        prefix: "",
+      addusersForm: {
+        users: "",
         description: "",
         department_id: "",
       },
@@ -267,8 +346,8 @@ export default {
       // 控制弹窗创建按钮
       addLoading: false,
       // 弹窗内的表单验证
-      prefixRules: {
-        prefix: [
+      usersRules: {
+        users: [
           { required: true, message: "请输入前缀", trigger: "blur" },
           {
             min: 1,
@@ -283,15 +362,19 @@ export default {
       data_total: 0, // 数据总数
       page_status: 0, // 分页状态变量，当上下一页时进行改变，只有是0时点击数字页码会改变
       page: 1,
-      // 下拉框
+      // 下拉框-部门
       departmentId: "", // 公司id列表
-      selectLoading: false, // 下来加载变量
+      selectDepartmentLoading: false, // 下来加载变量
       departmentSearch: [], // 搜索后的列表
+      // 下拉框
+      positionId: "", // 职位id列表
+      selectPositionLoading: false, // 下来加载变量
+      positionSearch: [], // 搜索后的列表
     };
   },
   created() {
     this.loading = true;
-    this.getPrefixDate();
+    this.getusersDate();
     this.loading = false;
   },
   methods: {
@@ -304,14 +387,14 @@ export default {
       let pk = row.id;
       this.loading = true;
       this.$http
-        .delete("foundation/prefix/", {
+        .delete("users/info/", {
           data: { pk: pk },
         })
         .then((res) => {
           let data = res.data;
           if (data.code === 200) {
             this.$message.success(data.message);
-            this.getPrefixDate();
+            this.getusersDate();
             rows.splice(index, 1);
           } else {
             this.$message.error(data.message);
@@ -334,17 +417,31 @@ export default {
       this.loading = true;
       if (this.departmentId) {
         row.department_id = this.departmentId;
+      }else{
+        row.department_id = 0
+      }
+
+      if(this.positionId){
+        row.position_id = this.positionId
+      }else{
+        row.position_id = 0
+      }
+
+      if (this.is_value !== "未选择" ){
+        row.is_show = this.is_value
+      }else{
+        row.is_show = 1
       }
       row.editable = false;
       this.$http
-        .put("foundation/prefix/", {
+        .put("users/info/", {
           data: row,
         })
         .then((res) => {
           let data = res.data;
           if (data.code === 200) {
             this.$message.success(data.message);
-            this.getPrefixDate();
+            this.getusersDate();
           } else {
             this.$message.error(data.message);
           }
@@ -358,29 +455,30 @@ export default {
     },
     // 显示弹框
     dialogDisplay() {
+      console.log(1231321);
       this.dialogDisplayVar = true;
     },
     // 关闭弹窗,并清空表单的内容
     dialogClose(formName) {
       this.dialogDisplayVar = false;
       this.$refs[formName].resetFields();
-      this.getPrefixDate(); // 进行回调，重新载入一下数据
+      this.getusersDate(); // 进行回调，重新载入一下数据
     },
     // ×关闭
     handleClose() {
       this.dialogDisplayVar = false;
-      this.getPrefixDate(); // 进行回调，重新载入一下数据
+      this.getusersDate(); // 进行回调，重新载入一下数据
     },
     // 弹窗内创建按钮
-    addPrefixData(formName) {
+    addusersData(formName) {
       this.addLoading = true;
-      if (!this.addPrefixForm.prefix) {
+      if (!this.addusersForm.users) {
         this.$message.error("部门名称属于必填项！");
         this.addLoading = false;
       } else {
         this.$http
-          .post("foundation/prefix/", {
-            data: this.addPrefixForm,
+          .post("users/info/", {
+            data: this.addusersForm,
           })
           .then((res) => {
             let data = res.data;
@@ -388,7 +486,7 @@ export default {
               this.$message.success(data.message);
               data.data.index = 1;
               data.data.department = "新增"; // 给个默认值，进行显示
-              this.prefixData.unshift(data.data);
+              this.usersData.unshift(data.data);
               this.$refs[formName].resetFields();
             } else {
               this.$message.error(data.message);
@@ -403,19 +501,19 @@ export default {
       }
     },
     // 获取数据
-    getPrefixDate() {
+    getusersDate() {
       let get_url;
       if (this.search) {
-        get_url = `foundation/prefix/?page=${this.page}&search=${this.search}`;
+        get_url = `users/info/?page=${this.page}&search=${this.search}`;
       } else {
-        get_url = `foundation/prefix/?page=${this.page}`;
+        get_url = `users/info/?page=${this.page}`;
       }
       this.$http
         .get(get_url)
         .then((res) => {
           let data = res.data;
           if (data.code === 200) {
-            this.prefixData = data.data.data;
+            this.usersData = data.data.data;
             this.data_total = data.data.data_total;
           } else {
             this.firmData = [];
@@ -434,7 +532,7 @@ export default {
       this.page_status = page;
       this.page = page;
       // 下一页按钮
-      this.getPrefixDate();
+      this.getusersDate();
       this.loading = false;
     },
     prevPage(page) {
@@ -442,7 +540,7 @@ export default {
       this.page_status = page;
       this.page = page;
       // 上一页按钮
-      this.getPrefixDate();
+      this.getusersDate();
       this.loading = false;
     },
     currentPage(page) {
@@ -450,7 +548,7 @@ export default {
       this.page = page;
       // 点击按钮触发
       if (this.page_status === 0) {
-        this.getPrefixDate();
+        this.getusersDate();
       }
       this.loading = false;
     },
@@ -459,20 +557,20 @@ export default {
       this.loading = true;
       if (this.search) {
         this.page = 1;
-        this.getPrefixDate();
+        this.getusersDate();
       } else {
-        this.getPrefixDate();
+        this.getusersDate();
       }
       this.loading = false;
     },
     // 重置
     reloadDate() {
       this.search = "";
-      this.getPrefixDate();
+      this.getusersDate();
     },
-    // 下拉框调用api方法
+    // 下拉框调用api方法-部门
     getDepartmentData(query) {
-      this.selectLoading = true;
+      this.selectDepartmentLoading = true;
       this.$http
         .get(`foundation/department/?status=all&querySelect=${query}`)
         .then((res) => {
@@ -487,13 +585,39 @@ export default {
           this.$message.error(error.message);
         })
         .finally(() => {
-          this.selectLoading = false;
+          this.selectDepartmentLoading = false;
         });
     },
-    // 下拉框调用方法
-    remoteSelect(query) {
+    // 下拉框调用方法-部门
+    remoteDepartmentSelect(query) {
       if (query !== "") {
         this.getDepartmentData(query);
+      }
+    },
+    // 下拉框api调用方法-职位
+    getPositionData(query){
+      this.selectPositionLoading = true;
+      this.$http
+        .get(`foundation/position/?status=all&querySelect=${query}`)
+        .then((res) => {
+          let data = res.data;
+          if (data.code === 200) {
+            this.positionSearch = data.data;
+          } else {
+            this.positionSearch = [];
+          }
+        })
+        .catch((error) => {
+          this.$message.error(error.message);
+        })
+        .finally(() => {
+          this.selectPositionLoading = false;
+        });
+    },
+    // 下来框调用方法-职位
+    remotePositionSelect(query){
+      if (query !== "") {
+        this.getPositionData(query);
       }
     },
   },
@@ -502,7 +626,7 @@ export default {
 
 <style>
 @media screen and (max-width: 700px) {
-  .prefix .el-tag {
+  .users .el-tag {
     font-size: 9px;
     padding: 1px 4px;
     height: 16px;

@@ -9,7 +9,8 @@
             <i class="el-icon-user"></i>
             {{ name }}
           </el-button>
-          <el-dropdown-menu slot="dropdown">
+          <template v-slot:dropdown>
+<el-dropdown-menu >
             <el-dropdown-item command="access">访问记录</el-dropdown-item>
             <el-dropdown-item command="userinfo" divided>
               用户信息</el-dropdown-item
@@ -18,6 +19,7 @@
               退出登录
             </el-dropdown-item>
           </el-dropdown-menu>
+</template>
         </el-dropdown>
       </div>
     </div>

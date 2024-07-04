@@ -25,7 +25,7 @@ export default {
     };
   },
   methods: {
-    handleClick(tab, event) {
+    handleClick(tab) {
       this.activeName = tab.name;
     },
   },

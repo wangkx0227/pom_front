@@ -75,6 +75,7 @@ const routes = [
 
 const router = new VueRouter({
   mode: "history",
+  /* eslint-disable */
   base: process.env.BASE_URL,
   routes,
 });
