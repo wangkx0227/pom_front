@@ -39,10 +39,51 @@
           :rules="usersRules"
           ref="addusersRef"
         >
-          <el-form-item label="前缀名称" prop="users">
-            <el-input v-model="addusersForm.users"></el-input>
+          <el-form-item label="姓名" prop="login_name">
+            <el-input v-model="addusersForm.login_name"></el-input>
           </el-form-item>
-          <el-form-item label="选择归属部门" prop="department_id">
+          <el-form-item label="登录用户名" prop="user_name">
+            <el-input v-model="addusersForm.user_name"></el-input>
+          </el-form-item>
+          <el-form-item label="密码(默认1234)">
+            <el-input v-model="addusersForm.passwd" type="password" show-password></el-input>
+          </el-form-item>
+          <el-form-item label="邮箱" prop="email">
+            <el-input v-model="addusersForm.email"></el-input>
+          </el-form-item>
+          <el-form-item label="账户状态(默认禁用)" prop="is_show">
+            <el-select v-model="addusersForm.is_show" clearable placeholder="请选择">
+              <el-option
+                v-for="item in is_show_list"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+                </el-option>
+              </el-select>
+          </el-form-item>
+          <el-form-item label="请选择前缀(必填项)" prop="prefix_id">
+            <el-select
+              v-model="addusersForm.prefix_id"
+              filterable
+              remote
+              reserve-keyword
+              placeholder="请输入关键词"
+              :remote-method="remotePrefixSelect"
+              :loading="selectPrefixLoading"
+            >
+              <el-option
+                v-for="item in prefixSearch"
+                :key="item.id"
+                :label="item.prefix"
+                :value="item.id"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="用户前缀数值(必填项)" prop="user_id">
+            <el-input v-model.number="addusersForm.user_id"></el-input>
+          </el-form-item>
+          <el-form-item label="选择归属部门(必填项)" prop="department_id">
             <el-select
               v-model="addusersForm.department_id"
               filterable
@@ -61,24 +102,37 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="描述信息" prop="description">
-            <el-input
-              type="textarea"
-              v-model="addusersForm.description"
-            ></el-input>
+          <el-form-item label="选择职务(必填项)" prop="position_id">
+            <el-select
+              v-model="addusersForm.position_id"
+              filterable
+              remote
+              reserve-keyword
+              placeholder="请输入关键词"
+              :remote-method="remotePositionSelect"
+              :loading="selectPositionLoading"
+            >
+              <el-option
+                v-for="item in positionSearch"
+                :key="item.id"
+                :label="item.position"
+                :value="item.id"
+              >
+              </el-option>
+            </el-select>
           </el-form-item>
         </el-form>
         <template v-slot:footer>
-<div  class="dialog-footer">
-          <el-button @click="dialogClose('addusersRef')">取 消</el-button>
-          <el-button
-            type="primary"
-            @click="addusersData('addusersRef')"
-            :loading="addLoading"
-            >立即创建
-          </el-button>
-        </div>
-</template>
+          <div  class="dialog-footer">
+            <el-button @click="dialogClose('addusersRef')">取 消</el-button>
+            <el-button
+              type="primary"
+              @click="addusersData('addusersRef')"
+              :loading="addLoading"
+              >立即创建
+            </el-button>
+          </div>
+        </template>
       </el-dialog>
     </div>
     <div class="table_content">
@@ -89,7 +143,7 @@
           align="center"
           width="60"
         ></el-table-column>
-        <el-table-column label="名称" align="center"
+        <el-table-column label="姓名" align="center"
         width="120"
         >
           <template v-slot="{ row }">
@@ -337,9 +391,15 @@ export default {
       dialogDisplayVar: false,
       //  添加弹出框数据
       addusersForm: {
-        users: "",
-        description: "",
+        login_name:"",
+        user_name:"",
+        passwd: "",
+        email: "",
+        is_show: "",
+        user_id: "",
         department_id: "",
+        prefix_id: "",
+        position_id: "",
       },
       // 弹出框内输入框大小
       formLabelWidth: "120px",
@@ -347,8 +407,8 @@ export default {
       addLoading: false,
       // 弹窗内的表单验证
       usersRules: {
-        users: [
-          { required: true, message: "请输入前缀", trigger: "blur" },
+        login_name: [
+          { required: true, message: "请输姓名", trigger: "blur" },
           {
             min: 1,
             max: 15,
@@ -356,7 +416,32 @@ export default {
             trigger: "blur",
           },
         ],
-        description: [{ validator: descriptionLen, trigger: "blur" }],
+        user_name: [
+          { required: true, message: "请输登录用户名", trigger: "blur" },
+          {
+            min: 1,
+            max: 15,
+            message: "长度在 1 到 5 个字符之间",
+            trigger: "blur",
+          },
+        ],
+        email: [
+          { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+        ],
+        user_id:[
+          { required: true, message: '不能为空'},
+          { type: 'number', message: '必须为数字值'}
+        ],
+        prefix_id: [
+            { required: true, message: "必填项", trigger: "blur" },
+        ],
+        department_id:[
+          { required: true, message: "必填项", trigger: "blur" },
+        ],
+        position_id:[
+          { required: true, message: "必填项", trigger: "blur" },
+        ]
+
       },
       // 分页
       data_total: 0, // 数据总数
@@ -366,10 +451,13 @@ export default {
       departmentId: "", // 公司id列表
       selectDepartmentLoading: false, // 下来加载变量
       departmentSearch: [], // 搜索后的列表
-      // 下拉框
+      // 下拉框-职务
       positionId: "", // 职位id列表
-      selectPositionLoading: false, // 下来加载变量
+      selectPositionLoading: false, // 职位下拉加载变量
       positionSearch: [], // 搜索后的列表
+      // 下拉框-前缀
+      selectPrefixLoading: false, // 前缀下拉加载变量
+      prefixSearch: [], // 搜索后的列表
     };
   },
   created() {
@@ -455,7 +543,6 @@ export default {
     },
     // 显示弹框
     dialogDisplay() {
-      console.log(1231321);
       this.dialogDisplayVar = true;
     },
     // 关闭弹窗,并清空表单的内容
@@ -471,11 +558,21 @@ export default {
     },
     // 弹窗内创建按钮
     addusersData(formName) {
-      this.addLoading = true;
-      if (!this.addusersForm.users) {
-        this.$message.error("部门名称属于必填项！");
-        this.addLoading = false;
-      } else {
+      
+      if (!this.addusersForm.login_name) {
+        this.$message.error("姓名属于必填项！");
+      } else if(!this.addusersForm.user_name){
+         this.$message.error("用户名属于必填项！");
+      }else if(!this.addusersForm.user_id){
+         this.$message.error("前缀值属于必填项！");
+      }else if(!this.addusersForm.department_id){
+         this.$message.error("部门属于必填项！");
+      }else if(!this.addusersForm.prefix_id){
+         this.$message.error("前缀属于必填项！");
+      }else if(!this.addusersForm.position_id){
+         this.$message.error("职位属于必填项！");
+      }else {
+        this.addLoading = true;
         this.$http
           .post("users/info/", {
             data: this.addusersForm,
@@ -620,6 +717,32 @@ export default {
         this.getPositionData(query);
       }
     },
+    // 下拉框api调用方法-前缀
+    getPrefixData(query){
+      this.selectPrefixLoading = true;
+      this.$http
+        .get(`foundation/prefix/?status=all&querySelect=${query}`)
+        .then((res) => {
+          let data = res.data;
+          if (data.code === 200) {
+            this.prefixSearch = data.data;
+          } else {
+            this.prefixSearch = [];
+          }
+        })
+        .catch((error) => {
+          this.$message.error(error.message);
+        })
+        .finally(() => {
+          this.selectPrefixLoading = false;
+        });
+    },
+    // 下拉框前缀
+    remotePrefixSelect(query){
+      if (query !== "") {
+        this.getPrefixData(query);
+      }
+    }
   },
 };
 </script>
