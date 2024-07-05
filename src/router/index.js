@@ -55,19 +55,19 @@ const routes = [
       {
         path: "department_info", // 公司部门管理页面
         name: "department_info",
-        component: () => import("@/views/FunctionMenu/DepartmentInfoView.vue"),
+        component: () => import("@/views/BasicFunctionMenu/DepartmentInfoView.vue"),
         meta: { title: "公司部门管理" },
       },
       {
         path: "user_list_info", // 公司部门管理页面
         name: "user_list_info",
-        component: () => import("@/views/FunctionMenu/UserListInfoView.vue"),
+        component: () => import("@/views/BasicFunctionMenu/UserListInfoView.vue"),
         meta: { title: "职位用户管理" },
       },
       {
         path: "front_menu", // 公司部门管理页面
         name: "front_menu",
-        component: () => import("@/views/FunctionMenu/FrontMenuInfoView.vue"),
+        component: () => import("@/views/BasicFunctionMenu/FrontMenuInfoView.vue"),
         meta: { title: "显示菜单管理" },
       },
     ],

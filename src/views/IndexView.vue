@@ -1,5 +1,5 @@
 <template>
-  <div class="index">
+  <div class="index"  v-loading="loading">
     <div class="header">
       <h5 class="title-h5">POM管理系统</h5>
       <div style="margin-right: 15px">
@@ -51,6 +51,7 @@ export default {
   data() {
     return {
       name: null,
+      loading:false,
     };
   },
   created() {
@@ -90,6 +91,7 @@ export default {
     },
     // 退出登录按钮
     userLogOut() {
+      this.loading = true;
       this.$http
         .delete("users/login/")
         .then((res) => {
@@ -97,10 +99,12 @@ export default {
           if (data.code === 200) {
             localStorage.clear();
             this.$message.success(data.message);
+            setTimeout(() => {
+              this.$router.push({ name: "login" });
+            }, 2000);
+          }else {
+            this.$message.success(data.message);
           }
-          setTimeout(() => {
-            this.$router.push({ name: "login" });
-          }, 2000);
         })
         .catch((error) => {
           if (error.response.status === 401) {
@@ -110,7 +114,9 @@ export default {
           }
           this.$message.error(error.message);
         })
-        .finally(() => {});
+        .finally(() => {
+          this.loading = false;
+        });
     },
     // 用户访问记录
     userAccess() {

@@ -1,7 +1,10 @@
 <template>
   <div class="login">
     <h3 class="login_title">POM系统登录</h3>
-    <el-tabs v-model="activeName">
+    <el-tabs v-model="activeName"
+             v-loading="loading"
+             element-loading-text="正在登录"
+    >
       <el-tab-pane label="中文名登录" name="first">
         <el-form :model="login" status-icon class="demo-ruleForm">
           <el-form-item prop="pass">
@@ -23,7 +26,7 @@
           <el-form-item>
             <el-checkbox v-model="login.checked">七天免登录</el-checkbox>
             <el-button
-              :loading="loading"
+
               type="primary"
               style="width: 100%"
               plain
@@ -117,9 +120,11 @@ export default {
           .catch((error) => {
             this.$message.error(error.message);
           })
-          .finally(() => {});
+          .finally(() => {
+            this.loading = false;
+          });
       }
-      this.loading = false;
+
     },
   },
 };

@@ -304,7 +304,7 @@
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center"
-                         width="100"
+                         width="150"
         >
           <template v-slot="scope">
             <el-button
@@ -361,6 +361,14 @@
                 size="mini"
                 type="text"
             >取消
+            </el-button>
+            |
+            <el-button
+                style="margin-left: 0"
+                @click="forceLogin(scope.row)"
+                size="mini"
+                type="text"
+            >强制退出
             </el-button>
           </template>
         </el-table-column>
@@ -763,9 +771,33 @@ export default {
       if (query !== "") {
         this.getPrefixData(query);
       }
-    }
+    },
+    // 管理员强制退出
+    forceLogin(row) {
+      this.loading = true;
+      this.$http
+          .post("users/forcel_ogin/", {
+            pk: row.id,
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.$message.success(data.message);
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.loading = false
+          });
+    },
+
   },
-};
+}
+;
 </script>
 
 <style>
@@ -817,11 +849,12 @@ export default {
   .el-input__suffix {
     top: 1px !important;
   }
-  .el-input .el-input__clear
-  {
+
+  .el-input .el-input__clear {
     font-size: 9px !important;
   }
-  .el-form-item .el-select .el-input .el-select__caret{
+
+  .el-form-item .el-select .el-input .el-select__caret {
     font-size: 9px !important;
   }
 }

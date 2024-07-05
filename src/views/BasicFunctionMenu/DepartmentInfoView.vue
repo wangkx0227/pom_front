@@ -23,9 +23,9 @@ export default {
     return {
       activeName: "first",
       // 使用懒加载形式加载组件
-      firstComponent: () => import("@/components/department/FirmModule"),
-      secondComponent: () => import("@/components/department/DepartmentModule"),
-      thirdComponent: () => import("@/components/department/PrefixModule"),
+      firstComponent: () => import("@/components/BasicFunctionComponent/department/FirmModule"),
+      secondComponent: () => import("@/components/BasicFunctionComponent/department/DepartmentModule"),
+      thirdComponent: () => import("@/components/BasicFunctionComponent/department/PrefixModule"),
     };
   },
   methods: {
