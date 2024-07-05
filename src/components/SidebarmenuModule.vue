@@ -1,40 +1,40 @@
 <template>
   <el-menu
-    router
-    class="el-menu-vertical-demo"
-    :default-active="activeIndex"
-    @open="handleOpen"
-    @close="handleClose"
+      router
+      class="el-menu-vertical-demo"
+      :default-active="activeIndex"
+      @open="handleOpen"
+      @close="handleClose"
   >
     <el-menu-item index="/index/dashboard_info/">
       <i class="el-icon-pie-chart"></i>
       <template v-slot:title>
-<span >仪表盘</span>
-</template>
+        <span>仪表盘</span>
+      </template>
     </el-menu-item>
     <el-menu-item index="/index/work_info/">
       <i class="el-icon-date"></i>
       <template v-slot:title>
-<span >事务信息</span>
-</template>
+        <span>事务信息</span>
+      </template>
     </el-menu-item>
     <el-menu-item index="/index/supervise_info/">
       <i class="el-icon-tickets"></i>
       <template v-slot:title>
-<span >监督信息</span>
-</template>
+        <span>监督信息</span>
+      </template>
     </el-menu-item>
     <el-menu-item index="/index/departmental_info/">
       <i class="el-icon-office-building"></i>
       <template v-slot:title>
-<span >部门事务</span>
-</template>
+        <span>部门事务</span>
+      </template>
     </el-menu-item>
     <el-menu-item index="/index/delayed_info/">
       <i class="el-icon-copy-document"></i>
       <template v-slot:title>
-<span >延期审核</span>
-</template>
+        <span>延期审核</span>
+      </template>
     </el-menu-item>
     <el-submenu index="6">
       <template v-slot:title>
@@ -42,8 +42,8 @@
         <span>基础设置</span>
       </template>
       <el-menu-item index="/index/department_info/">公司部门管理</el-menu-item>
-      <el-menu-item index="/index/user_list_info/">用户管理</el-menu-item>
-      <el-menu-item index="6-2">访问权限</el-menu-item>
+      <el-menu-item index="/index/user_list_info/">职位用户管理</el-menu-item>
+      <el-menu-item index="/index/front_menu/">显示菜单管理</el-menu-item>
       <el-menu-item index="6-3">角色权限</el-menu-item>
       <el-menu-item index="6-4">菜单权限</el-menu-item>
       <el-menu-item index="6-5">用户权限</el-menu-item>

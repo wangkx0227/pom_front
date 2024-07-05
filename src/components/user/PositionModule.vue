@@ -161,7 +161,7 @@
               </div>
               <template v-slot:reference>
 <el-button
-                
+
                 size="mini"
                 type="text"
                 @click="deleteDisplay(scope.row)"

@@ -170,7 +170,7 @@ export default {
 .index .content {
   margin-left: 200px;
   overflow-y: scroll;
-  max-height: 85dvh;
+  max-height: 92vh;
 }
 
 @media screen and (max-width: 700px) {

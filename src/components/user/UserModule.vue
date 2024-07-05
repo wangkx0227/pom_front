@@ -2,134 +2,155 @@
   <div class="users" v-loading="loading">
     <div class="head_search_add">
       <el-button
-        type="info"
-        icon="el-icon-circle-plus-outline"
-        plain
-        @click="dialogDisplay"
-        >添加
+          type="info"
+          icon="el-icon-circle-plus-outline"
+          plain
+          @click="dialogDisplay"
+      >添加
       </el-button>
       <el-input
-        placeholder="请输入搜索公司名称"
-        v-model="search"
-        clearable
-        class="input_search"
+          placeholder="请输入搜索公司名称"
+          v-model="search"
+          clearable
+          class="input_search"
       >
       </el-input>
       <el-button type="primary" icon="el-icon-search" plain @click="searchDate"
-        >搜索
+      >搜索
       </el-button>
       <el-button
-        type="warning"
-        icon="el-icon-refresh-right"
-        plain
-        @click="reloadDate"
-        >重置
+          type="warning"
+          icon="el-icon-refresh-right"
+          plain
+          @click="reloadDate"
+      >重置
       </el-button>
     </div>
     <div class="dialog">
       <el-dialog
-        title="用户前缀添加"
-        :visible.sync="dialogDisplayVar"
-        width="35%"
-        :before-close="handleClose"
+          title="用户添加"
+          :visible.sync="dialogDisplayVar"
+          width="35%"
+          :before-close="handleClose"
       >
         <el-form
-          :model="addusersForm"
-          label-position="top"
-          :rules="usersRules"
-          ref="addusersRef"
+            :model="addusersForm"
+            label-position="top"
+            :rules="usersRules"
+            ref="addusersRef"
         >
-          <el-form-item label="姓名" prop="login_name">
-            <el-input v-model="addusersForm.login_name"></el-input>
-          </el-form-item>
-          <el-form-item label="登录用户名" prop="user_name">
-            <el-input v-model="addusersForm.user_name"></el-input>
-          </el-form-item>
-          <el-form-item label="密码(默认1234)">
-            <el-input v-model="addusersForm.passwd" type="password" show-password></el-input>
-          </el-form-item>
-          <el-form-item label="邮箱" prop="email">
-            <el-input v-model="addusersForm.email"></el-input>
-          </el-form-item>
-          <el-form-item label="账户状态(默认禁用)" prop="is_show">
-            <el-select v-model="addusersForm.is_show" clearable placeholder="请选择">
-              <el-option
-                v-for="item in is_show_list"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-                </el-option>
-              </el-select>
-          </el-form-item>
-          <el-form-item label="请选择前缀(必填项)" prop="prefix_id">
-            <el-select
-              v-model="addusersForm.prefix_id"
-              filterable
-              remote
-              reserve-keyword
-              placeholder="请输入关键词"
-              :remote-method="remotePrefixSelect"
-              :loading="selectPrefixLoading"
-            >
-              <el-option
-                v-for="item in prefixSearch"
-                :key="item.id"
-                :label="item.prefix"
-                :value="item.id"
-              >
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="用户前缀数值(必填项)" prop="user_id">
-            <el-input v-model.number="addusersForm.user_id"></el-input>
-          </el-form-item>
-          <el-form-item label="选择归属部门(必填项)" prop="department_id">
-            <el-select
-              v-model="addusersForm.department_id"
-              filterable
-              remote
-              reserve-keyword
-              placeholder="请输入关键词"
-              :remote-method="remoteDepartmentSelect"
-              :loading="selectDepartmentLoading"
-            >
-              <el-option
-                v-for="item in departmentSearch"
-                :key="item.id"
-                :label="item.department"
-                :value="item.id"
-              >
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="选择职务(必填项)" prop="position_id">
-            <el-select
-              v-model="addusersForm.position_id"
-              filterable
-              remote
-              reserve-keyword
-              placeholder="请输入关键词"
-              :remote-method="remotePositionSelect"
-              :loading="selectPositionLoading"
-            >
-              <el-option
-                v-for="item in positionSearch"
-                :key="item.id"
-                :label="item.position"
-                :value="item.id"
-              >
-              </el-option>
-            </el-select>
-          </el-form-item>
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item label="姓名" prop="login_name">
+                <el-input v-model="addusersForm.login_name"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="登录用户名" prop="user_name">
+                <el-input v-model="addusersForm.user_name"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="密码(默认1234)">
+                <el-input v-model="addusersForm.passwd" type="password" show-password></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="邮箱" prop="email">
+                <el-input v-model="addusersForm.email"></el-input>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="12">
+              <el-form-item label="请选择前缀(必填项)" prop="prefix_id">
+                <el-select
+                    v-model="addusersForm.prefix_id"
+                    filterable
+                    remote
+                    reserve-keyword
+                    placeholder="请输入关键词"
+                    :remote-method="remotePrefixSelect"
+                    :loading="selectPrefixLoading"
+                >
+                  <el-option
+                      v-for="item in prefixSearch"
+                      :key="item.id"
+                      :label="item.prefix"
+                      :value="item.id"
+                  >
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="用户前缀数值(必填项)" prop="user_id">
+                <el-input v-model.number="addusersForm.user_id"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="选择归属部门(必填项)" prop="department_id">
+                <el-select
+                    v-model="addusersForm.department_id"
+                    filterable
+                    remote
+                    reserve-keyword
+                    placeholder="请输入关键词"
+                    :remote-method="remoteDepartmentSelect"
+                    :loading="selectDepartmentLoading"
+                >
+                  <el-option
+                      v-for="item in departmentSearch"
+                      :key="item.id"
+                      :label="item.department"
+                      :value="item.id"
+                  >
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="选择职务(必填项)" prop="position_id">
+                <el-select
+                    v-model="addusersForm.position_id"
+                    filterable
+                    remote
+                    reserve-keyword
+                    placeholder="请输入关键词"
+                    :remote-method="remotePositionSelect"
+                    :loading="selectPositionLoading"
+                >
+                  <el-option
+                      v-for="item in positionSearch"
+                      :key="item.id"
+                      :label="item.position"
+                      :value="item.id"
+                  >
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="账户状态(默认禁用)" prop="is_show">
+                <el-select v-model="addusersForm.is_show" clearable placeholder="请选择">
+                  <el-option
+                      v-for="item in is_show_list"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
         </el-form>
         <template v-slot:footer>
-          <div  class="dialog-footer">
+          <div class="dialog-footer">
             <el-button @click="dialogClose('addusersRef')">取 消</el-button>
             <el-button
-              type="primary"
-              @click="addusersData('addusersRef')"
-              :loading="addLoading"
-              >立即创建
+                type="primary"
+                @click="addusersData('addusersRef')"
+                :loading="addLoading"
+            >立即创建
             </el-button>
           </div>
         </template>
@@ -138,29 +159,29 @@
     <div class="table_content">
       <el-table :data="usersData" style="width: 100%" max-height="580">
         <el-table-column
-          prop="index"
-          label="#"
-          align="center"
-          width="60"
+            prop="index"
+            label="#"
+            align="center"
+            width="60"
         ></el-table-column>
         <el-table-column label="姓名" align="center"
-        width="120"
+                         width="120"
         >
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.user_name }}</span>
             <el-input v-model="row.user_name" v-else></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="登录名称" align="center"   prop="login_name"
-        width="80"
+        <el-table-column label="登录名称" align="center" prop="login_name"
+                         width="80"
         >
         </el-table-column>
         <el-table-column label="密码" align="center" prop="passwd"
-        width="80"
+                         width="80"
         >
         </el-table-column>
         <el-table-column label="邮箱" align="center"
-        width="200"
+                         width="200"
         >
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.email }}</span>
@@ -168,64 +189,64 @@
           </template>
         </el-table-column>
         <el-table-column label="账户状态" align="center"
-        width="150"
+                         width="150"
         >
           <template v-slot="{ row }">
             <div class="tag-group" v-if="!row.editable">
-              <el-tag v-if="row.is_show" >正常</el-tag>
+              <el-tag v-if="row.is_show">正常</el-tag>
               <el-tag type="danger" v-else>禁用</el-tag>
             </div>
             <div v-else>
               <el-select v-model="is_value" clearable placeholder="请选择">
-              <el-option
-                v-for="item in is_show_list"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
+                <el-option
+                    v-for="item in is_show_list"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
                 </el-option>
               </el-select>
             </div>
           </template>
         </el-table-column>
         <el-table-column label="用户唯一ID" align="center"
-        width="150"
+                         width="150"
         >
           <template v-slot="{ row }">
             <el-tag>{{ row.prefix }}-{{ row.user_id }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="创建日期" align="center"
-        width="180"
+                         width="180"
         >
           <template v-slot="{ row }">
             <el-tooltip
-              class="item"
-              effect="dark"
-              :content="row.create_date"
-              placement="bottom"
-              v-if="!row.editable"
+                class="item"
+                effect="dark"
+                :content="row.create_date"
+                placement="bottom"
+                v-if="!row.editable"
             >
               <div class="cell ellipsis">{{ row.create_date }}</div>
             </el-tooltip>
           </template>
         </el-table-column>
         <el-table-column label="修改日期" align="center"
-        width="180"
+                         width="180"
         >
           <template v-slot="{ row }">
             <el-tooltip
-              class="item"
-              effect="dark"
-              :content="row.update_date"
-              placement="bottom"
-              v-if="!row.editable"
+                class="item"
+                effect="dark"
+                :content="row.update_date"
+                placement="bottom"
+                v-if="!row.editable"
             >
               <div class="cell ellipsis">{{ row.update_date }}</div>
             </el-tooltip>
           </template>
         </el-table-column>
         <el-table-column label="归属部门" align="center"
-        width="180"
+                         width="180"
         >
           <template v-slot="{ row }">
             <div class="tag-group" v-if="!row.editable">
@@ -234,27 +255,27 @@
               </el-tag>
             </div>
             <el-select
-              v-else
-              v-model="departmentId"
-              filterable
-              remote
-              reserve-keyword
-              placeholder="请输入关键词"
-              :remote-method="remoteDepartmentSelect"
-              :loading="selectDepartmentLoading"
+                v-else
+                v-model="departmentId"
+                filterable
+                remote
+                reserve-keyword
+                placeholder="请输入关键词"
+                :remote-method="remoteDepartmentSelect"
+                :loading="selectDepartmentLoading"
             >
               <el-option
-                v-for="item in departmentSearch"
-                :key="item.id"
-                :label="item.department"
-                :value="item.id"
+                  v-for="item in departmentSearch"
+                  :key="item.id"
+                  :label="item.department"
+                  :value="item.id"
               >
               </el-option>
             </el-select>
           </template>
         </el-table-column>
         <el-table-column label="职位/岗位" align="center"
-        width="180"
+                         width="180"
         >
           <template v-slot="{ row }">
             <div class="tag-group" v-if="!row.editable">
@@ -263,83 +284,83 @@
               </el-tag>
             </div>
             <el-select
-              v-else
-              v-model="positionId"
-              filterable
-              remote
-              reserve-keyword
-              placeholder="请输入关键词"
-              :remote-method="remotePositionSelect"
-              :loading="selectPositionLoading"
+                v-else
+                v-model="positionId"
+                filterable
+                remote
+                reserve-keyword
+                placeholder="请输入关键词"
+                :remote-method="remotePositionSelect"
+                :loading="selectPositionLoading"
             >
               <el-option
-                v-for="item in positionSearch"
-                :key="item.id"
-                :label="item.position"
-                :value="item.id"
+                  v-for="item in positionSearch"
+                  :key="item.id"
+                  :label="item.position"
+                  :value="item.id"
               >
               </el-option>
             </el-select>
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center"
-        width="100"
+                         width="100"
         >
           <template v-slot="scope">
             <el-button
-              v-if="!scope.row.editable"
-              @click="editRow(scope.row)"
-              size="mini"
-              type="text"
-              >编辑
+                v-if="!scope.row.editable"
+                @click="editRow(scope.row)"
+                size="mini"
+                type="text"
+            >编辑
             </el-button>
             <el-button
-              v-else
-              @click="saveRow(scope.row)"
-              size="mini"
-              type="text"
-              >保存
+                v-else
+                @click="saveRow(scope.row)"
+                size="mini"
+                type="text"
+            >保存
             </el-button>
             |
             <el-popover
-              v-if="!scope.row.editable"
-              placement="top"
-              width="160"
-              v-model="scope.row.visible"
-              trigger="manual"
+                v-if="!scope.row.editable"
+                placement="top"
+                width="160"
+                v-model="scope.row.visible"
+                trigger="manual"
             >
               <p>删除后无恢复，请问确定删除吗？</p>
               <div style="text-align: right; margin: 0">
                 <el-button
-                  size="mini"
-                  type="text"
-                  @click="scope.row.visible = false"
-                  >取消
+                    size="mini"
+                    type="text"
+                    @click="scope.row.visible = false"
+                >取消
                 </el-button>
                 <el-button
-                  type="primary"
-                  size="mini"
-                  @click="deleteRow(scope.$index, usersData, scope.row)"
-                  >确定
+                    type="primary"
+                    size="mini"
+                    @click="deleteRow(scope.$index, usersData, scope.row)"
+                >确定
                 </el-button>
               </div>
               <template v-slot:reference>
-<el-button
-                
-                size="mini"
-                type="text"
-                @click="deleteDisplay(scope.row)"
+                <el-button
+
+                    size="mini"
+                    type="text"
+                    @click="deleteDisplay(scope.row)"
                 >删除
-              </el-button>
-</template>
+                </el-button>
+              </template>
             </el-popover>
             <el-button
-              style="margin-left: 0"
-              v-else
-              @click="scope.row.editable = false"
-              size="mini"
-              type="text"
-              >取消
+                style="margin-left: 0"
+                v-else
+                @click="scope.row.editable = false"
+                size="mini"
+                type="text"
+            >取消
             </el-button>
           </template>
         </el-table-column>
@@ -347,15 +368,15 @@
     </div>
     <div class="pagination">
       <el-pagination
-        hide-on-single-page
-        @current-change="currentPage"
-        @prev-click="prevPage"
-        @next-click="nextPage"
-        background
-        layout="total,prev, pager, next"
-        :page-size="10"
-        :total="data_total"
-        v-model:current-page="page"
+          hide-on-single-page
+          @current-change="currentPage"
+          @prev-click="prevPage"
+          @next-click="nextPage"
+          background
+          layout="total,prev, pager, next"
+          :page-size="10"
+          :total="data_total"
+          v-model:current-page="page"
       >
       </el-pagination>
     </div>
@@ -373,7 +394,7 @@ export default {
     };
     return {
       // 用来控制当前账户是否可以被使用的变量列表与变量值
-      is_show_list:[
+      is_show_list: [
         {
           value: 0,
           label: '禁用'
@@ -391,8 +412,8 @@ export default {
       dialogDisplayVar: false,
       //  添加弹出框数据
       addusersForm: {
-        login_name:"",
-        user_name:"",
+        login_name: "",
+        user_name: "",
         passwd: "",
         email: "",
         is_show: "",
@@ -408,7 +429,7 @@ export default {
       // 弹窗内的表单验证
       usersRules: {
         login_name: [
-          { required: true, message: "请输姓名", trigger: "blur" },
+          {required: true, message: "请输姓名", trigger: "blur"},
           {
             min: 1,
             max: 15,
@@ -417,7 +438,7 @@ export default {
           },
         ],
         user_name: [
-          { required: true, message: "请输登录用户名", trigger: "blur" },
+          {required: true, message: "请输登录用户名", trigger: "blur"},
           {
             min: 1,
             max: 15,
@@ -426,20 +447,20 @@ export default {
           },
         ],
         email: [
-          { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+          {type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change']}
         ],
-        user_id:[
-          { required: true, message: '不能为空'},
-          { type: 'number', message: '必须为数字值'}
+        user_id: [
+          {required: true, message: '不能为空'},
+          {type: 'number', message: '必须为数字值'}
         ],
         prefix_id: [
-            { required: true, message: "必填项", trigger: "blur" },
+          {required: true, message: "必填项", trigger: "blur"},
         ],
-        department_id:[
-          { required: true, message: "必填项", trigger: "blur" },
+        department_id: [
+          {required: true, message: "必填项", trigger: "blur"},
         ],
-        position_id:[
-          { required: true, message: "必填项", trigger: "blur" },
+        position_id: [
+          {required: true, message: "必填项", trigger: "blur"},
         ]
 
       },
@@ -475,25 +496,25 @@ export default {
       let pk = row.id;
       this.loading = true;
       this.$http
-        .delete("users/info/", {
-          data: { pk: pk },
-        })
-        .then((res) => {
-          let data = res.data;
-          if (data.code === 200) {
-            this.$message.success(data.message);
-            this.getusersDate();
-            rows.splice(index, 1);
-          } else {
-            this.$message.error(data.message);
-          }
-        })
-        .catch((error) => {
-          this.$message.error(error.message);
-        })
-        .finally(() => {
-          this.loading = false;
-        });
+          .delete("users/info/", {
+            data: {pk: pk},
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.$message.success(data.message);
+              this.getusersDate();
+              rows.splice(index, 1);
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.loading = false;
+          });
     },
     // 编辑按钮，修改row.editable值 让这条可以进行修改
     editRow(row) {
@@ -505,41 +526,41 @@ export default {
       this.loading = true;
       if (this.departmentId) {
         row.department_id = this.departmentId;
-      }else{
+      } else {
         row.department_id = 0
       }
 
-      if(this.positionId){
+      if (this.positionId) {
         row.position_id = this.positionId
-      }else{
+      } else {
         row.position_id = 0
       }
 
-      if (this.is_value !== "未选择" ){
+      if (this.is_value !== "未选择") {
         row.is_show = this.is_value
-      }else{
+      } else {
         row.is_show = 1
       }
       row.editable = false;
       this.$http
-        .put("users/info/", {
-          data: row,
-        })
-        .then((res) => {
-          let data = res.data;
-          if (data.code === 200) {
-            this.$message.success(data.message);
-            this.getusersDate();
-          } else {
-            this.$message.error(data.message);
-          }
-        })
-        .catch((error) => {
-          this.$message.error(error.message);
-        })
-        .finally(() => {
-          this.loading = false;
-        });
+          .put("users/info/", {
+            data: row,
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.$message.success(data.message);
+              this.getusersDate();
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.loading = false;
+          });
     },
     // 显示弹框
     dialogDisplay() {
@@ -558,43 +579,43 @@ export default {
     },
     // 弹窗内创建按钮
     addusersData(formName) {
-      
+
       if (!this.addusersForm.login_name) {
         this.$message.error("姓名属于必填项！");
-      } else if(!this.addusersForm.user_name){
-         this.$message.error("用户名属于必填项！");
-      }else if(!this.addusersForm.user_id){
-         this.$message.error("前缀值属于必填项！");
-      }else if(!this.addusersForm.department_id){
-         this.$message.error("部门属于必填项！");
-      }else if(!this.addusersForm.prefix_id){
-         this.$message.error("前缀属于必填项！");
-      }else if(!this.addusersForm.position_id){
-         this.$message.error("职位属于必填项！");
-      }else {
+      } else if (!this.addusersForm.user_name) {
+        this.$message.error("用户名属于必填项！");
+      } else if (!this.addusersForm.user_id) {
+        this.$message.error("前缀值属于必填项！");
+      } else if (!this.addusersForm.department_id) {
+        this.$message.error("部门属于必填项！");
+      } else if (!this.addusersForm.prefix_id) {
+        this.$message.error("前缀属于必填项！");
+      } else if (!this.addusersForm.position_id) {
+        this.$message.error("职位属于必填项！");
+      } else {
         this.addLoading = true;
         this.$http
-          .post("users/info/", {
-            data: this.addusersForm,
-          })
-          .then((res) => {
-            let data = res.data;
-            if (data.code === 200) {
-              this.$message.success(data.message);
-              data.data.index = 1;
-              data.data.department = "新增"; // 给个默认值，进行显示
-              this.usersData.unshift(data.data);
-              this.$refs[formName].resetFields();
-            } else {
-              this.$message.error(data.message);
-            }
-          })
-          .catch((error) => {
-            this.$message.error(error.message);
-          })
-          .finally(() => {
-            this.addLoading = false;
-          });
+            .post("users/info/", {
+              data: this.addusersForm,
+            })
+            .then((res) => {
+              let data = res.data;
+              if (data.code === 200) {
+                this.$message.success(data.message);
+                data.data.index = 1;
+                data.data.department = "新增"; // 给个默认值，进行显示
+                this.usersData.unshift(data.data);
+                this.$refs[formName].resetFields();
+              } else {
+                this.$message.error(data.message);
+              }
+            })
+            .catch((error) => {
+              this.$message.error(error.message);
+            })
+            .finally(() => {
+              this.addLoading = false;
+            });
       }
     },
     // 获取数据
@@ -606,22 +627,22 @@ export default {
         get_url = `users/info/?page=${this.page}`;
       }
       this.$http
-        .get(get_url)
-        .then((res) => {
-          let data = res.data;
-          if (data.code === 200) {
-            this.usersData = data.data.data;
-            this.data_total = data.data.data_total;
-          } else {
-            this.firmData = [];
-          }
-        })
-        .catch((error) => {
-          this.$message.error(error.message);
-        })
-        .finally(() => {
-          this.page_status = 0;
-        });
+          .get(get_url)
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.usersData = data.data.data;
+              this.data_total = data.data.data_total;
+            } else {
+              this.firmData = [];
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.page_status = 0;
+          });
     },
     // 页码功能
     nextPage(page) {
@@ -669,21 +690,21 @@ export default {
     getDepartmentData(query) {
       this.selectDepartmentLoading = true;
       this.$http
-        .get(`foundation/department/?status=all&querySelect=${query}`)
-        .then((res) => {
-          let data = res.data;
-          if (data.code === 200) {
-            this.departmentSearch = data.data;
-          } else {
-            this.departmentSearch = [];
-          }
-        })
-        .catch((error) => {
-          this.$message.error(error.message);
-        })
-        .finally(() => {
-          this.selectDepartmentLoading = false;
-        });
+          .get(`foundation/department/?status=all&querySelect=${query}`)
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.departmentSearch = data.data;
+            } else {
+              this.departmentSearch = [];
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.selectDepartmentLoading = false;
+          });
     },
     // 下拉框调用方法-部门
     remoteDepartmentSelect(query) {
@@ -692,53 +713,53 @@ export default {
       }
     },
     // 下拉框api调用方法-职位
-    getPositionData(query){
+    getPositionData(query) {
       this.selectPositionLoading = true;
       this.$http
-        .get(`foundation/position/?status=all&querySelect=${query}`)
-        .then((res) => {
-          let data = res.data;
-          if (data.code === 200) {
-            this.positionSearch = data.data;
-          } else {
-            this.positionSearch = [];
-          }
-        })
-        .catch((error) => {
-          this.$message.error(error.message);
-        })
-        .finally(() => {
-          this.selectPositionLoading = false;
-        });
+          .get(`foundation/position/?status=all&querySelect=${query}`)
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.positionSearch = data.data;
+            } else {
+              this.positionSearch = [];
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.selectPositionLoading = false;
+          });
     },
     // 下来框调用方法-职位
-    remotePositionSelect(query){
+    remotePositionSelect(query) {
       if (query !== "") {
         this.getPositionData(query);
       }
     },
     // 下拉框api调用方法-前缀
-    getPrefixData(query){
+    getPrefixData(query) {
       this.selectPrefixLoading = true;
       this.$http
-        .get(`foundation/prefix/?status=all&querySelect=${query}`)
-        .then((res) => {
-          let data = res.data;
-          if (data.code === 200) {
-            this.prefixSearch = data.data;
-          } else {
-            this.prefixSearch = [];
-          }
-        })
-        .catch((error) => {
-          this.$message.error(error.message);
-        })
-        .finally(() => {
-          this.selectPrefixLoading = false;
-        });
+          .get(`foundation/prefix/?status=all&querySelect=${query}`)
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.prefixSearch = data.data;
+            } else {
+              this.prefixSearch = [];
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.selectPrefixLoading = false;
+          });
     },
     // 下拉框前缀
-    remotePrefixSelect(query){
+    remotePrefixSelect(query) {
       if (query !== "") {
         this.getPrefixData(query);
       }
@@ -757,9 +778,11 @@ export default {
     border-radius: 1px;
     margin: 2px 0 2px 2px;
   }
+
   .el-select-dropdown__wrap ul {
     flex-direction: column !important;
   }
+
   .el-select-dropdown__wrap .el-select-dropdown__item {
     height: 20px !important;
     line-height: 20px !important;
@@ -768,22 +791,38 @@ export default {
     padding: 0 13px !important;
     width: 90%;
   }
+
   .el-select-dropdown__wrap .el-select-dropdown__item span {
     font-size: 9px !important;
   }
+
   .el-select-dropdown.is-multiple .el-select-dropdown__item.selected::after {
     right: 11px !important;
     font-size: 9px !important;
   }
+
   .el-select-dropdown__empty {
     font-size: 7px !important;
   }
+
   .el-select-dropdown__wrap ul {
     flex-direction: column !important;
   }
+
   .el-form-item__content .el-select .el-select__tags .el-select__input {
     font-size: 9px;
     margin-left: 5px;
+  }
+
+  .el-input__suffix {
+    top: 1px !important;
+  }
+  .el-input .el-input__clear
+  {
+    font-size: 9px !important;
+  }
+  .el-form-item .el-select .el-input .el-select__caret{
+    font-size: 9px !important;
   }
 }
 </style>

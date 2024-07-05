@@ -90,7 +90,7 @@
           label="#"
           align="center"
         ></el-table-column>
-        <el-table-column label="部门名称" align="center">
+        <el-table-column label="部门名称" align="center" >
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.department }}</span>
             <el-input v-model="row.department" v-else></el-input>
@@ -217,7 +217,7 @@
               </div>
               <template v-slot:reference>
 <el-button
-                
+
                 size="mini"
                 type="text"
                 @click="deleteDisplay(scope.row)"
