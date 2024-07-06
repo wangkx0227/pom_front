@@ -1,4 +1,18 @@
+.el-card {
+  height: 810px;
+}
+
+
+
 @media screen and (max-width: 700px) {
+  .el-card {
+    height: 680px;
+  }
+
+  .el-tabs__item.is_top {
+    font-size: 12px !important;
+  }
+  
   td.el-table_1_column_8.el-table__cell .cell {
     display: flex;
     font-size: 9px !important;

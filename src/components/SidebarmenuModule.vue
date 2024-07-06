@@ -41,10 +41,10 @@
         <i class="el-icon-user"></i>
         <span>基础设置</span>
       </template>
-      <el-menu-item index="/index/department_info/">公司部门管理</el-menu-item>
-      <el-menu-item index="/index/user_list_info/">职位用户管理</el-menu-item>
-      <el-menu-item index="/index/front_menu/">显示菜单管理</el-menu-item>
-      <el-menu-item index="6-3">角色权限</el-menu-item>
+      <el-menu-item index="/basic_function/department_info/">部门管理</el-menu-item>
+      <el-menu-item index="/basic_function/user_list_info/">用户管理</el-menu-item>
+      <el-menu-item index="/basic_function/user_roles/">角色管理</el-menu-item>
+      <el-menu-item index="/basic_function/front_menu/">菜单管理</el-menu-item>
       <el-menu-item index="6-4">菜单权限</el-menu-item>
       <el-menu-item index="6-5">用户权限</el-menu-item>
     </el-submenu>

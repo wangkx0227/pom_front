@@ -34,18 +34,4 @@ export default {
 
 <style scoped>
 @import url("@/static/currency.css");
-
-.el-card {
-  height: 810px;
-}
-
-@media screen and (max-width: 700px) {
-  .el-card {
-    height: 680px;
-  }
-
-  .el-tabs__item.is_top {
-    font-size: 12px !important;
-  }
-}
 </style>

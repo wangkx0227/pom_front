@@ -51,25 +51,7 @@ const routes = [
         component: () => import("@/views/WorkInfoView.vue"),
         meta: { title: "延期审核事务" },
       },
-      // 功能菜单类别
-      {
-        path: "department_info", // 公司部门管理页面
-        name: "department_info",
-        component: () => import("@/views/BasicFunctionMenu/DepartmentInfoView.vue"),
-        meta: { title: "公司部门管理" },
-      },
-      {
-        path: "user_list_info", // 公司部门管理页面
-        name: "user_list_info",
-        component: () => import("@/views/BasicFunctionMenu/UserListInfoView.vue"),
-        meta: { title: "职位用户管理" },
-      },
-      {
-        path: "front_menu", // 公司部门管理页面
-        name: "front_menu",
-        component: () => import("@/views/BasicFunctionMenu/FrontMenuInfoView.vue"),
-        meta: { title: "显示菜单管理" },
-      },
+
     ],
   },
   {
@@ -77,6 +59,39 @@ const routes = [
     name: "login",
     component: () => import("@/views/LoginView.vue"),
   },
+  {
+    path: "/basic_function",
+    name: "basic_function",
+    meta: { title: "基础设置" },
+    component: () => import("@/views/IndexView.vue"),
+    children: [
+      // 功能菜单类别
+      {
+        path: "department_info", // 公司部门管理页面
+        name: "department_info",
+        component: () => import("@/views/BasicFunctionMenu/DepartmentInfoView.vue"),
+        meta: { title: "部门管理" },
+      },
+      {
+        path: "user_list_info", // 公司部门管理页面
+        name: "user_list_info",
+        component: () => import("@/views/BasicFunctionMenu/UserListInfoView.vue"),
+        meta: { title: "用户管理" },
+      },
+      {
+        path: "front_menu", // 公司部门管理页面
+        name: "front_menu",
+        component: () => import("@/views/BasicFunctionMenu/FrontMenuInfoView.vue"),
+        meta: { title: "菜单管理" },
+      },
+      {
+        path: "user_roles", // 公司部门管理页面
+        name: "user_roles",
+        component: () => import("@/views/BasicFunctionMenu/RoleUsersView.vue"),
+        meta: { title: "角色管理" },
+      },
+    ]
+  }
 ];
 
 const router = new VueRouter({
