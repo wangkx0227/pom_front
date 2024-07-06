@@ -60,6 +60,16 @@ const routes = [
     component: () => import("@/views/LoginView.vue"),
   },
   {
+    path: "/404",
+    name: "404",
+    component: () => import("@/views/ErroeViews/404.vue")
+  },
+  {
+    path: "/500",
+    name: "500",
+    component: () => import("@/views/ErroeViews/500.vue")
+  },
+  {
     path: "/basic_function",
     name: "basic_function",
     meta: { title: "基础设置" },
