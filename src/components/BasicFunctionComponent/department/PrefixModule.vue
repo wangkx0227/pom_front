@@ -339,7 +339,7 @@ export default {
       if (this.departmentId) {
         row.department_id = this.departmentId;
       }
-      row.editable = false;
+      
       this.$http
         .put("foundation/prefix/", {
           data: row,
@@ -347,6 +347,7 @@ export default {
         .then((res) => {
           let data = res.data;
           if (data.code === 200) {
+            row.editable = false;
             this.$message.success(data.message);
             this.getPrefixDate();
           } else {

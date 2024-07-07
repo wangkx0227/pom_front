@@ -207,7 +207,7 @@ export default {
         saveRow(row) {
             // 保存的数据 row
             this.loading = true;
-            row.editable = false;
+            
             this.$http
                 .put("users/roles/", {
                     data: row,
@@ -215,6 +215,7 @@ export default {
                 .then((res) => {
                     let data = res.data;
                     if (data.code === 200) {
+                        row.editable = false;
                         this.$message.success(data.message);
                         this.getroleDate();
                     } else {

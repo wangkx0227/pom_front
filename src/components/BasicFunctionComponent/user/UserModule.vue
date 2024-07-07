@@ -549,7 +549,7 @@ export default {
       } else {
         row.is_show = 1
       }
-      row.editable = false;
+      
       this.$http
           .put("users/info/", {
             data: row,
@@ -557,6 +557,7 @@ export default {
           .then((res) => {
             let data = res.data;
             if (data.code === 200) {
+              row.editable = false;
               this.$message.success(data.message);
               this.getusersDate();
             } else {

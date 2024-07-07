@@ -346,7 +346,7 @@ export default {
       // 保存的数据 row
       this.loading = true;
       row.firm_id_list = this.FirmIdList; // 部门绑定公司的id列表
-      row.editable = false;
+      
       this.$http
         .put("foundation/department/", {
           data: row,
@@ -354,6 +354,7 @@ export default {
         .then((res) => {
           let data = res.data;
           if (data.code === 200) {
+            row.editable = false;
             this.$message.success(data.message);
             this.getDepartmentData();
           } else {
