@@ -12,7 +12,7 @@
                 </el-button>
             </div>
             <div class="dialog">
-                <el-dialog title="角色添加" :visible.sync="dialogDisplayVar" width="35%" :before-close="handleClose">
+                <el-dialog title="角色添加" :visible.sync="dialogDisplayVar" width="35%" :before-close="roleHandleClose">
                     <el-form :model="addroleForm" label-role="top" :rules="roleRules" ref="addroleRef">
                         <el-form-item label="角色名称" prop="role">
                             <el-input v-model="addroleForm.role"></el-input>
@@ -67,9 +67,14 @@
                     </el-table-column>
                     <el-table-column label="操作" align="center">
                         <template v-slot="scope">
-                            <el-button v-if="!scope.row.editable" @click="editRow(scope.row)" size="mini" type="text">编辑
+                            <el-button size="mini" icon="el-icon-menu" type="text"
+                                @click="permissionsDdialog(scope.row)"></el-button>
+                            |
+                            <el-button style="margin-left: 0;" v-if="!scope.row.editable" @click="editRow(scope.row)"
+                                size="mini" type="text">编辑
                             </el-button>
-                            <el-button v-else @click="saveRow(scope.row)" size="mini" type="text">保存
+                            <el-button style="margin-left: 0;" v-else @click="saveRow(scope.row)" size="mini"
+                                type="text">保存
                             </el-button>
                             |
                             <el-popover v-if="!scope.row.editable" placement="top" width="160"
@@ -100,12 +105,20 @@
                     :total="data_total" v-model:current-page="page">
                 </el-pagination>
             </div>
+            <div class="permissions_dialog">
+                <PermissionsDdialogModule v-if="showChild" ref="permissions_dialog"></PermissionsDdialogModule>
+            </div>
         </el-card>
     </div>
 </template>
 
 <script>
+// 角色对应权限菜单的的展示弹窗
+import PermissionsDdialogModule from "@/components/BasicFunctionComponent/role/PermissionsDdialogModule";
 export default {
+    components: {
+        PermissionsDdialogModule
+    },
     name: "RoleUsersView",
     data() {
         let descriptionLen = (rule, value, callback) => {
@@ -146,6 +159,9 @@ export default {
             data_total: 0, // 数据总数
             page_status: 0, // 分页状态变量，当上下一页时进行改变，只有是0时点击数字页码会改变
             page: 1,
+            // 展示菜单弹窗
+            role_pk: "",
+            showChild:false,
         };
     },
     created() {
@@ -223,7 +239,7 @@ export default {
             this.getroleDate(); // 进行回调，重新载入一下数据
         },
         // ×关闭
-        handleClose() {
+        roleHandleClose() {
             this.dialogDisplayVar = false;
             this.getroleDate(); // 进行回调，重新载入一下数据
         },
@@ -326,6 +342,15 @@ export default {
             this.search = "";
             this.getroleDate();
         },
+        // 父组件控制角色设置菜单弹窗显示
+        permissionsDdialog(row) {
+            this.showChild = true;
+            let role_pk = row.id
+            this.$nextTick(() => {
+                this.$refs.permissions_dialog.openDialog(role_pk);
+            });
+        },
+
     },
 }
 </script>

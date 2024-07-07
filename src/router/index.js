@@ -9,18 +9,27 @@ const routes = [
     redirect: { name: "login" },
   },
   {
+    path: "/login",
+    name: "login",
+    component: () => import("@/views/LoginView.vue"),
+  },
+  {
+    path: "/404",
+    name: "404",
+    component: () => import("@/views/ErroeViews/404.vue")
+  },
+  {
+    path: "/500",
+    name: "500",
+    component: () => import("@/views/ErroeViews/500.vue")
+  },
+  {
     path: "/index",
     name: "index",
     redirect: { name: "dashboard_info" },
     meta: { title: "首页" },
     component: () => import("@/views/IndexView.vue"),
     children: [
-      {
-        path: "user_info", // 仪表盘页面
-        name: "user_info",
-        component: () => import("@/views/UserInfoView"),
-        meta: { title: "个人页面" },
-      },
       {
         path: "dashboard_info", // 仪表盘页面
         name: "dashboard_info",
@@ -51,24 +60,24 @@ const routes = [
         component: () => import("@/views/WorkInfoView.vue"),
         meta: { title: "延期审核事务" },
       },
+      {
+        path: "user_info", // 用户登录后下拉菜单中的用户信息页面
+        name: "user_info",
+        component: () => import("@/views/UserInfoView"),
+        meta: { title: "个人页面" },
+      },
+      {
+        path:"user_access", // 用户下来菜单中的访问记录页面
+        name: "user_access",
+        component: () => import("@/views/UserAccessView"),
+        meta: { title: "访问记录" },
+
+      }
+
 
     ],
   },
-  {
-    path: "/login",
-    name: "login",
-    component: () => import("@/views/LoginView.vue"),
-  },
-  {
-    path: "/404",
-    name: "404",
-    component: () => import("@/views/ErroeViews/404.vue")
-  },
-  {
-    path: "/500",
-    name: "500",
-    component: () => import("@/views/ErroeViews/500.vue")
-  },
+
   {
     path: "/basic_function",
     name: "basic_function",

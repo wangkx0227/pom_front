@@ -41,13 +41,13 @@
         >
           <el-row :gutter="20">
             <el-col :span="12">
-              <el-form-item label="姓名" prop="login_name">
-                <el-input v-model="addusersForm.login_name"></el-input>
+              <el-form-item label="姓名" prop="user_name">
+                <el-input v-model="addusersForm.user_name"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="登录用户名" prop="user_name">
-                <el-input v-model="addusersForm.user_name"></el-input>
+              <el-form-item label="登录用户名" prop="login_name">
+                <el-input v-model="addusersForm.login_name"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">

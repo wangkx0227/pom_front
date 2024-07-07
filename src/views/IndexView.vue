@@ -1,5 +1,5 @@
 <template>
-  <div class="index"  v-loading="loading">
+  <div class="index" v-loading="loading">
     <div class="header">
       <h5 class="title-h5">POM管理系统</h5>
       <div style="margin-right: 15px">
@@ -10,16 +10,15 @@
             {{ name }}
           </el-button>
           <template v-slot:dropdown>
-<el-dropdown-menu >
-            <el-dropdown-item command="access">访问记录</el-dropdown-item>
-            <el-dropdown-item command="userinfo" divided>
-              用户信息</el-dropdown-item
-            >
-            <el-dropdown-item command="logout" divided>
-              退出登录
-            </el-dropdown-item>
-          </el-dropdown-menu>
-</template>
+            <el-dropdown-menu>
+              <el-dropdown-item command="access">访问记录</el-dropdown-item>
+              <el-dropdown-item command="userinfo" divided>
+                用户信息</el-dropdown-item>
+              <el-dropdown-item command="logout" divided>
+                退出登录
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
         </el-dropdown>
       </div>
     </div>
@@ -28,10 +27,7 @@
     </div>
     <div class="content">
       <Breadcrumb></Breadcrumb>
-      <div
-        class="main"
-        style="margin-top: 5px; margin-left: 5px; margin-right: 5px"
-      >
+      <div class="main" style="margin-top: 5px; margin-left: 5px; margin-right: 5px">
         <keep-alive>
           <router-view></router-view>
         </keep-alive>
@@ -51,7 +47,7 @@ export default {
   data() {
     return {
       name: null,
-      loading:false,
+      loading: false,
     };
   },
   created() {
@@ -102,7 +98,7 @@ export default {
             setTimeout(() => {
               this.$router.push({ name: "login" });
             }, 2000);
-          }else {
+          } else {
             this.$message.success(data.message);
           }
         })
@@ -120,7 +116,12 @@ export default {
     },
     // 用户访问记录
     userAccess() {
-      console.log("访问记录");
+      // 访问的是当前组件的网址，什么都不做
+      if (window.location.pathname === "/index/user_access") {
+        null;
+      } else {
+        this.$router.push({ name: "user_access" });
+      }
     },
     // 判断当前是pc端还是手机端，手机端进行提示信息
     decisionPCPhone() {
@@ -144,7 +145,8 @@ export default {
   -webkit-background-clip: text;
   background-clip: text;
   font-weight: bold;
-  color: transparent; /* 将文字颜色设置为透明 */
+  color: transparent;
+  /* 将文字颜色设置为透明 */
 }
 
 .title-h5 {
@@ -183,10 +185,12 @@ export default {
   .userTag {
     font-size: 10px;
   }
+
   .el-dropdown .el-button--mini,
   .el-button--mini.is-round {
     padding: 4px 10px;
   }
+
   .gradient-text {
     font-size: 12px;
   }
@@ -211,26 +215,32 @@ export default {
     border-top: solid 1px #e6e6e6;
     border-left: none;
   }
+
   /*sdasa有问题*/
   .sidebar {
     overflow: initial;
   }
+
   .el-menu {
     border-right: none;
     justify-content: center;
   }
+
   .el-menu .el-menu-item {
     padding-left: 6px !important;
   }
+
   ul li span {
     /*display: none;*/
     font-size: 10px;
   }
+
   ul li i {
     width: 15px !important;
     font-size: 10px !important;
     margin-right: 0px !important;
   }
+
   .el-submenu {
     display: none;
   }
@@ -248,5 +258,4 @@ export default {
     font-size: 10px;
   }
 }
-
 </style>
