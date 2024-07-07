@@ -1,12 +1,12 @@
 <template>
-    <div class="level_front">
-        前端菜单展示页面
+    <div class="menu">
+        菜单展示
     </div>
 </template>
 
 <script>
 export default {
-name: "Level_1_MenuModule"
+name: "menuModule"
 }
 </script>
 

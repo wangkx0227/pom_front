@@ -776,7 +776,7 @@ export default {
     forceLogin(row) {
       this.loading = true;
       this.$http
-          .post("users/forcel_ogin/", {
+          .post("users/force_exit/", {
             pk: row.id,
           })
           .then((res) => {

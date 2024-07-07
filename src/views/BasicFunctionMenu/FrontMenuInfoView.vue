@@ -1,12 +1,12 @@
 <template>
   <div class="user_list_info">
     <el-card class="box-card">
-      <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="一级菜单管理" name="one">
-          <component :is="Level1Component" v-if="activeName === 'one'"/>
+      <el-tabs v-model="activeName" @tab-click="menuHandleClick">
+        <el-tab-pane label="菜单类型" name="type">
+          <component :is="menuTypeComponent" v-if="activeName === 'type'"/>
         </el-tab-pane>
-        <el-tab-pane label="二级菜单管理" name="two">
-          <component :is="Level2Component" v-if="activeName === 'two'"/>
+        <el-tab-pane label="菜单管理" name="menu">
+          <component :is="menuComponent" v-if="activeName === 'menu'"/>
         </el-tab-pane>
       </el-tabs>
     </el-card>
@@ -18,14 +18,14 @@ export default {
   name: "FrontMenuInfoView",
   data() {
     return {
-      activeName: "one",
+      activeName: "type",
       // 使用懒加载形式加载组件
-      Level1Component: () => import("@/components/BasicFunctionComponent/front_menu/Level_1_MenuModule"),
-      Level2Component: () => import("@/components/BasicFunctionComponent/front_menu/Level_2_MenuModule"),
+      menuTypeComponent: () => import("@/components/BasicFunctionComponent/front_menu/menuTypeModule"),
+      menuComponent: () => import("@/components/BasicFunctionComponent/front_menu/menuModule"),
     };
   },
   methods: {
-    handleClick(tab) {
+    menuHandleClick(tab) {
       this.activeName = tab.name;
     },
   },
