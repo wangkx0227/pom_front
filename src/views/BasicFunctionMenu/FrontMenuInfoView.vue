@@ -2,10 +2,10 @@
   <div class="user_list_info">
     <el-card class="box-card">
       <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="一级菜单管理" name="role">
+        <el-tab-pane label="一级菜单管理" name="one">
           <component :is="Level1Component" v-if="activeName === 'one'"/>
         </el-tab-pane>
-        <el-tab-pane label="二级菜单管理" name="user">
+        <el-tab-pane label="二级菜单管理" name="two">
           <component :is="Level2Component" v-if="activeName === 'two'"/>
         </el-tab-pane>
       </el-tabs>
@@ -18,7 +18,7 @@ export default {
   name: "FrontMenuInfoView",
   data() {
     return {
-      activeName: "role",
+      activeName: "one",
       // 使用懒加载形式加载组件
       Level1Component: () => import("@/components/BasicFunctionComponent/front_menu/Level_1_MenuModule"),
       Level2Component: () => import("@/components/BasicFunctionComponent/front_menu/Level_2_MenuModule"),
