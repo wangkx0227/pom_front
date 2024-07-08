@@ -23,8 +23,35 @@
                 <el-table-column prop="menu_url_alias" label="路径别名" align="center"></el-table-column>
                 <el-table-column prop="menu_url_name" label="路径名称" align="center"></el-table-column>
                 <el-table-column prop="menu_url_icon" label="路径图标" align="center"></el-table-column>
-                <el-table-column prop="access_control" label="是否需要权限控制" align="center"></el-table-column>
-                <el-table-column prop="menu_id" label="父菜单" align="center"></el-table-column>
+                <el-table-column label="是否需要权限控制" align="center">
+                    <template v-slot="{ row }">
+                        <div class="tag-group" v-if="!row.editable">
+                            <el-tag v-if="row.access_control">需要</el-tag>
+                            <el-tag type="danger" v-else>不需要</el-tag>
+                        </div>
+                        <div v-else>
+                            <el-select v-model="access_control_value" clearable placeholder="请选择">
+                                <el-option v-for="item in access_control_list" :key="item.value" :label="item.label"
+                                    :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </div>
+                    </template>
+                </el-table-column>
+                <el-table-column label="父菜单" align="center">
+                    <template v-slot="{ row }">
+                        <div class="tag-group" v-if="!row.editable">
+                            <el-tag v-if="row.father_menu_url_name">{{ row.father_menu_url_name }}</el-tag>
+                        </div>
+                        <div v-else>
+                            <el-select v-model="father_menu_value" clearable placeholder="请选择">
+                                <el-option v-for="item in father_menu_data_list" :key="item.value" :label="item.label"
+                                    :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </div>
+                    </template>
+                </el-table-column>
                 <el-table-column label="描述信息" align="center">
                     <template v-slot="{ row }">
                         <el-tooltip class="item" effect="dark" :content="row.description" placement="bottom"
@@ -36,16 +63,23 @@
                 </el-table-column>
                 <el-table-column label="加载日期" align="center">
                     <template v-slot="{ row }">
-                        <el-tooltip class="item" effect="dark" :content="row.create_date" placement="bottom"
-                            v-if="!row.editable">
+                        <el-tooltip class="item" effect="dark" :content="row.create_date" placement="bottom">
                             <div class="cell ellipsis">{{ row.create_date }}</div>
                         </el-tooltip>
                     </template>
                 </el-table-column>
                 <el-table-column label="菜单类型" align="center">
                     <template v-slot="{ row }">
-                        <span v-if="!row.editable">{{ row.menu_type_id }}</span>
-                        <el-input v-model="row.menu_type_id" v-else></el-input>
+                        <div class="tag-group" v-if="!row.editable">
+                            <el-tag v-if="row.menu">{{ row.menu }}</el-tag>
+                        </div>
+                        <div v-else>
+                            <el-select v-model="menu_type_value" clearable placeholder="请选择">
+                                <el-option v-for="item in menu_type_list" :key="item.value" :label="item.label"
+                                    :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </div>
                     </template>
                 </el-table-column>
                 <el-table-column label="操作" align="center">
@@ -91,6 +125,19 @@ export default {
     name: "menuModule",
     data() {
         return {
+            // 用来展示与存储当前路径是否需要权限控制
+            access_control_value: 0,
+            access_control_list: [
+                { label: "需要", value: 1 },
+                { label: "不需要", value: 0 }
+            ],
+            // 展示当前菜单类型
+            menu_type_value: "",
+            menu_type_list: [],
+            // 展示一级菜单
+            father_menu_value: "",
+            father_menu_data_list: [],
+            // 搜索数据变量
             search: "",
             loading: false, // 数据加载样式
             MenueData: [],
@@ -99,17 +146,18 @@ export default {
             page_status: 0, // 分页状态变量，当上下一页时进行改变，只有是0时点击数字页码会改变
             page: 1,
             // 加载按钮使用变量
-            loadVisibleMenuRouter:false,
+            loadVisibleMenuRouter: false,
         };
     },
     created() {
         this.loading = true;
-        this.getMenueDate();
+        this.getMenueData();
+        this.getMenuTypeData()
         this.loading = false;
     },
     methods: {
         // 将Vue项目中的路由保存到后端进行存储
-        addMenuRouter(){
+        addMenuRouter() {
             this.loadVisibleMenuRouter = false;
 
         },
@@ -129,7 +177,7 @@ export default {
                     let data = res.data;
                     if (data.code === 200) {
                         this.$message.success(data.message);
-                        this.getMenueDate();
+                        this.getMenueData();
                         rows.splice(index, 1);
                     } else {
                         this.$message.error(data.message);
@@ -150,6 +198,19 @@ export default {
         saveRow(row) {
             // 保存的数据 row
             this.loading = true;
+            if (this.menu_type_value) {
+                row.menu_type_id = this.menu_type_value
+            } else {
+                row.menu_type_id = 0
+
+            }
+            if (this.father_menu_value) {
+                row.menu_id = this.father_menu_value
+            } else {
+                row.menu_id = 0
+
+            }
+            row.access_control = this.access_control_value
             this.$http
                 .put("users/menu_routes/", {
                     data: row,
@@ -159,7 +220,7 @@ export default {
                     if (data.code === 200) {
                         row.editable = false;
                         this.$message.success(data.message);
-                        this.getMenueDate();
+                        this.getMenueData();
                     } else {
                         this.$message.error(data.message);
                     }
@@ -171,8 +232,8 @@ export default {
                     this.loading = false;
                 });
         },
-        // 获取数据
-        getMenueDate() {
+        // 获取数据Vue菜单数据
+        getMenueData() {
             let get_url;
             if (this.search) {
                 get_url = `users/menu_routes/?page=${this.page}&search=${this.search}`;
@@ -185,6 +246,7 @@ export default {
                     let data = res.data;
                     if (data.code === 200) {
                         this.MenueData = data.data.data;
+                        this.father_menu_data_list = data.data.father_menu_data
                         this.data_total = data.data.data_total;
                     } else {
                         this.firmData = [];
@@ -197,13 +259,30 @@ export default {
                     this.page_status = 0;
                 });
         },
+        // 获取菜单类型数据
+        getMenuTypeData() {
+            this.$http
+                .get('users/menu_type/?status=all')
+                .then((res) => {
+                    let data = res.data;
+                    if (data.code === 200) {
+                        this.menu_type_list = data.data;
+                    } else {
+                        this.menu_type_list = [];
+                    }
+                })
+                .catch((error) => {
+                    this.$message.error(error.message);
+                })
+                .finally(() => { });
+        },
         // 页码功能
         nextPage(page) {
             this.loading = true;
             this.page_status = page;
             this.page = page;
             // 下一页按钮
-            this.getMenueDate();
+            this.getMenueData();
             this.loading = false;
         },
         prevPage(page) {
@@ -211,7 +290,7 @@ export default {
             this.page_status = page;
             this.page = page;
             // 上一页按钮
-            this.getMenueDate();
+            this.getMenueData();
             this.loading = false;
         },
         currentPage(page) {
@@ -219,7 +298,7 @@ export default {
             this.page = page;
             // 点击按钮触发
             if (this.page_status === 0) {
-                this.getMenueDate();
+                this.getMenueData();
             }
             this.loading = false;
         },
@@ -228,16 +307,16 @@ export default {
             this.loading = true;
             if (this.search) {
                 this.page = 1;
-                this.getMenueDate();
+                this.getMenueData();
             } else {
-                this.getMenueDate();
+                this.getMenueData();
             }
             this.loading = false;
         },
         // 重置
         reloadDate() {
             this.search = "";
-            this.getMenueDate();
+            this.getMenueData();
         },
     },
 }
