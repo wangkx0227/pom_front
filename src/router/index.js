@@ -6,21 +6,26 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: "/",
+    name: '跟路径',
+    meta: { title: "跟路径" },
     redirect: { name: "login" },
   },
   {
     path: "/login",
     name: "login",
+    meta: { title: "登录" },
     component: () => import("@/views/LoginView.vue"),
   },
   {
     path: "/404",
     name: "404",
+    meta: { title: "错误页面：资源错误" },
     component: () => import("@/views/ErroeViews/404.vue")
   },
   {
     path: "/500",
     name: "500",
+    meta: { title: "错误页面：接口错误" },
     component: () => import("@/views/ErroeViews/500.vue")
   },
   {
@@ -34,31 +39,31 @@ const routes = [
         path: "dashboard_info", // 仪表盘页面
         name: "dashboard_info",
         component: () => import("@/views/DashboardView.vue"),
-        meta: { title: "仪表盘" },
+        meta: { title: "仪表盘", 'icon': 'el-icon-pie-chart' },
       },
       {
         path: "work_info", // 事务页面
         name: "work_info",
         component: () => import("@/views/WorkInfoView.vue"),
-        meta: { title: "事务信息" },
+        meta: { title: "事务信息", 'icon': 'el-icon-date' },
       },
       {
         path: "supervise_info", // 监督页面
         name: "supervise_info",
         component: () => import("@/views/WorkInfoView.vue"),
-        meta: { title: "监督信息" },
+        meta: { title: "监督信息", 'icon': 'el-icon-tickets' },
       },
       {
         path: "departmental_info", // 部门事务页面
         name: "Departmental_info",
         component: () => import("@/views/WorkInfoView.vue"),
-        meta: { title: "部门事务" },
+        meta: { title: "部门事务", 'icon': 'el-icon-office-building' },
       },
       {
         path: "delayed_info", // 延期审核页面
         name: "delayed_info",
         component: () => import("@/views/WorkInfoView.vue"),
-        meta: { title: "延期审核事务" },
+        meta: { title: "延期审核事务", 'icon': 'el-icon-copy-document' },
       },
       {
         path: "user_info", // 用户登录后下拉菜单中的用户信息页面
@@ -67,21 +72,19 @@ const routes = [
         meta: { title: "个人页面" },
       },
       {
-        path:"user_access", // 用户下来菜单中的访问记录页面
+        path: "user_access", // 用户下来菜单中的访问记录页面
         name: "user_access",
         component: () => import("@/views/UserAccessView"),
         meta: { title: "访问记录" },
 
       }
-
-
     ],
   },
 
   {
     path: "/basic_function",
     name: "basic_function",
-    meta: { title: "基础设置" },
+    meta: { title: "基础设置", 'icon': 'el-icon-user' },
     component: () => import("@/views/IndexView.vue"),
     children: [
       // 功能菜单类别

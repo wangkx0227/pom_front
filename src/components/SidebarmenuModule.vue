@@ -51,7 +51,6 @@
         <i class="el-icon-setting"></i>
         <span>功能设置</span>
       </template>
-
       <el-menu-item index="7-1">工厂绑定FMR</el-menu-item>
       <el-menu-item index="7-2">清单类型</el-menu-item>
       <el-menu-item index="7-3">清单详情</el-menu-item>

@@ -19,15 +19,15 @@
         <div class="table_content">
             <el-table :data="MenueData" style="width: 100%" max-height="580">
                 <el-table-column prop="index" label="#" align="center" width="60"></el-table-column>
-                <el-table-column prop="menu_url" label="路径" align="center" width="100"></el-table-column>
-                <el-table-column prop="menu_url_alias" label="路径别名" align="center" width="100"></el-table-column>
-                <el-table-column prop="menu_url_name" label="路径名称" align="center" width="100"></el-table-column>
-                <el-table-column prop="menu_url_icon" label="路径图标" align="center" width="100"></el-table-column>
+                <el-table-column prop="menu_url" label="路径" align="center" width="200"></el-table-column>
+                <el-table-column prop="menu_url_alias" label="路径别名" align="center" width="200"></el-table-column>
+                <el-table-column prop="menu_url_name" label="路径名称" align="center" width="150"></el-table-column>
+                <el-table-column prop="menu_url_icon" label="路径图标" align="center" width="180"></el-table-column>
                 <el-table-column label="是否需要权限控制" align="center" width="150">
                     <template v-slot="{ row }">
                         <div class="tag-group" v-if="!row.editable">
                             <el-tag v-if="row.access_control">需要</el-tag>
-                            <el-tag type="danger" v-else>不需要</el-tag>
+                            <el-tag type="info" v-else>不需要</el-tag>
                         </div>
                         <div v-else>
                             <el-select v-model="access_control_value" clearable placeholder="请选择">
@@ -41,10 +41,10 @@
                 <el-table-column label="父菜单" align="center" width="150">
                     <template v-slot="{ row }">
                         <div class="tag-group" v-if="!row.editable">
-                            <el-tag v-if="row.father_menu_url_name">{{ row.father_menu_url_name }}</el-tag>
+                            <el-tag v-if="row.father_menu_url_name">{{ row.father_menu_url_name }} </el-tag>
                         </div>
                         <div v-else>
-                            <el-select v-model="father_menu_value" clearable placeholder="请选择">
+                            <el-select v-if="row.menu_type == 2 && row.access_control == 1" v-model="father_menu_value" clearable placeholder="请选择">
                                 <el-option v-for="item in father_menu_data_list" :key="item.value" :label="item.label"
                                     :value="item.value">
                                 </el-option>
@@ -71,9 +71,9 @@
                 <el-table-column label="菜单类型" align="center" width="150">
                     <template v-slot="{ row }">
                         <div class="tag-group" v-if="!row.editable">
-                            <el-tag v-if="row.menu_type == 0">非菜单</el-tag>
+                            <el-tag v-if="row.menu_type == 0" type="info">不做菜单</el-tag>
                             <el-tag v-else-if="row.menu_type == 1">一级菜单</el-tag>
-                            <el-tag v-else-if="row.menu_type == 2">二级菜单</el-tag>
+                            <el-tag v-else-if="row.menu_type == 2" type="success">二级菜单</el-tag>
                         </div>
                         <div v-else>
                             <el-select v-model="menu_type_value" clearable placeholder="请选择">
@@ -130,12 +130,12 @@ export default {
             // 展示当前菜单类型
             menu_type_value: "",
             menu_type_list: [
-                { label: "非菜单", value: 0 },
+                { label: "不做菜单", value: 0 },
                 { label: "一级菜单", value: 1 },
                 { label: "二级菜单", value: 2 }
             ],
             // 用来展示与存储当前路径是否需要权限控制
-            access_control_value: 0,
+            access_control_value: null,
             access_control_list: [
                 { label: "需要", value: 1 },
                 { label: "不需要", value: 0 }
@@ -165,8 +165,27 @@ export default {
         // 将Vue项目中的路由保存到后端进行存储
         addMenuRouter() {
             this.loadVisibleMenuRouter = false;
-            const allRoutes = this.$router.getRoutes();
-            console.log(allRoutes);
+            const allRoutes = this.$router.options.routes
+            this.loading = true;
+            this.$http
+                .post("routes/front_menu/", {
+                    data: allRoutes,
+                })
+                .then((res) => {
+                    let data = res.data;
+                    if (data.code === 200) {
+                        this.$message.success(data.message);
+                        this.getMenueData();
+                    } else {
+                        this.$message.error(data.message);
+                    }
+                })
+                .catch((error) => {
+                    this.$message.error(error.message);
+                })
+                .finally(() => {
+                    this.loading = false;
+                });
 
         },
         //删除按钮显示小弹框
@@ -178,7 +197,7 @@ export default {
             let pk = row.id;
             this.loading = true;
             this.$http
-                .delete("users/menu_routes/", {
+                .delete("routes/front_menu/", {
                     data: { pk: pk },
                 })
                 .then((res) => {
@@ -212,16 +231,20 @@ export default {
                 row.menu_type = row.menu_type
 
             }
-            console.log(this.father_menu_value);
             if (this.father_menu_value) {
                 row.menu_id = this.father_menu_value
             } else {
                 row.menu_id = row.menu_id
 
             }
-            row.access_control = this.access_control_value
+            if(this.access_control_value == null){
+                row.access_control = row.menu_type
+            }else{
+                row.access_control = this.access_control_value
+            }
+            
             this.$http
-                .put("users/menu_routes/", {
+                .put("routes/front_menu/", {
                     data: row,
                 })
                 .then((res) => {
@@ -245,9 +268,9 @@ export default {
         getMenueData() {
             let get_url;
             if (this.search) {
-                get_url = `users/menu_routes/?page=${this.page}&search=${this.search}`;
+                get_url = `routes/front_menu/?page=${this.page}&search=${this.search}`;
             } else {
-                get_url = `users/menu_routes/?page=${this.page}`;
+                get_url = `routes/front_menu/?page=${this.page}`;
             }
             this.$http
                 .get(get_url)
