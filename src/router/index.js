@@ -98,9 +98,9 @@ const routes = [
         meta: { title: "用户管理" },
       },
       {
-        path: "front_menu", // 公司部门管理页面
+        path: "front_menu", // 菜单权限管理页面
         name: "front_menu",
-        component: () => import("@/views/BasicFunctionMenu/FrontMenuInfoView.vue"),
+        component: () => import("@/views/BasicFunctionMenu/MenuInfoView.vue"),
         meta: { title: "菜单管理" },
       },
       {

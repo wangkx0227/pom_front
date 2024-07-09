@@ -45,7 +45,6 @@
       <el-menu-item index="/basic_function/user_list_info/">用户管理</el-menu-item>
       <el-menu-item index="/basic_function/user_roles/">角色管理</el-menu-item>
       <el-menu-item index="/basic_function/front_menu/">菜单管理</el-menu-item>
-      <el-menu-item index="6-4">接口权限</el-menu-item>
     </el-submenu>
     <el-submenu index="7">
       <template v-slot:title>

@@ -2,11 +2,11 @@
   <div class="user_list_info">
     <el-card class="box-card">
       <el-tabs v-model="activeName" @tab-click="menuHandleClick">
-        <el-tab-pane label="菜单类型" name="type">
-          <component :is="menuTypeComponent" v-if="activeName === 'type'"/>
+        <el-tab-pane label="前端菜单管理" name="front">
+          <component :is="frontComponent" v-if="activeName === 'front'" />
         </el-tab-pane>
-        <el-tab-pane label="菜单管理" name="menu">
-          <component :is="menuComponent" v-if="activeName === 'menu'"/>
+        <el-tab-pane label="后端接口权限" name="api">
+          <component :is="apiComponent" v-if="activeName === 'api'" />
         </el-tab-pane>
       </el-tabs>
     </el-card>
@@ -18,10 +18,10 @@ export default {
   name: "FrontMenuInfoView",
   data() {
     return {
-      activeName: "type",
+      activeName: "front",
       // 使用懒加载形式加载组件
-      menuTypeComponent: () => import("@/components/BasicFunctionComponent/front_menu/menuTypeModule"),
-      menuComponent: () => import("@/components/BasicFunctionComponent/front_menu/menuModule"),
+      frontComponent: () => import("@/components/BasicFunctionComponent/menu_routes/frontMenuRoutesModule"),
+      apiComponent: () => import("@/components/BasicFunctionComponent/menu_routes/apiMenuRoutesModule"),
     };
   },
   methods: {

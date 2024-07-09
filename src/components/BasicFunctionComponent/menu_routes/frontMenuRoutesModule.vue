@@ -7,7 +7,7 @@
                     <el-button size="mini" type="text" @click="loadVisibleMenuRouter = false">取消</el-button>
                     <el-button type="primary" size="mini" @click="addMenuRouter">确定</el-button>
                 </div>
-                <el-button slot="reference">重新加载菜单</el-button>
+                <el-button slot="reference" icon="el-icon-refresh">加载菜单</el-button>
             </el-popover>
             <el-input placeholder="请输入搜索路径名称" v-model="search" clearable class="input_search">
             </el-input>
@@ -18,12 +18,12 @@
         </div>
         <div class="table_content">
             <el-table :data="MenueData" style="width: 100%" max-height="580">
-                <el-table-column prop="index" label="#" align="center"></el-table-column>
-                <el-table-column prop="menu_url" label="路径" align="center"></el-table-column>
-                <el-table-column prop="menu_url_alias" label="路径别名" align="center"></el-table-column>
-                <el-table-column prop="menu_url_name" label="路径名称" align="center"></el-table-column>
-                <el-table-column prop="menu_url_icon" label="路径图标" align="center"></el-table-column>
-                <el-table-column label="是否需要权限控制" align="center">
+                <el-table-column prop="index" label="#" align="center" width="60"></el-table-column>
+                <el-table-column prop="menu_url" label="路径" align="center" width="100"></el-table-column>
+                <el-table-column prop="menu_url_alias" label="路径别名" align="center" width="100"></el-table-column>
+                <el-table-column prop="menu_url_name" label="路径名称" align="center" width="100"></el-table-column>
+                <el-table-column prop="menu_url_icon" label="路径图标" align="center" width="100"></el-table-column>
+                <el-table-column label="是否需要权限控制" align="center" width="150">
                     <template v-slot="{ row }">
                         <div class="tag-group" v-if="!row.editable">
                             <el-tag v-if="row.access_control">需要</el-tag>
@@ -38,7 +38,7 @@
                         </div>
                     </template>
                 </el-table-column>
-                <el-table-column label="父菜单" align="center">
+                <el-table-column label="父菜单" align="center" width="150">
                     <template v-slot="{ row }">
                         <div class="tag-group" v-if="!row.editable">
                             <el-tag v-if="row.father_menu_url_name">{{ row.father_menu_url_name }}</el-tag>
@@ -52,7 +52,7 @@
                         </div>
                     </template>
                 </el-table-column>
-                <el-table-column label="描述信息" align="center">
+                <el-table-column label="描述信息" align="center" width="180">
                     <template v-slot="{ row }">
                         <el-tooltip class="item" effect="dark" :content="row.description" placement="bottom"
                             v-if="!row.editable">
@@ -61,17 +61,19 @@
                         <el-input type="textarea" v-model="row.description" v-else></el-input>
                     </template>
                 </el-table-column>
-                <el-table-column label="加载日期" align="center">
+                <el-table-column label="加载日期" align="center" width="180">
                     <template v-slot="{ row }">
                         <el-tooltip class="item" effect="dark" :content="row.create_date" placement="bottom">
                             <div class="cell ellipsis">{{ row.create_date }}</div>
                         </el-tooltip>
                     </template>
                 </el-table-column>
-                <el-table-column label="菜单类型" align="center">
+                <el-table-column label="菜单类型" align="center" width="150">
                     <template v-slot="{ row }">
                         <div class="tag-group" v-if="!row.editable">
-                            <el-tag v-if="row.menu">{{ row.menu }}</el-tag>
+                            <el-tag v-if="row.menu_type == 0">非菜单</el-tag>
+                            <el-tag v-else-if="row.menu_type == 1">一级菜单</el-tag>
+                            <el-tag v-else-if="row.menu_type == 2">二级菜单</el-tag>
                         </div>
                         <div v-else>
                             <el-select v-model="menu_type_value" clearable placeholder="请选择">
@@ -82,7 +84,7 @@
                         </div>
                     </template>
                 </el-table-column>
-                <el-table-column label="操作" align="center">
+                <el-table-column label="操作" align="center" width="150">
                     <template v-slot="scope">
                         <el-button v-if="!scope.row.editable" @click="editRow(scope.row)" size="mini" type="text">编辑
                         </el-button>
@@ -125,15 +127,20 @@ export default {
     name: "menuModule",
     data() {
         return {
+            // 展示当前菜单类型
+            menu_type_value: "",
+            menu_type_list: [
+                { label: "非菜单", value: 0 },
+                { label: "一级菜单", value: 1 },
+                { label: "二级菜单", value: 2 }
+            ],
             // 用来展示与存储当前路径是否需要权限控制
             access_control_value: 0,
             access_control_list: [
                 { label: "需要", value: 1 },
                 { label: "不需要", value: 0 }
             ],
-            // 展示当前菜单类型
-            menu_type_value: "",
-            menu_type_list: [],
+
             // 展示一级菜单
             father_menu_value: "",
             father_menu_data_list: [],
@@ -152,13 +159,14 @@ export default {
     created() {
         this.loading = true;
         this.getMenueData();
-        this.getMenuTypeData()
         this.loading = false;
     },
     methods: {
         // 将Vue项目中的路由保存到后端进行存储
         addMenuRouter() {
             this.loadVisibleMenuRouter = false;
+            const allRoutes = this.$router.getRoutes();
+            console.log(allRoutes);
 
         },
         //删除按钮显示小弹框
@@ -199,15 +207,16 @@ export default {
             // 保存的数据 row
             this.loading = true;
             if (this.menu_type_value) {
-                row.menu_type_id = this.menu_type_value
+                row.menu_type = this.menu_type_value
             } else {
-                row.menu_type_id = 0
+                row.menu_type = row.menu_type
 
             }
+            console.log(this.father_menu_value);
             if (this.father_menu_value) {
                 row.menu_id = this.father_menu_value
             } else {
-                row.menu_id = 0
+                row.menu_id = row.menu_id
 
             }
             row.access_control = this.access_control_value
@@ -258,23 +267,6 @@ export default {
                 .finally(() => {
                     this.page_status = 0;
                 });
-        },
-        // 获取菜单类型数据
-        getMenuTypeData() {
-            this.$http
-                .get('users/menu_type/?status=all')
-                .then((res) => {
-                    let data = res.data;
-                    if (data.code === 200) {
-                        this.menu_type_list = data.data;
-                    } else {
-                        this.menu_type_list = [];
-                    }
-                })
-                .catch((error) => {
-                    this.$message.error(error.message);
-                })
-                .finally(() => { });
         },
         // 页码功能
         nextPage(page) {
