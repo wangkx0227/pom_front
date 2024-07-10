@@ -68,13 +68,13 @@ const routes = [
       {
         path: "user_info", // 用户登录后下拉菜单中的用户信息页面
         name: "user_info",
-        component: () => import("@/views/UserInfoView"),
+        component: () => import("@/views/UserDropdown/UserInfoView"),
         meta: { title: "个人页面" },
       },
       {
         path: "user_access", // 用户下来菜单中的访问记录页面
         name: "user_access",
-        component: () => import("@/views/UserAccessView"),
+        component: () => import("@/views/UserDropdown/UserAccessView"),
         meta: { title: "访问记录" },
 
       }

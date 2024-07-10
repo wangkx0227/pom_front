@@ -119,7 +119,7 @@ export default {
     // 发送请求,修改密码
     updatePassword() {
       this.$http
-        .put("users/login/", { pwd: this.form.password, pk: this.user_id })
+        .put("users/update_passwd/", { pwd: this.form.password, pk: this.user_id })
         .then((res) => {
           let data = res.data;
           if (data.code === 200) {
@@ -145,7 +145,7 @@ export default {
     // 获取用户基本数据，无法获取延期审核人信息，与权限信息
     getUserInfo() {
       this.$http
-        .get("users/login/")
+        .get("users/personal_details/")
         .then((res) => {
           let data = res.data;
           if (data.code === 200) {
