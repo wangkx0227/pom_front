@@ -38,31 +38,31 @@ const routes = [
       {
         path: "dashboard_info", // 仪表盘页面
         name: "dashboard_info",
-        component: () => import("@/views/DashboardView.vue"),
+        component: () => import("@/views/CorporateAffairsWork/DashboardView.vue"),
         meta: { title: "仪表盘", 'icon': 'el-icon-pie-chart' },
       },
       {
         path: "work_info", // 事务页面
         name: "work_info",
-        component: () => import("@/views/WorkInfoView.vue"),
+        component: () => import("@/views/CorporateAffairsWork/WorkInfoView.vue"),
         meta: { title: "事务信息", 'icon': 'el-icon-date' },
       },
       {
         path: "supervise_info", // 监督页面
         name: "supervise_info",
-        component: () => import("@/views/WorkInfoView.vue"),
+        component: () => import("@/views/CorporateAffairsWork/WorkInfoView.vue"),
         meta: { title: "监督信息", 'icon': 'el-icon-tickets' },
       },
       {
         path: "departmental_info", // 部门事务页面
         name: "Departmental_info",
-        component: () => import("@/views/WorkInfoView.vue"),
+        component: () => import("@/views/CorporateAffairsWork/WorkInfoView.vue"),
         meta: { title: "部门事务", 'icon': 'el-icon-office-building' },
       },
       {
         path: "delayed_info", // 延期审核页面
         name: "delayed_info",
-        component: () => import("@/views/WorkInfoView.vue"),
+        component: () => import("@/views/CorporateAffairsWork/WorkInfoView.vue"),
         meta: { title: "延期审核事务", 'icon': 'el-icon-copy-document' },
       },
       {
