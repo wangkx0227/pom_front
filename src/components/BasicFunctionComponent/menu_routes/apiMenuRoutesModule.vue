@@ -154,7 +154,7 @@ export default {
       let pk = row.id;
       this.loading = true;
       this.$http
-        .delete("users/menu_type/", {
+        .delete("routes/api_routes/", {
           data: { pk: pk },
         })
         .then((res) => {
@@ -183,7 +183,7 @@ export default {
       // 保存的数据 row
       this.loading = true;
       this.$http
-        .put("users/menu_type/", {
+        .put("routes/api_routes/", {
           data: row,
         })
         .then((res) => {
@@ -226,7 +226,7 @@ export default {
         this.addLoading = false;
       } else {
         this.$http
-          .post("users/menu_type/", {
+          .post("routes/api_routes/", {
             data: this.addmenuTypeForm,
           })
           .then((res) => {
@@ -253,9 +253,9 @@ export default {
     getmenuTypeDate() {
       let get_url;
       if (this.search) {
-        get_url = `users/menu_type/?page=${this.page}&search=${this.search}`;
+        get_url = `routes/api_routes/?page=${this.page}&search=${this.search}`;
       } else {
-        get_url = `users/menu_type/?page=${this.page}`;
+        get_url = `routes/api_routes/?page=${this.page}`;
       }
       this.$http
         .get(get_url)
