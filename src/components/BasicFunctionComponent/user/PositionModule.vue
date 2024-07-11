@@ -101,7 +101,6 @@
               effect="dark"
               :content="row.create_date"
               placement="bottom"
-              v-if="!row.editable"
             >
               <div class="cell ellipsis">{{ row.create_date }}</div>
             </el-tooltip>
@@ -114,7 +113,6 @@
               effect="dark"
               :content="row.update_date"
               placement="bottom"
-              v-if="!row.editable"
             >
               <div class="cell ellipsis">{{ row.update_date }}</div>
             </el-tooltip>

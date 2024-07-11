@@ -126,14 +126,14 @@
         </el-table-column>
         <el-table-column label="创建日期" align="center" width="180">
           <template v-slot="{ row }">
-            <el-tooltip class="item" effect="dark" :content="row.create_date" placement="bottom" v-if="!row.editable">
+            <el-tooltip class="item" effect="dark" :content="row.create_date" placement="bottom">
               <div class="cell ellipsis">{{ row.create_date }}</div>
             </el-tooltip>
           </template>
         </el-table-column>
         <el-table-column label="修改日期" align="center" width="180">
           <template v-slot="{ row }">
-            <el-tooltip class="item" effect="dark" :content="row.update_date" placement="bottom" v-if="!row.editable">
+            <el-tooltip class="item" effect="dark" :content="row.update_date" placement="bottom">
               <div class="cell ellipsis">{{ row.update_date }}</div>
             </el-tooltip>
           </template>
@@ -166,7 +166,7 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="150">
+        <el-table-column label="操作" align="center" width="150" fixed="right">
           <template v-slot="scope">
             <el-button v-if="!scope.row.editable" @click="editRow(scope.row)" size="mini" type="text">编辑
             </el-button>

@@ -30,7 +30,7 @@
                             <el-tag type="info" v-else>不需要</el-tag>
                         </div>
                         <div v-else>
-                            <el-select v-model="access_control_value" clearable placeholder="请选择">
+                            <el-select v-model="row.access_control" clearable placeholder="请选择">
                                 <el-option v-for="item in access_control_list" :key="item.value" :label="item.label"
                                     :value="item.value">
                                 </el-option>
@@ -44,7 +44,8 @@
                             <el-tag v-if="row.father_menu_url_name">{{ row.father_menu_url_name }} </el-tag>
                         </div>
                         <div v-else>
-                            <el-select v-if="row.menu_type == 2 && row.access_control == 1" v-model="father_menu_value" clearable placeholder="请选择">
+                            <el-select v-if="row.menu_type == 2 && row.access_control == 1" v-model="row.menu_id"
+                                clearable placeholder="请选择">
                                 <el-option v-for="item in father_menu_data_list" :key="item.value" :label="item.label"
                                     :value="item.value">
                                 </el-option>
@@ -52,7 +53,7 @@
                         </div>
                     </template>
                 </el-table-column>
-                <el-table-column label="描述信息" align="center" width="180">
+                <el-table-column label="作用" align="center" width="180">
                     <template v-slot="{ row }">
                         <el-tooltip class="item" effect="dark" :content="row.description" placement="bottom"
                             v-if="!row.editable">
@@ -76,7 +77,7 @@
                             <el-tag v-else-if="row.menu_type == 2" type="success">二级菜单</el-tag>
                         </div>
                         <div v-else>
-                            <el-select v-model="menu_type_value" clearable placeholder="请选择">
+                            <el-select v-model="row.menu_type" clearable placeholder="请选择">
                                 <el-option v-for="item in menu_type_list" :key="item.value" :label="item.label"
                                     :value="item.value">
                                 </el-option>
@@ -84,7 +85,7 @@
                         </div>
                     </template>
                 </el-table-column>
-                <el-table-column label="操作" align="center" width="150">
+                <el-table-column label="操作" align="center" width="150" fixed="right">
                     <template v-slot="scope">
                         <el-button v-if="!scope.row.editable" @click="editRow(scope.row)" size="mini" type="text">编辑
                         </el-button>
@@ -128,21 +129,18 @@ export default {
     data() {
         return {
             // 展示当前菜单类型
-            menu_type_value: "",
             menu_type_list: [
                 { label: "不做菜单", value: 0 },
                 { label: "一级菜单", value: 1 },
                 { label: "二级菜单", value: 2 }
             ],
             // 用来展示与存储当前路径是否需要权限控制
-            access_control_value: null,
             access_control_list: [
                 { label: "需要", value: 1 },
                 { label: "不需要", value: 0 }
             ],
 
             // 展示一级菜单
-            father_menu_value: "",
             father_menu_data_list: [],
             // 搜索数据变量
             search: "",
@@ -224,25 +222,6 @@ export default {
         // 修改保存按钮
         saveRow(row) {
             // 保存的数据 row
-            this.loading = true;
-            if (this.menu_type_value) {
-                row.menu_type = this.menu_type_value
-            } else {
-                row.menu_type = row.menu_type
-
-            }
-            if (this.father_menu_value) {
-                row.menu_id = this.father_menu_value
-            } else {
-                row.menu_id = row.menu_id
-
-            }
-            if(this.access_control_value == null){
-                row.access_control = row.menu_type
-            }else{
-                row.access_control = this.access_control_value
-            }
-            
             this.$http
                 .put("routes/front_menu/", {
                     data: row,

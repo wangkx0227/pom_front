@@ -57,14 +57,14 @@
         </el-table-column>
         <el-table-column label="创建日期" align="center">
           <template v-slot="{ row }">
-            <el-tooltip class="item" effect="dark" :content="row.create_date" placement="bottom" v-if="!row.editable">
+            <el-tooltip class="item" effect="dark" :content="row.create_date" placement="bottom">
               <div class="cell ellipsis">{{ row.create_date }}</div>
             </el-tooltip>
           </template>
         </el-table-column>
         <el-table-column label="修改日期" align="center">
           <template v-slot="{ row }">
-            <el-tooltip class="item" effect="dark" :content="row.update_date" placement="bottom" v-if="!row.editable">
+            <el-tooltip class="item" effect="dark" :content="row.update_date" placement="bottom">
               <div class="cell ellipsis">{{ row.update_date }}</div>
             </el-tooltip>
           </template>
