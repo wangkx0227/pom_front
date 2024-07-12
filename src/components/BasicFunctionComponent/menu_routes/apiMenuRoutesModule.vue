@@ -214,6 +214,7 @@ export default {
           .finally(() => {
             this.loading = false;
             this.loadVisibleApiRouter = false;
+            
           });
 
     },
@@ -274,6 +275,7 @@ export default {
           })
           .finally(() => {
             this.loading = false;
+            this.method_data_id_list = [];
           });
     },
     // 获取数据
