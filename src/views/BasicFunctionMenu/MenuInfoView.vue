@@ -8,6 +8,9 @@
         <el-tab-pane label="后端接口权限" name="api">
           <component :is="apiComponent" v-if="activeName === 'api'" />
         </el-tab-pane>
+        <el-tab-pane label="后端访问方法" name="method">
+          <component :is="requestMethodComponent" v-if="activeName === 'method'" />
+        </el-tab-pane>
       </el-tabs>
     </el-card>
   </div>
@@ -22,6 +25,7 @@ export default {
       // 使用懒加载形式加载组件
       frontComponent: () => import("@/components/BasicFunctionComponent/menu_routes/frontMenuRoutesModule"),
       apiComponent: () => import("@/components/BasicFunctionComponent/menu_routes/apiMenuRoutesModule"),
+      requestMethodComponent: () => import("@/components/BasicFunctionComponent/menu_routes/apiRequestMethodModule"),
     };
   },
   methods: {
