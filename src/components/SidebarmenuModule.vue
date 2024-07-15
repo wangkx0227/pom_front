@@ -45,17 +45,19 @@
       <el-menu-item index="/basic_function/user_list_info/">用户管理</el-menu-item>
       <el-menu-item index="/basic_function/user_roles/">角色管理</el-menu-item>
       <el-menu-item index="/basic_function/front_menu/">菜单管理</el-menu-item>
+      <el-menu-item index="7-5">用户访问查询</el-menu-item>
     </el-submenu>
     <el-submenu index="7">
       <template v-slot:title>
         <i class="el-icon-setting"></i>
         <span>功能设置</span>
       </template>
+      <el-menu-item index="7-6">事务规则设置</el-menu-item>
+      <el-menu-item index="7-2">非订单类清单</el-menu-item>
+      <el-menu-item index="7-3">订单类清单</el-menu-item>
+      <el-menu-item index="7-4">事务变更设置</el-menu-item>
       <el-menu-item index="7-1">工厂绑定FMR</el-menu-item>
-      <el-menu-item index="7-2">清单类型</el-menu-item>
-      <el-menu-item index="7-3">清单详情</el-menu-item>
-      <el-menu-item index="7-4">人员变更记录</el-menu-item>
-      <el-menu-item index="7-5">登录统计</el-menu-item>
+
     </el-submenu>
   </el-menu>
 </template>
