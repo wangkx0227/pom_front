@@ -2,7 +2,7 @@
     <el-dialog title="当前角色权限菜单展示" :visible.sync="P_dialogShow" width="30%" :before-close="P_dialogClose">
 
         <el-tree :data="p_tree_data" show-checkbox node-key="id" accordion :default-checked-keys="default_node"
-            :props="KeyDefaultProps">
+            :props="KeyDefaultProps" @check-change="handleCheckChange" ref="treeRef">
         </el-tree>
         <span slot="footer" class="dialog-footer">
             <el-button @click="loadPermission" :loading="P_loading" icon="el-icon-refresh-right"
@@ -27,6 +27,9 @@ export default {
                 children: 'children',
                 label: 'label'
             },
+            menu_id_list: [], // 存放菜单的id
+            api_id_list: [], // 存放 api接口的id
+            method_id_list: [], // 存放 api接口可以被使用方法的id
         }
 
     },
@@ -66,10 +69,30 @@ export default {
         loadPermission() {
             this.getMenuPermission();
         },
-    
+        // 节点进行触发存储
+        handleCheckChange(data, checkedData) {
+            const tree = this.$refs.treeRef;
+            // 使用 getCheckedKeys 方法获取当前所有选中节点的key值
+            const checkedKeys = tree.getCheckedKeys();
+
+            // 使用 getCheckedNodes 方法获取当前所有选中的节点
+            const checkedNodes = tree.getCheckedNodes();
+            // 收集所有选中节点的父节点ID
+            let parentIDs = new Set();
+            for (let node of checkedNodes) {
+                let currentNode = node;
+                while (currentNode.parent) {
+                    parentIDs.add(currentNode.parent.id);
+                    currentNode = currentNode.parent;
+                }
+            }
+            let parentIDArray = Array.from(parentIDs);
+            console.log('Selected parent node IDs:', parentIDArray);
+            console.log('Checked keys:', checkedKeys);
+        }
     },
+
+
 }
 </script>
-<style>
-.option-wrapper { padding: 0 !important; } 
-</style>
+<style></style>
