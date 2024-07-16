@@ -8,7 +8,7 @@
             <el-button @click="loadPermission" :loading="P_loading" icon="el-icon-refresh-right"
                 type="success">权限加载</el-button>
             <el-button @click="P_dialogShow = false">取 消</el-button>
-            <el-button type="primary" @click="P_dialogShow = false">确 定</el-button>
+            <el-button type="primary" @click="saveData">确 定</el-button>
         </span>
     </el-dialog>
 </template>
@@ -21,7 +21,7 @@ export default {
             P_loading: false,
             role_pk: "", // 角色的id
             P_dialogShow: false, // 控制弹窗的展开或者关闭
-            default_node: [5], // 设置默认选中的树形属性
+            default_node: [], // 设置默认选中的树形属性
             p_tree_data: [], // 设置属性属性的值
             KeyDefaultProps: { // 属性节点展开后对应数据的key值
                 children: 'children',
@@ -46,7 +46,7 @@ export default {
                     let data = res.data;
                     if (data.code === 200) {
                         this.p_tree_data = data.data.menu_permission_list;
-                        this.default_node = [6];
+                        this.default_node = data.data.default_node;
                     }
                 })
                 .catch((error) => {
@@ -69,27 +69,117 @@ export default {
         loadPermission() {
             this.getMenuPermission();
         },
-        // 节点进行触发存储
-        handleCheckChange(data, checkedData) {
-            const tree = this.$refs.treeRef;
-            // 使用 getCheckedKeys 方法获取当前所有选中节点的key值
-            const checkedKeys = tree.getCheckedKeys();
-
-            // 使用 getCheckedNodes 方法获取当前所有选中的节点
-            const checkedNodes = tree.getCheckedNodes();
-            // 收集所有选中节点的父节点ID
-            let parentIDs = new Set();
-            for (let node of checkedNodes) {
-                let currentNode = node;
-                while (currentNode.parent) {
-                    parentIDs.add(currentNode.parent.id);
-                    currentNode = currentNode.parent;
+        // 处理节点数据函数-删除-判断节点是不是类似的节点进行删除
+        handleNodeDeletion(nodes, deletedNode) {
+            let type_split = deletedNode.type.split('-')
+            const regex = new RegExp(`${type_split[0]}-${type_split[1]}.*`); // 匹配正则表达式
+            // 找到所有匹配符合条件的节点
+            const matchedNodes = nodes.filter(node =>
+                node.type.match(regex)
+            );
+            if (matchedNodes.length === 1) {
+                let indexToDelete = nodes.findIndex((item) => (
+                    item.id === matchedNodes[0].id && item.type === matchedNodes[0].type
+                ))
+                if (indexToDelete !== -1) {
+                    nodes.splice(indexToDelete, 1);
                 }
             }
-            let parentIDArray = Array.from(parentIDs);
-            console.log('Selected parent node IDs:', parentIDArray);
-            console.log('Checked keys:', checkedKeys);
-        }
+
+        },
+        // 处理节点数据函数-删除
+        handleNodeDataDel(node_data) {
+            let del_pk = node_data.id;
+            let del_type = node_data.type;
+            let menu = del_type.match(/menu.*/); // 正则匹配是不是菜单类型的节点
+            let api = del_type.match(/api.*/); // 正则匹配是不是菜单类型的节点
+            if (menu) {
+                // 获取删除到列表的节点下标索引
+                let indexToDelete = this.menu_id_list.findIndex((item) => (
+                    item.id === del_pk && item.type === del_type
+                ))
+                // 删除这个元素
+                if (indexToDelete !== -1) {
+                    let type_split = del_type.split('-')
+                    if (type_split.length === 2) { // 1级菜单
+                        const regex = new RegExp(`${del_type}.*`); // 匹配正则表达式
+                        const matchedNodes = this.menu_id_list.filter(node =>
+                            node.type.match(regex)
+                        );
+                        if (matchedNodes.length === 1) {
+                            this.menu_id_list.splice(indexToDelete, 1);
+                        }
+                    } else {
+                        this.menu_id_list.splice(indexToDelete, 1);
+                    }
+                }
+                // 删除的时候也是需要进行判断，当前是不是最后一个节点,数据列表中又没多余节点数据，勾选了子节点，那么父节点也同时勾选，那么删除子节点，那么父节点也需要删除   
+                this.handleNodeDeletion(this.menu_id_list, { type: del_type, id: del_pk })
+            }else if(api){
+
+            }
+        },
+        // 处理函数数据-添加
+        handleNodeDataAdd(checkedNodes) {
+            for (let i = 0; i < checkedNodes.length; i++) {
+                let add_pk = checkedNodes[i].id
+                let add_type = checkedNodes[i].type
+                if (!add_type) {
+                    add_type = ''
+                }
+                let menu = add_type.match(/menu.*/); // 正则匹配是不是菜单类型的节点
+                let api = add_type.match(/api.*/); // 正则匹配是不是菜单类型的节点
+                // 筛选获取菜单，进行添加
+                if (menu) {
+                    let indexToShow = this.menu_id_list.findIndex((item) => (
+                        item.id === add_pk && item.type === add_type
+                    ))
+                    // 防止重复添加到列表中,-1说明额米有添加
+                    if (indexToShow === -1) {
+                        // 拆分：如果选中的时二级菜单，那么需要将1及菜单也添加进去
+                        let type_split_add = add_type.split("-")
+                        if (type_split_add.length === 3) { // 选中的就是二级菜单,就分割为3个值，将1与2值进行拼接获取1级菜单
+                            // 添加一层判断，判断当前的1级菜单是否已经添加
+                            let one_pk = parseInt(type_split_add[1])
+                            let one_type = `${type_split_add[0]}-${type_split_add[1]}`
+                            let indexToShow_one = this.menu_id_list.findIndex((item) => (
+                                item.id === one_pk && item.type === one_type
+                            ))
+                            if (indexToShow_one === -1) {
+                                this.menu_id_list.push({ type: one_type, id: one_pk })
+                            }
+                        }
+                        this.menu_id_list.push({ type: add_type, id: add_pk })
+                    }
+                }else if(api){
+                    
+                }
+            }
+        },
+        // 节点进行触发存储
+        handleCheckChange(node_data, checkedStatus) {
+            const tree = this.$refs.treeRef;
+            // checkedStatus 判断当前节点是否被选中
+            // node_data 当前节点的数据
+            // 使用 getCheckedNodes 方法获取当前所有选中的节点
+            const checkedNodes = tree.getCheckedNodes();
+            if (!checkedStatus) { // 当属性为flase时，那么就需要将列表的选中的剔除
+                this.handleNodeDataDel(node_data)
+            } else {
+                // 将选中的节点添加到列表中
+                this.handleNodeDataAdd(checkedNodes)
+            }
+
+
+
+
+
+        },
+        // 确定最后的数据
+        saveData() {
+            console.log(this.menu_id_list, "最后结果");
+        },
+
     },
 
 
