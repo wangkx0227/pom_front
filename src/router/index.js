@@ -112,6 +112,12 @@ const routes = [
         component: () => import("@/views/BasicFunctionMenu/RoleUsersView.vue"),
         meta: { title: "角色管理" },
       },
+      {
+        path: "users_access", // 公司部门管理页面
+        name: "users_access",
+        component: () => import("@/views/BasicFunctionMenu/UserAccessView.vue"),
+        meta: { title: "用户访问查询" },
+      },
     ]
   }
 ];
