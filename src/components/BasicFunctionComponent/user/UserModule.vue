@@ -75,6 +75,15 @@
                 </el-select>
               </el-form-item>
             </el-col>
+            <el-col :span="12">
+              <el-form-item label="角色权限(必填项)" prop="role_id">
+                <el-select v-model="addusersForm.role_id" filterable remote reserve-keyword placeholder="请输入关键词"
+                  :remote-method="remoteRoleSelect" :loading="selectRoleLoading">
+                  <el-option v-for="item in roleSearch" :key="item.id" :label="item.role" :value="item.id">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
           </el-row>
         </el-form>
         <template v-slot:footer>
@@ -152,7 +161,7 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column label="职位/岗位" align="center" width="180">
+        <el-table-column label="职务/岗位" align="center" width="180">
           <template v-slot="{ row }">
             <div class="tag-group" v-if="!row.editable">
               <el-tag type="position" effect="plain">
@@ -166,6 +175,21 @@
             </el-select>
           </template>
         </el-table-column>
+        <el-table-column label="角色权限" align="center" width="180">
+          <template v-slot="{ row }">
+            <div class="tag-group" v-if="!row.editable">
+              <el-tag type="position" effect="plain" v-if="row.role">
+                {{ row.role }}
+              </el-tag>
+            </div>
+            <el-select v-else v-model="roleId" filterable remote reserve-keyword placeholder="请输入关键词"
+              :remote-method="remoteRoleSelect" :loading="selectRoleLoading">
+              <el-option v-for="item in roleSearch" :key="item.id" :label="item.role" :value="item.id">
+              </el-option>
+            </el-select>
+          </template>
+        </el-table-column>
+
         <el-table-column label="操作" align="center" width="180">
           <template v-slot="scope">
             <el-button v-if="!scope.row.editable" @click="editRow(scope.row)" size="mini" type="text">编辑
@@ -233,6 +257,7 @@ export default {
       dialogDisplayVar: false,
       //  添加弹出框数据
       addusersForm: {
+        role_id: "",
         login_name: "",
         user_name: "",
         passwd: "",
@@ -282,7 +307,10 @@ export default {
         ],
         position_id: [
           { required: true, message: "必填项", trigger: "blur" },
-        ]
+        ],
+        role_id: [
+          { required: true, message: "必填项", trigger: "blur" },
+        ],
 
       },
       // 分页
@@ -300,6 +328,11 @@ export default {
       // 下拉框-前缀
       selectPrefixLoading: false, // 前缀下拉加载变量
       prefixSearch: [], // 搜索后的列表
+      // 下拉框-角色
+      roleId: "", // 角色id
+      selectRoleLoading: false,
+      roleSearch: [], // 搜索后的列表
+
     };
   },
   created() {
@@ -347,22 +380,18 @@ export default {
       this.loading = true;
       if (this.departmentId) {
         row.department_id = this.departmentId;
-      } else {
-        row.department_id = 0
       }
-
       if (this.positionId) {
         row.position_id = this.positionId
-      } else {
-        row.position_id = 0
       }
-
+      if (this.roleId) {
+        row.role_id = this.roleId;
+      }
       if (this.is_value !== "未选择") {
         row.is_show = this.is_value
       } else {
         row.is_show = 1
       }
-
       this.$http
         .put("users/info/", {
           data: row,
@@ -414,6 +443,8 @@ export default {
         this.$message.error("前缀属于必填项！");
       } else if (!this.addusersForm.position_id) {
         this.$message.error("职位属于必填项！");
+      }else if (!this.addusersForm.role_id) {
+        this.$message.error("角色权限属于必填项！");
       } else {
         this.addLoading = true;
         this.$http
@@ -608,6 +639,33 @@ export default {
           this.loading = false
         });
     },
+    // 角色查询
+    getRoleData(query) {
+      this.selectRoleLoading = true;
+      this.$http
+        .get(`users/roles/?status=all&querySelect=${query}`)
+        .then((res) => {
+          let data = res.data;
+          if (data.code === 200) {
+            this.roleSearch = data.data;
+          } else {
+            this.roleSearch = [];
+          }
+
+        })
+        .catch((error) => {
+          this.$message.error(error.message);
+        })
+        .finally(() => {
+          this.selectRoleLoading = false;
+        });
+    },
+    // 角色添加
+    remoteRoleSelect(query) {
+      if (query !== "") {
+        this.getRoleData(query);
+      }
+    }
 
   },
 }

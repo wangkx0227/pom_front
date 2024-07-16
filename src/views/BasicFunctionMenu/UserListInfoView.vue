@@ -2,7 +2,7 @@
   <div class="user_list_info">
     <el-card class="box-card">
       <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="职位管理" name="role">
+        <el-tab-pane label="职务管理" name="role">
           <component :is="roleComponent" v-if="activeName === 'role'" />
         </el-tab-pane>
         <el-tab-pane label="用户管理" name="user">
