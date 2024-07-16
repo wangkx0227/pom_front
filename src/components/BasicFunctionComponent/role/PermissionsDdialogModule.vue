@@ -165,6 +165,7 @@ export default {
                     // 防止重复添加到列表中,-1说明额米有添加
                     if (indexToShow === -1) {
                         // 拆分：如果选中的时二级菜单，那么需要将1及菜单也添加进去
+                        /*
                         let type_split_add = add_type.split("-")
                         if (type_split_add.length === 3) { // 选中的就是二级菜单,就分割为3个值，将1与2值进行拼接获取1级菜单
                             // 添加一层判断，判断当前的1级菜单是否已经添加
@@ -177,6 +178,7 @@ export default {
                                 this.menu_id_list.push({ type: one_type, id: one_pk })
                             }
                         }
+                            */
                         this.menu_id_list.push({ type: add_type, id: add_pk })
                     }
                 } else if (api) {
@@ -186,6 +188,7 @@ export default {
                     // 防止重复添加到列表中,-1说明额米有添加
                     if (indexToShow === -1) {
                         // 拆分：如果选中的时二级菜单，那么需要将1及菜单也添加进去
+                        /*
                         let type_split_add = add_type.split("-")
                         if (type_split_add.length === 3) { // 选中的就是二级菜单,就分割为3个值，将1与2值进行拼接获取1级菜单
                             // 添加一层判断，判断当前的1级菜单是否已经添加
@@ -198,6 +201,7 @@ export default {
                                 this.api_method_id_list.push({ type: one_type, id: one_pk })
                             }
                         }
+                            */
                         this.api_method_id_list.push({ type: add_type, id: add_pk })
                     }
                 }
