@@ -20,7 +20,7 @@
       </el-descriptions-item>
       <el-descriptions-item label="邮箱">
         <el-tag v-if="user_info_form.email">{{ user_info_form.email }}</el-tag>
-        <el-tag v-esle>请联系管理员添加</el-tag>
+        <el-tag v-else>请联系管理员添加</el-tag>
       </el-descriptions-item>
       <el-descriptions-item label="密码">
         ******
