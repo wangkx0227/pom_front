@@ -3,10 +3,10 @@
         <el-card class="box-card">
             <div class="head_search_add">
                 <el-autocomplete class="inline-input" v-model="search_user_name" :fetch-suggestions="querySearch"
-                    placeholder="请输入内容" :trigger-on-focus="false" @select="handleSelect"
-                    style="margin-right: 5px;"></el-autocomplete>
-                <el-date-picker v-model="time_frame_list" type="datetimerange" range-separator="至" start-placeholder="开始日期"
-                    end-placeholder="结束日期" style="margin-right: 5px;">
+                    placeholder="请输入内容" :trigger-on-focus="false" @select="userIdSelect" style="margin-right: 5px;"
+                    :disabled="disabled"></el-autocomplete>
+                <el-date-picker v-model="time_frame_list" type="datetimerange" range-separator="至"
+                    start-placeholder="开始日期" end-placeholder="结束日期" style="margin-right: 5px;">
                 </el-date-picker>
                 <el-button type="primary" icon="el-icon-search" plain @click="searchDate">搜索
                 </el-button>
@@ -31,8 +31,8 @@
             </div>
             <div class="pagination">
                 <el-pagination hide-on-single-page @current-change="currentPage" @prev-click="prevPage"
-                    @next-click="nextPage" background layout="total,prev, pager, next" :page-size="10" :total="data_total"
-                    v-model:current-page="page">
+                    @next-click="nextPage" background layout="total,prev, pager, next" :page-size="10"
+                    :total="data_total" v-model:current-page="page">
                 </el-pagination>
             </div>
         </el-card>
@@ -47,8 +47,8 @@ export default {
         return {
             restaurants: [], // 建议搜索数据列表
             time_frame_list: [],
-            search_user_name: "",
-            search_user_id:"",
+            search_user_name: "", //存储搜索框的值，没有什么用 
+            search_user_id: "",
             search_start_time: "",
             search_end_time: "",
             loading: false, // 数据加载样式
@@ -57,13 +57,15 @@ export default {
             data_total: 0, // 数据总数
             page_status: 0, // 分页状态变量，当上下一页时进行改变，只有是0时点击数字页码会改变
             page: 1,
+            // 用户
+            user_id: "", // 如果单独用户访问，那么只会看到自己的访问记录
+            disabled: false, // 
         };
     },
     created() {
         this.loading = true;
         this.getroleDate();
         this.getUsers();
-        this.loading = false;
     },
     methods: {
         // 获取用户的信息
@@ -82,20 +84,24 @@ export default {
                     this.$message.error(error.message);
                 })
                 .finally(() => {
-                    this.page_status = 0;
+                    this.loading = false;
                 });
         },
         // 获取数据
         getroleDate() {
+            console.log(this.user_id);
             let get_url;
-            if (this.search_user_name && !this.time_frame_list) {
-                get_url = `users/user_access_log/?page=${this.page}&search=${this.search_user_name}`;
-            } else if (this.time_frame_list && !this.search_user_name) {
+            if (this.search_user_id && !this.search_start_time) {
+                get_url = `users/user_access_log/?page=${this.page}&search=${this.search_user_id}`;
+            } else if (this.search_start_time && !this.search_user_id) {
                 get_url = `users/user_access_log/?page=${this.page}&end_time=${this.search_end_time}&start_time=${this.search_start_time}`;
-            } else if (this.time_frame_list && this.search_user_name) {
-                get_url = `users/user_access_log/?page=${this.page}&search=${this.search_user_name}&end_time=${this.search_end_time}&start_time=${this.search_start_time}`;
+            } else if (this.search_start_time && this.search_user_id) {
+                get_url = `users/user_access_log/?page=${this.page}&search=${this.search_user_id}&end_time=${this.search_end_time}&start_time=${this.search_start_time}`;
             } else {
                 get_url = `users/user_access_log/?page=${this.page}`;
+            }
+            if (this.user_id) {
+                get_url = get_url + `&pk=${this.user_id}`
             }
             this.$http
                 .get(get_url)
@@ -113,6 +119,7 @@ export default {
                 })
                 .finally(() => {
                     this.page_status = 0;
+                    this.loading = false;
                 });
         },
         // 页码功能
@@ -122,7 +129,6 @@ export default {
             this.page = page;
             // 下一页按钮
             this.getroleDate();
-            this.loading = false;
         },
         prevPage(page) {
             this.loading = true;
@@ -130,7 +136,6 @@ export default {
             this.page = page;
             // 上一页按钮
             this.getroleDate();
-            this.loading = false;
         },
         currentPage(page) {
             this.loading = true;
@@ -139,12 +144,11 @@ export default {
             if (this.page_status === 0) {
                 this.getroleDate();
             }
-            this.loading = false;
         },
         // 搜索功能
         searchDate() {
             this.loading = true;
-            if (this.time_frame_list) {
+            if (this.time_frame_list.length !== 0) {
                 this.search_start_time = new Date(this.time_frame_list[0]).toISOString();
                 this.search_end_time = new Date(this.time_frame_list[1]).toISOString();
             }
@@ -154,12 +158,14 @@ export default {
             } else {
                 this.getroleDate();
             }
-            this.loading = false;
         },
         // 重置
         reloadDate() {
-            this.search = "";
+            this.search_user_name = "";
+            this.search_user_id = '';
             this.time_frame_list = [];
+            this.search_start_time = '';
+            this.search_end_time = '';
             this.getroleDate();
         },
         // 建议搜索，获取结果函数
@@ -167,12 +173,7 @@ export default {
             var restaurants = this.restaurants;
             var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
             // 调用 callback 返回建议列表的数据
-            console.log(results);
-            const formattedResults = results.map(item => ({
-                value: item.value,
-                label: item.name  // 这里将 name 字段作为 label 显示
-            }));
-            cb(formattedResults);
+            cb(results);
         },
         // 筛选函数
         createFilter(queryString) {
@@ -180,10 +181,26 @@ export default {
                 return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
             };
         },
-        handleSelect(item) {
+        // id赋值函数
+        userIdSelect(item) {
             this.search_user_id = item.id
-        }
+        },
     },
+    beforeRouteUpdate(to, from, next) { // 局部路由守卫
+        // 响应路由变化，更新组件状态
+        const user_id = to.query.pk
+        if (user_id) {
+            this.user_id = user_id;
+            this.disabled = true;
+            this.search_user_name = "";
+            this.search_user_id = '';
+        } else {
+            this.disabled = false;
+            
+
+        }
+        next();
+    }
 }
 </script>
 

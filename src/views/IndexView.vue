@@ -7,7 +7,7 @@
         <el-dropdown @command="changeDropdown" trigger="click">
           <el-button type="info" class="userTag" size="mini">
             <i class="el-icon-user"></i>
-            {{ name }}
+            {{ user_name }}
           </el-button>
           <template v-slot:dropdown>
             <el-dropdown-menu>
@@ -46,8 +46,9 @@ export default {
   },
   data() {
     return {
-      name: null,
+      user_name: "",
       loading: false,
+      user_id: "",
     };
   },
   created() {
@@ -56,9 +57,10 @@ export default {
     }, 3000);
     let user_info = JSON.parse(localStorage.getItem("user_info"));
     if (user_info) {
-      this.name = user_info.user_name;
+      this.user_name = user_info.user_name;
+      this.user_id = user_info.user_id;
     } else {
-      this.name = "test";
+      this.user_name = "test";
     }
   },
   methods: {
@@ -79,9 +81,8 @@ export default {
     // 跳转用户信息
     userInfo() {
       // 访问的是当前组件的网址，什么都不做
-      if (window.location.pathname === "/index/user_info") {
-        null;
-      } else {
+      const url = window.location.pathname;
+      if (url !== "/index/user_info") {
         this.$router.push({ name: "user_info" });
       }
     },
@@ -117,10 +118,15 @@ export default {
     // 用户访问记录
     userAccess() {
       // 访问的是当前组件的网址，什么都不做
-      if (window.location.pathname === "/index/user_access") {
-        null;
-      } else {
-        this.$router.push({ name: "user_access" });
+      const query = window.location.search;
+      const url = window.location.pathname;
+      if (`${url}${query}` !== `/basic_function/users_access?pk=${this.user_id}`) {
+        this.$router.push({
+          name: "users_access",
+          query: {
+            pk: this.user_id
+          }
+        },);
       }
     },
     // 判断当前是pc端还是手机端，手机端进行提示信息
