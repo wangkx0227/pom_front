@@ -118,14 +118,10 @@ export default {
     // 用户访问记录
     userAccess() {
       // 访问的是当前组件的网址，什么都不做
-      const query = window.location.search;
       const url = window.location.pathname;
-      if (`${url}${query}` !== `/basic_function/users_access?pk=${this.user_id}`) {
+      if (url !== '/index/personal_access') {
         this.$router.push({
-          name: "users_access",
-          query: {
-            pk: this.user_id
-          }
+          name: "personal_access",
         },);
       }
     },

@@ -6,7 +6,7 @@
           <el-statistic :value="work_total" title="累计完成"></el-statistic>
         </div>
       </el-card>
-      <el-card shadow="hover" style="width: 31%; margin-right: 5px">
+      <el-card shadow="hover" style="width: 31%; margin-right: 5px;">
         <div style="width: 100%; display: inline-block">
           <el-statistic :value="expire_work" title="已过期"></el-statistic>
         </div>
