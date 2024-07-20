@@ -263,7 +263,6 @@ export default {
   created() {
     this.loading = true;
     this.getFirmData();
-    this.loading = false;
   },
   methods: {
     //删除按钮显示小弹框
@@ -291,9 +290,6 @@ export default {
         .catch((error) => {
           this.$message.error(error.message);
         })
-        .finally(() => {
-          this.loading = false;
-        });
     },
     // 编辑按钮，修改row.editable值 让这条可以进行修改
     editRow(row) {
@@ -303,7 +299,6 @@ export default {
     saveRow(row) {
       // 保存的数据 row
       this.loading = true;
-      
       this.$http
         .put("foundation/firm/", {
           data: row,
@@ -321,9 +316,6 @@ export default {
         .catch((error) => {
           this.$message.error(error.message);
         })
-        .finally(() => {
-          this.loading = false;
-        });
     },
     // 显示弹框
     dialogDisplay() {
@@ -394,6 +386,7 @@ export default {
         })
         .finally(() => {
           this.page_status = 0;
+          this.loading = false;
         });
     },
     // 页码功能
@@ -403,7 +396,6 @@ export default {
       this.page = page;
       // 下一页按钮
       this.getFirmData();
-      this.loading = false;
     },
     prevPage(page) {
       this.loading = true;
@@ -411,7 +403,6 @@ export default {
       this.page = page;
       // 上一页按钮
       this.getFirmData();
-      this.loading = false;
     },
     currentPage(page) {
       this.loading = true;
@@ -420,7 +411,6 @@ export default {
       if (this.page_status === 0) {
         this.getFirmData();
       }
-      this.loading = false;
     },
     // 搜索功能
     searchData() {
@@ -431,7 +421,6 @@ export default {
       } else {
         this.getFirmData();
       }
-      this.loading = false;
     },
     // 重置
     reloadData() {

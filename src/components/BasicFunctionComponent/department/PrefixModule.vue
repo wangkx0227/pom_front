@@ -192,9 +192,6 @@ export default {
         .catch((error) => {
           this.$message.error(error.message);
         })
-        .finally(() => {
-          this.loading = false;
-        });
     },
     // 编辑按钮，修改row.editable值 让这条可以进行修改
     editRow(row) {
@@ -221,9 +218,6 @@ export default {
         .catch((error) => {
           this.$message.error(error.message);
         })
-        .finally(() => {
-          this.loading = false;
-        });
     },
     // 显示弹框
     dialogDisplay() {
@@ -305,7 +299,6 @@ export default {
       this.page = page;
       // 下一页按钮
       this.getPrefixDate();
-      this.loading = false;
     },
     prevPage(page) {
       this.loading = true;
@@ -313,7 +306,6 @@ export default {
       this.page = page;
       // 上一页按钮
       this.getPrefixDate();
-      this.loading = false;
     },
     currentPage(page) {
       this.loading = true;
@@ -322,7 +314,6 @@ export default {
       if (this.page_status === 0) {
         this.getPrefixDate();
       }
-      this.loading = false;
     },
     // 搜索功能
     searchDate() {
@@ -333,7 +324,6 @@ export default {
       } else {
         this.getPrefixDate();
       }
-      this.loading = false;
     },
     // 重置
     reloadDate() {
