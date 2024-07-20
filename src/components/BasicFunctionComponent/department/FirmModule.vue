@@ -225,18 +225,7 @@ export default {
     return {
       search: "",
       loading: false, // 数据加载样式
-      firmData: [
-        // {
-        //   id: 1,
-        //   firm: "艺隆",
-        //   abbr: "yilong",
-        //   english: "yilong",
-        //   editable: false, // 数据格式 true可以修改 false不可以修改
-        //   description: "一家公司sasadsaasddsdsasaddsadsa",
-        //   create_date: "2024-06-18",
-        //   update_date: "2024-06-18",
-        // },
-      ],
+      firmData: [],
       // 弹出框控制变量
       dialogDisplayVar: false,
       //  添加弹出框数据

@@ -1,96 +1,45 @@
 <template>
   <div class="department" v-loading="loading">
     <div class="head_search_add">
-      <el-button
-        type="info"
-        icon="el-icon-circle-plus-outline"
-        plain
-        @click="dialogDisplay"
-        >添加
+      <el-button type="info" icon="el-icon-circle-plus-outline" plain @click="dialogDisplay">添加
       </el-button>
-      <el-input
-        placeholder="请输入搜索部门名称"
-        v-model="search"
-        clearable
-        class="input_search"
-      >
+      <el-input placeholder="请输入搜索部门名称" v-model="search" clearable class="input_search">
       </el-input>
-      <el-button type="primary" icon="el-icon-search" plain @click="searchData"
-        >搜索
+      <el-button type="primary" icon="el-icon-search" plain @click="searchData">搜索
       </el-button>
-      <el-button
-        type="warning"
-        icon="el-icon-refresh-right"
-        plain
-        @click="reloadData"
-        >重置
+      <el-button type="warning" icon="el-icon-refresh-right" plain @click="reloadData">重置
       </el-button>
     </div>
     <div class="dialog">
-      <el-dialog
-        title="部门添加"
-        :visible.sync="dialogDisplayVar"
-        width="35%"
-        :before-close="handleClose"
-      >
-        <el-form
-          :model="addDepartmentForm"
-          label-position="top"
-          :rules="DepartmentRules"
-          ref="addDepartmentRef"
-        >
+      <el-dialog title="部门添加" :visible.sync="dialogDisplayVar" width="35%" :before-close="handleClose">
+        <el-form :model="addDepartmentForm" label-position="top" :rules="DepartmentRules" ref="addDepartmentRef">
           <el-form-item label="部门名称" prop="department">
             <el-input v-model="addDepartmentForm.department"></el-input>
           </el-form-item>
           <el-form-item label="关联公司">
-            <el-select
-              popper-class="select_class"
-              v-model="addDepartmentForm.firmIdList"
-              multiple
-              filterable
-              remote
-              reserve-keyword
-              placeholder="输入关键字进行搜索"
-              :remote-method="remoteSelect"
-              :loading="selectLoading"
-            >
-              <el-option
-                v-for="item in FirmDataSearch"
-                :key="item.id"
-                :label="item.firm"
-                :value="item.id"
-              >
+            <el-select popper-class="select_class" v-model="addDepartmentForm.firmIdList" multiple collapse-tags
+              clearable placeholder="请选择">
+              <el-option v-for="item in FirmDataList" :key="item.id" :label="item.firm" :value="item.id">
               </el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="描述信息" prop="description">
-            <el-input
-              type="textarea"
-              v-model="addDepartmentForm.description"
-            ></el-input>
+            <el-input type="textarea" v-model="addDepartmentForm.description"></el-input>
           </el-form-item>
         </el-form>
         <template v-slot:footer>
-<div  class="dialog-footer">
-          <el-button @click="dialogClose('addDepartmentRef')">取 消</el-button>
-          <el-button
-            type="primary"
-            @click="addDepartmentData('addDepartmentRef')"
-            :loading="addLoading"
-            >立即创建
-          </el-button>
-        </div>
-</template>
+          <div class="dialog-footer">
+            <el-button @click="dialogClose('addDepartmentRef')">取 消</el-button>
+            <el-button type="primary" @click="addDepartmentData('addDepartmentRef')" :loading="addLoading">立即创建
+            </el-button>
+          </div>
+        </template>
       </el-dialog>
     </div>
     <div class="table_content">
       <el-table :data="DepartmentData" style="width: 100%" max-height="580">
-        <el-table-column
-          prop="index"
-          label="#"
-          align="center"
-        ></el-table-column>
-        <el-table-column label="部门名称" align="center" >
+        <el-table-column prop="index" label="#" align="center"></el-table-column>
+        <el-table-column label="部门名称" align="center">
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.department }}</span>
             <el-input v-model="row.department" v-else></el-input>
@@ -98,43 +47,22 @@
         </el-table-column>
         <el-table-column label="描述信息" align="center">
           <template v-slot="{ row }">
-            <el-tooltip
-              class="item"
-              effect="dark"
-              :content="row.description"
-              placement="bottom"
-              v-if="!row.editable"
-            >
+            <el-tooltip class="item" effect="dark" :content="row.description" placement="bottom" v-if="!row.editable">
               <div class="cell ellipsis">{{ row.description }}</div>
             </el-tooltip>
-            <el-input
-              type="textarea"
-              v-model="row.description"
-              v-else
-            ></el-input>
+            <el-input type="textarea" v-model="row.description" v-else></el-input>
           </template>
         </el-table-column>
         <el-table-column label="创建日期" align="center">
           <template v-slot="{ row }">
-            <el-tooltip
-              class="item"
-              effect="dark"
-              :content="row.create_date"
-              placement="bottom"
-
-            >
+            <el-tooltip class="item" effect="dark" :content="row.create_date" placement="bottom">
               <div class="cell ellipsis">{{ row.create_date }}</div>
             </el-tooltip>
           </template>
         </el-table-column>
         <el-table-column label="修改日期" align="center">
           <template v-slot="{ row }">
-            <el-tooltip
-              class="item"
-              effect="dark"
-              :content="row.update_date"
-              placement="bottom"
-            >
+            <el-tooltip class="item" effect="dark" :content="row.update_date" placement="bottom">
               <div class="cell ellipsis">{{ row.update_date }}</div>
             </el-tooltip>
           </template>
@@ -142,112 +70,47 @@
         <el-table-column label="归属公司" align="center">
           <template v-slot="{ row }">
             <div class="tag-group" v-if="!row.editable">
-              <el-tag
-                style="margin-right: 2px"
-                v-for="firm_name in row.firm_name_list"
-                :key="firm_name"
-                type="success"
-                effect="plain"
-              >
+              <el-tag style="margin-right: 2px" v-for="firm_name in row.firm_name_list" :key="firm_name" type="success"
+                effect="plain">
                 {{ firm_name }}
               </el-tag>
             </div>
-            <el-select
-              v-else
-              v-model="FirmIdList"
-              multiple
-              filterable
-              remote
-              reserve-keyword
-              collapse-tags
-              style="margin-left: 20px"
-              placeholder="输入关键字"
-              :remote-method="remoteSelect"
-              :loading="selectLoading"
-            >
-              <el-option
-                v-for="item in FirmDataSearch"
-                :key="item.id"
-                :label="item.firm"
-                :value="item.id"
-              >
+            <el-select v-else v-model="FirmIdList" style="margin-left: 20px" multiple collapse-tags clearable>
+              <el-option v-for="item in FirmDataList" :key="item.id" :label="item.firm" :value="item.id">
               </el-option>
             </el-select>
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center">
           <template v-slot="scope">
-            <el-button
-              v-if="!scope.row.editable"
-              @click="editRow(scope.row)"
-              size="mini"
-              type="text"
-              >编辑
+            <el-button v-if="!scope.row.editable" @click="editRow(scope.row)" size="mini" type="text">编辑
             </el-button>
-            <el-button
-              v-else
-              @click="saveRow(scope.row)"
-              size="mini"
-              type="text"
-              >保存
+            <el-button v-else @click="saveRow(scope.row)" size="mini" type="text">保存
             </el-button>
             |
-            <el-popover
-              v-if="!scope.row.editable"
-              placement="top"
-              width="160"
-              v-model="scope.row.visible"
-              trigger="manual"
-            >
+            <el-popover v-if="!scope.row.editable" placement="top" width="160" v-model="scope.row.visible"
+              trigger="manual">
               <p>删除后无恢复，请问确定删除吗？</p>
               <div style="text-align: right; margin: 0">
-                <el-button
-                  size="mini"
-                  type="text"
-                  @click="scope.row.visible = false"
-                  >取消
+                <el-button size="mini" type="text" @click="scope.row.visible = false">取消
                 </el-button>
-                <el-button
-                  type="primary"
-                  size="mini"
-                  @click="deleteRow(scope.$index, DepartmentData, scope.row)"
-                  >确定
+                <el-button type="primary" size="mini" @click="deleteRow(scope.$index, DepartmentData, scope.row)">确定
                 </el-button>
               </div>
               <template v-slot:reference>
-<el-button
-
-                size="mini"
-                type="text"
-                @click="deleteDisplay(scope.row)"
-                >删除
-              </el-button>
-</template>
+                <el-button size="mini" type="text" @click="deleteDisplay(scope.row)">删除
+                </el-button>
+              </template>
             </el-popover>
-            <el-button
-              style="margin-left: 0"
-              v-else
-              @click="scope.row.editable = false"
-              size="mini"
-              type="text"
-              >取消
+            <el-button style="margin-left: 0" v-else @click="scope.row.editable = false" size="mini" type="text">取消
             </el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
     <div class="pagination">
-      <el-pagination
-        hide-on-single-page
-        @current-change="currentPage"
-        @prev-click="prevPage"
-        @next-click="nextPage"
-        background
-        layout="total,prev, pager, next"
-        :page-size="10"
-        :total="data_total"
-        v-model:current-page="page"
-      >
+      <el-pagination hide-on-single-page @current-change="currentPage" @prev-click="prevPage" @next-click="nextPage"
+        background layout="total,prev, pager, next" :page-size="10" :total="data_total" v-model:current-page="page">
       </el-pagination>
     </div>
   </div>
@@ -297,14 +160,13 @@ export default {
       page: 1,
       // 下拉框
       FirmIdList: [], // 公司id列表
-      selectLoading: false, // 下来加载变量
-      FirmDataSearch: [], // 搜索后的列表
+      FirmDataList: [], // 搜索后的列表
     };
   },
   created() {
     this.loading = true;
     this.getDepartmentData();
-    this.loading = false;
+    this.getFirmData();
   },
   methods: {
     //删除按钮显示小弹框
@@ -345,7 +207,7 @@ export default {
       // 保存的数据 row
       this.loading = true;
       row.firm_id_list = this.FirmIdList; // 部门绑定公司的id列表
-      
+
       this.$http
         .put("foundation/department/", {
           data: row,
@@ -484,30 +346,23 @@ export default {
     },
     // 远程下拉框搜索,使用方法
     // 通过查询参数，模糊查询公司名称
-    getFirmData(query) {
-      this.selectLoading = true;
+    getFirmData() {
       this.$http
-        .get(`foundation/firm/?status=all&querySelect=${query}`)
+        .get("foundation/firm/?status=all")
         .then((res) => {
           let data = res.data;
           if (data.code === 200) {
-            this.FirmDataSearch = data.data;
+            this.FirmDataList = data.data;
           } else {
-            this.FirmDataSearch = [];
+            this.FirmDataList = [];
           }
         })
         .catch((error) => {
           this.$message.error(error.message);
         })
         .finally(() => {
-          this.selectLoading = false;
+          this.loading = false;
         });
-    },
-    // 调用方法
-    remoteSelect(query) {
-      if (query !== "") {
-        this.getFirmData(query);
-      }
     },
   },
 };
@@ -589,6 +444,7 @@ export default {
     right: 11px !important;
     font-size: 9px !important;
   }
+
   .el-select-dropdown__empty {
     font-size: 9px !important;
   }
@@ -596,6 +452,7 @@ export default {
   .el-form-item__content .el-select .el-select__tags {
     top: 54%;
   }
+
   .el-form-item__content .el-select .el-select__tags .el-select__input {
     font-size: 9px;
     margin-left: 5px;

@@ -17,9 +17,8 @@
             <el-input v-model="addPrefixForm.prefix"></el-input>
           </el-form-item>
           <el-form-item label="选择归属部门" prop="department_id">
-            <el-select v-model="addPrefixForm.department_id" filterable remote reserve-keyword placeholder="请输入关键词"
-              :remote-method="remoteSelect" :loading="selectLoading">
-              <el-option v-for="item in departmentSearch" :key="item.id" :label="item.department" :value="item.id">
+            <el-select v-model="addPrefixForm.department_id" collapse-tags clearable placeholder="请输选择">
+              <el-option v-for="item in departmentList" :key="item.id" :label="item.department" :value="item.id">
               </el-option>
             </el-select>
           </el-form-item>
@@ -46,7 +45,6 @@
             <el-input v-model="row.prefix" v-else></el-input>
           </template>
         </el-table-column>
-
         <el-table-column label="描述信息" align="center">
           <template v-slot="{ row }">
             <el-tooltip class="item" effect="dark" :content="row.description" placement="bottom" v-if="!row.editable">
@@ -76,9 +74,8 @@
                 {{ row.department }}
               </el-tag>
             </div>
-            <el-select v-else v-model="departmentId" filterable remote reserve-keyword placeholder="请输入关键词"
-              :remote-method="remoteSelect" :loading="selectLoading">
-              <el-option v-for="item in departmentSearch" :key="item.id" :label="item.department" :value="item.id">
+            <el-select v-else v-model="row.department_id" collapse-tags clearable placeholder="请输选择">
+              <el-option v-for="item in departmentList" :key="item.id" :label="item.department" :value="item.id">
               </el-option>
             </el-select>
           </template>
@@ -161,15 +158,13 @@ export default {
       page_status: 0, // 分页状态变量，当上下一页时进行改变，只有是0时点击数字页码会改变
       page: 1,
       // 下拉框
-      departmentId: "", // 公司id列表
-      selectLoading: false, // 下来加载变量
-      departmentSearch: [], // 搜索后的列表
+      departmentList: [], // 部门列表
     };
   },
   created() {
     this.loading = true;
     this.getPrefixDate();
-    this.loading = false;
+    this.getDepartmentData();
   },
   methods: {
     //删除按钮显示小弹框
@@ -209,10 +204,6 @@ export default {
     saveRow(row) {
       // 保存的数据 row
       this.loading = true;
-      if (this.departmentId) {
-        row.department_id = this.departmentId;
-      }
-
       this.$http
         .put("foundation/prefix/", {
           data: row,
@@ -304,6 +295,7 @@ export default {
         })
         .finally(() => {
           this.page_status = 0;
+          this.loading = false;
         });
     },
     // 页码功能
@@ -352,27 +344,21 @@ export default {
     getDepartmentData(query) {
       this.selectLoading = true;
       this.$http
-        .get(`foundation/department/?status=all&querySelect=${query}`)
+        .get('foundation/department/?status=all')
         .then((res) => {
           let data = res.data;
           if (data.code === 200) {
-            this.departmentSearch = data.data;
+            this.departmentList = data.data;
           } else {
-            this.departmentSearch = [];
+            this.departmentList = [];
           }
         })
         .catch((error) => {
           this.$message.error(error.message);
         })
         .finally(() => {
-          this.selectLoading = false;
+          this.loading = false;
         });
-    },
-    // 下拉框调用方法
-    remoteSelect(query) {
-      if (query !== "") {
-        this.getDepartmentData(query);
-      }
     },
   },
 };
