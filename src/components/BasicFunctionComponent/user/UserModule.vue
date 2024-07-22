@@ -37,32 +37,16 @@
 
             <el-col :span="12">
               <el-form-item label="请选择前缀(必填项)" prop="prefix_id">
-                <el-select v-model="addusersForm.prefix_id" filterable remote reserve-keyword placeholder="请输入关键词"
-                  :remote-method="remotePrefixSelect" :loading="selectPrefixLoading">
-                  <el-option v-for="item in prefixSearch" :key="item.id" :label="item.prefix" :value="item.id">
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="用户前缀数值(必填项)" prop="user_id">
-                <el-input v-model.number="addusersForm.user_id"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="选择归属部门(必填项)" prop="department_id">
-                <el-select v-model="addusersForm.department_id" filterable remote reserve-keyword placeholder="请输入关键词"
-                  :remote-method="remoteDepartmentSelect" :loading="selectDepartmentLoading">
-                  <el-option v-for="item in departmentSearch" :key="item.id" :label="item.department" :value="item.id">
+                <el-select v-model="addusersForm.prefix_id" clearable placeholder="请选择">
+                  <el-option v-for="item in prefixIdList" :key="item.id" :label="item.prefix" :value="item.id">
                   </el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="选择职务(必填项)" prop="position_id">
-                <el-select v-model="addusersForm.position_id" filterable remote reserve-keyword placeholder="请输入关键词"
-                  :remote-method="remotePositionSelect" :loading="selectPositionLoading">
-                  <el-option v-for="item in positionSearch" :key="item.id" :label="item.position" :value="item.id">
+                <el-select v-model="addusersForm.position_id" clearable placeholder="请选择">
+                  <el-option v-for="item in positionIdList" :key="item.id" :label="item.position" :value="item.id">
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -77,9 +61,8 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="角色权限(必填项)" prop="role_id">
-                <el-select v-model="addusersForm.role_id" filterable remote reserve-keyword placeholder="请输入关键词"
-                  :remote-method="remoteRoleSelect" :loading="selectRoleLoading">
-                  <el-option v-for="item in roleSearch" :key="item.id" :label="item.role" :value="item.id">
+                <el-select v-model="addusersForm.role_id" clearable placeholder="请选择">
+                  <el-option v-for="item in roleIdList" :key="item.id" :label="item.role" :value="item.id">
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -121,7 +104,7 @@
               <el-tag type="danger" v-else>禁用</el-tag>
             </div>
             <div v-else>
-              <el-select v-model="is_value" clearable placeholder="请选择">
+              <el-select v-model="row.is_show" clearable placeholder="请选择">
                 <el-option v-for="item in is_show_list" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
@@ -149,16 +132,11 @@
         </el-table-column>
         <el-table-column label="归属部门" align="center" width="180">
           <template v-slot="{ row }">
-            <div class="tag-group" v-if="!row.editable">
+            <div class="tag-group">
               <el-tag style="margin-right: 2px" type="success" effect="plain">
                 {{ row.department }}
               </el-tag>
             </div>
-            <el-select v-else v-model="departmentId" filterable remote reserve-keyword placeholder="请输入关键词"
-              :remote-method="remoteDepartmentSelect" :loading="selectDepartmentLoading">
-              <el-option v-for="item in departmentSearch" :key="item.id" :label="item.department" :value="item.id">
-              </el-option>
-            </el-select>
           </template>
         </el-table-column>
         <el-table-column label="职务/岗位" align="center" width="180">
@@ -168,9 +146,8 @@
                 {{ row.position }}
               </el-tag>
             </div>
-            <el-select v-else v-model="positionId" filterable remote reserve-keyword placeholder="请输入关键词"
-              :remote-method="remotePositionSelect" :loading="selectPositionLoading">
-              <el-option v-for="item in positionSearch" :key="item.id" :label="item.position" :value="item.id">
+            <el-select v-else v-model="row.position_id" clearable placeholder="请选择">
+              <el-option v-for="item in positionIdList" :key="item.id" :label="item.position" :value="item.id">
               </el-option>
             </el-select>
           </template>
@@ -182,14 +159,12 @@
                 {{ row.role }}
               </el-tag>
             </div>
-            <el-select v-else v-model="roleId" filterable remote reserve-keyword placeholder="请输入关键词"
-              :remote-method="remoteRoleSelect" :loading="selectRoleLoading">
-              <el-option v-for="item in roleSearch" :key="item.id" :label="item.role" :value="item.id">
+            <el-select v-else v-model="row.role_id" clearable placeholder="请选择">
+              <el-option v-for="item in roleIdList" :key="item.id" :label="item.role" :value="item.id">
               </el-option>
             </el-select>
           </template>
         </el-table-column>
-
         <el-table-column label="操作" align="center" width="180">
           <template v-slot="scope">
             <el-button v-if="!scope.row.editable" @click="editRow(scope.row)" size="mini" type="text">编辑
@@ -229,6 +204,7 @@
 </template>
 
 <script>
+
 export default {
   name: "usersModule",
   data() {
@@ -263,8 +239,6 @@ export default {
         passwd: "",
         email: "",
         is_show: "",
-        user_id: "",
-        department_id: "",
         prefix_id: "",
         position_id: "",
       },
@@ -302,9 +276,6 @@ export default {
         prefix_id: [
           { required: true, message: "必填项", trigger: "blur" },
         ],
-        department_id: [
-          { required: true, message: "必填项", trigger: "blur" },
-        ],
         position_id: [
           { required: true, message: "必填项", trigger: "blur" },
         ],
@@ -317,28 +288,22 @@ export default {
       data_total: 0, // 数据总数
       page_status: 0, // 分页状态变量，当上下一页时进行改变，只有是0时点击数字页码会改变
       page: 1,
-      // 下拉框-部门
-      departmentId: "", // 公司id列表
-      selectDepartmentLoading: false, // 下来加载变量
-      departmentSearch: [], // 搜索后的列表
-      // 下拉框-职务
-      positionId: "", // 职位id列表
-      selectPositionLoading: false, // 职位下拉加载变量
-      positionSearch: [], // 搜索后的列表
-      // 下拉框-前缀
-      selectPrefixLoading: false, // 前缀下拉加载变量
-      prefixSearch: [], // 搜索后的列表
-      // 下拉框-角色
-      roleId: "", // 角色id
-      selectRoleLoading: false,
-      roleSearch: [], // 搜索后的列表
+  
+      // 职位数据列表
+      positionIdList: [],
+      // 前缀数据列表
+      prefixIdList: [],
+      // 角色数据列表
+      roleIdList: [],
 
     };
   },
   created() {
     this.loading = true;
+    this.getPositionData();
+    this.getPrefixData();
+    this.getRoleData();
     this.getusersDate();
-    this.loading = false;
   },
   methods: {
     //删除按钮显示小弹框
@@ -366,9 +331,7 @@ export default {
         .catch((error) => {
           this.$message.error(error.message);
         })
-        .finally(() => {
-          this.loading = false;
-        });
+
     },
     // 编辑按钮，修改row.editable值 让这条可以进行修改
     editRow(row) {
@@ -378,9 +341,6 @@ export default {
     saveRow(row) {
       // 保存的数据 row
       this.loading = true;
-      if (this.departmentId) {
-        row.department_id = this.departmentId;
-      }
       if (this.positionId) {
         row.position_id = this.positionId
       }
@@ -409,9 +369,7 @@ export default {
         .catch((error) => {
           this.$message.error(error.message);
         })
-        .finally(() => {
-          this.loading = false;
-        });
+
     },
     // 显示弹框
     dialogDisplay() {
@@ -419,31 +377,28 @@ export default {
     },
     // 关闭弹窗,并清空表单的内容
     dialogClose(formName) {
+      this.loading = true;
       this.dialogDisplayVar = false;
       this.$refs[formName].resetFields();
       this.getusersDate(); // 进行回调，重新载入一下数据
     },
     // ×关闭
     handleClose() {
+      this.loading = true;
       this.dialogDisplayVar = false;
       this.getusersDate(); // 进行回调，重新载入一下数据
     },
     // 弹窗内创建按钮
     addusersData(formName) {
-
       if (!this.addusersForm.login_name) {
         this.$message.error("姓名属于必填项！");
       } else if (!this.addusersForm.user_name) {
         this.$message.error("用户名属于必填项！");
-      } else if (!this.addusersForm.user_id) {
-        this.$message.error("前缀值属于必填项！");
-      } else if (!this.addusersForm.department_id) {
-        this.$message.error("部门属于必填项！");
       } else if (!this.addusersForm.prefix_id) {
         this.$message.error("前缀属于必填项！");
       } else if (!this.addusersForm.position_id) {
         this.$message.error("职位属于必填项！");
-      }else if (!this.addusersForm.role_id) {
+      } else if (!this.addusersForm.role_id) {
         this.$message.error("角色权限属于必填项！");
       } else {
         this.addLoading = true;
@@ -495,6 +450,7 @@ export default {
         })
         .finally(() => {
           this.page_status = 0;
+          this.loading = false;
         });
     },
     // 页码功能
@@ -504,7 +460,6 @@ export default {
       this.page = page;
       // 下一页按钮
       this.getusersDate();
-      this.loading = false;
     },
     prevPage(page) {
       this.loading = true;
@@ -512,7 +467,6 @@ export default {
       this.page = page;
       // 上一页按钮
       this.getusersDate();
-      this.loading = false;
     },
     currentPage(page) {
       this.loading = true;
@@ -521,7 +475,6 @@ export default {
       if (this.page_status === 0) {
         this.getusersDate();
       }
-      this.loading = false;
     },
     // 搜索功能
     searchDate() {
@@ -532,90 +485,44 @@ export default {
       } else {
         this.getusersDate();
       }
-      this.loading = false;
     },
     // 重置
     reloadDate() {
+      this.loading = true;
       this.search = "";
       this.getusersDate();
     },
-    // 下拉框调用api方法-部门
-    getDepartmentData(query) {
-      this.selectDepartmentLoading = true;
-      this.$http
-        .get(`foundation/department/?status=all&querySelect=${query}`)
-        .then((res) => {
-          let data = res.data;
-          if (data.code === 200) {
-            this.departmentSearch = data.data;
-          } else {
-            this.departmentSearch = [];
-          }
-        })
-        .catch((error) => {
-          this.$message.error(error.message);
-        })
-        .finally(() => {
-          this.selectDepartmentLoading = false;
-        });
-    },
-    // 下拉框调用方法-部门
-    remoteDepartmentSelect(query) {
-      if (query !== "") {
-        this.getDepartmentData(query);
-      }
-    },
     // 下拉框api调用方法-职位
-    getPositionData(query) {
-      this.selectPositionLoading = true;
+    getPositionData() {
       this.$http
-        .get(`foundation/position/?status=all&querySelect=${query}`)
+        .get("foundation/position/?status=all")
         .then((res) => {
           let data = res.data;
           if (data.code === 200) {
-            this.positionSearch = data.data;
+            this.positionIdList = data.data;
           } else {
-            this.positionSearch = [];
+            this.positionIdList = [];
           }
         })
         .catch((error) => {
           this.$message.error(error.message);
         })
-        .finally(() => {
-          this.selectPositionLoading = false;
-        });
-    },
-    // 下来框调用方法-职位
-    remotePositionSelect(query) {
-      if (query !== "") {
-        this.getPositionData(query);
-      }
     },
     // 下拉框api调用方法-前缀
-    getPrefixData(query) {
-      this.selectPrefixLoading = true;
+    getPrefixData() {
       this.$http
-        .get(`foundation/prefix/?status=all&querySelect=${query}`)
+        .get("foundation/prefix/?status=all")
         .then((res) => {
           let data = res.data;
           if (data.code === 200) {
-            this.prefixSearch = data.data;
+            this.prefixIdList = data.data;
           } else {
-            this.prefixSearch = [];
+            this.prefixIdList = [];
           }
         })
         .catch((error) => {
           this.$message.error(error.message);
         })
-        .finally(() => {
-          this.selectPrefixLoading = false;
-        });
-    },
-    // 下拉框前缀
-    remotePrefixSelect(query) {
-      if (query !== "") {
-        this.getPrefixData(query);
-      }
     },
     // 管理员强制退出
     forceLogin(row) {
@@ -640,32 +547,23 @@ export default {
         });
     },
     // 角色查询
-    getRoleData(query) {
-      this.selectRoleLoading = true;
+    getRoleData() {
       this.$http
-        .get(`users/roles/?status=all&querySelect=${query}`)
+        .get(
+          "users/roles/?status=all")
         .then((res) => {
           let data = res.data;
           if (data.code === 200) {
-            this.roleSearch = data.data;
+            this.roleIdList = data.data;
           } else {
-            this.roleSearch = [];
+            this.roleIdList = [];
           }
 
         })
         .catch((error) => {
           this.$message.error(error.message);
         })
-        .finally(() => {
-          this.selectRoleLoading = false;
-        });
     },
-    // 角色添加
-    remoteRoleSelect(query) {
-      if (query !== "") {
-        this.getRoleData(query);
-      }
-    }
 
   },
 }
