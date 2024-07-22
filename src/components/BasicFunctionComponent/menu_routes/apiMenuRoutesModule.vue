@@ -42,11 +42,7 @@
             </div>
             <div v-else>
               <el-select v-model="method_data_id_list" placeholder="请选择" multiple collapse-tags>
-                <el-option
-                    v-for="item in method_data_list"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
+                <el-option v-for="item in method_data_list" :key="item.value" :label="item.label" :value="item.value">
                   <span style="float: left">{{ item.label }}</span>
                   <span style="float: right; color: #8492a6; font-size: 13px">{{ item.lable2 }}</span>
                 </el-option>
@@ -63,7 +59,7 @@
             <div v-else>
               <el-select v-model="row.access_control" clearable placeholder="请选择">
                 <el-option v-for="item in access_control_list" :key="item.value" :label="item.label"
-                           :value="item.value">
+                  :value="item.value">
                 </el-option>
               </el-select>
             </div>
@@ -74,12 +70,13 @@
             <div class="tag-group" v-if="!row.editable">
               <el-tag v-if="row.pom_front_menu_routes_id">{{ row.menu_url_name }}</el-tag>
             </div>
-            <div v-else>
-              <el-select v-model="row.pom_front_menu_routes_id" clearable placeholder="请选择">
-                <el-option v-for="item in menu_data_list" :key="item.value" :label="item.label" :value="item.value">
-                </el-option>
-              </el-select>
-            </div>
+            <el-cascader v-else :options="menu_data_list" v-model="row.pom_front_menu_routes_id"
+              :show-all-levels="false">
+              <template slot-scope="{ node, data }">
+                <span>{{ data.label }}</span>
+                <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
+              </template>
+            </el-cascader>
           </template>
         </el-table-column>
         <el-table-column label="载入日期" align="center" width="180">
@@ -97,7 +94,7 @@
             </el-button>
             |
             <el-popover v-if="!scope.row.editable" placement="top" width="160" v-model="scope.row.visible"
-                        trigger="manual">
+              trigger="manual">
               <p>删除后无恢复，请问确定删除吗？</p>
               <div style="text-align: right; margin: 0">
                 <el-button size="mini" type="text" @click="scope.row.visible = false">取消
@@ -118,8 +115,7 @@
     </div>
     <div class="pagination">
       <el-pagination hide-on-single-page @current-change="currentPage" @prev-click="prevPage" @next-click="nextPage"
-                     background layout="total,prev, pager, next" :page-size="10" :total="data_total"
-                     v-model:current-page="page">
+        background layout="total,prev, pager, next" :page-size="10" :total="data_total" v-model:current-page="page">
       </el-pagination>
     </div>
   </div>
@@ -141,10 +137,10 @@ export default {
       loadVisibleApiRouter: false,
       // 用来展示与存储当前路径是否需要权限控制
       access_control_list: [
-        {label: "需要", value: 1},
-        {label: "不需要", value: 0}
+        { label: "需要", value: 1 },
+        { label: "不需要", value: 0 }
       ],
-      // 绑定的前端页面
+      // 绑定的前端页面菜单列表
       menu_data_list: [],
       // 请求方式类表
       method_data_list: [],
@@ -162,60 +158,60 @@ export default {
     // 获取请求方式
     getMethod() {
       this.$http
-          .get('routes/api_method/?status=all')
-          .then((res) => {
-            let data = res.data;
-            if (data.code === 200) {
-              this.method_data_list = data.data;
-            }
-          })
-          .catch((error) => {
-            this.$message.error(error.message);
-          })
-          .finally(() => {
-            this.page_status = 0;
-          });
+        .get('routes/api_method/?status=all')
+        .then((res) => {
+          let data = res.data;
+          if (data.code === 200) {
+            this.method_data_list = data.data;
+          }
+        })
+        .catch((error) => {
+          this.$message.error(error.message);
+        })
+        .finally(() => {
+          this.page_status = 0;
+        });
     },
     // 获取前端菜单信息用来绑定关系使用 绑定的前端页面
     getMenu() {
       this.$http
-          .get('routes/front_menu/?status=all')
-          .then((res) => {
-            let data = res.data;
-            if (data.code === 200) {
-              this.menu_data_list = data.data;
-            }
-          })
-          .catch((error) => {
-            this.$message.error(error.message);
-          })
-          .finally(() => {
-            this.page_status = 0;
-          });
+        .get('routes/front_menu/?status=all')
+        .then((res) => {
+          let data = res.data;
+          if (data.code === 200) {
+            this.menu_data_list = data.data;
+          }
+        })
+        .catch((error) => {
+          this.$message.error(error.message);
+        })
+        .finally(() => {
+          this.page_status = 0;
+        });
     },
     // 将后端路由加载到数据库中
     addApiRouter() {
       this.loadVisibleApiRouter = false;
       this.loading = true;
       this.$http
-          .post("routes/api_routes/")
-          .then((res) => {
-            let data = res.data;
-            if (data.code === 200) {
-              this.$message.success(data.message);
-              this.getApiData();
-            } else {
-              this.$message.error(data.message);
-            }
-          })
-          .catch((error) => {
-            this.$message.error(error.message);
-          })
-          .finally(() => {
-            this.loading = false;
-            this.loadVisibleApiRouter = false;
-            
-          });
+        .post("routes/api_routes/")
+        .then((res) => {
+          let data = res.data;
+          if (data.code === 200) {
+            this.$message.success(data.message);
+            this.getApiData();
+          } else {
+            this.$message.error(data.message);
+          }
+        })
+        .catch((error) => {
+          this.$message.error(error.message);
+        })
+        .finally(() => {
+          this.loading = false;
+          this.loadVisibleApiRouter = false;
+
+        });
 
     },
     //删除按钮显示小弹框
@@ -227,25 +223,25 @@ export default {
       let pk = row.id;
       this.loading = true;
       this.$http
-          .delete("routes/api_routes/", {
-            data: {pk: pk},
-          })
-          .then((res) => {
-            let data = res.data;
-            if (data.code === 200) {
-              this.$message.success(data.message);
-              this.getApiData();
-              rows.splice(index, 1);
-            } else {
-              this.$message.error(data.message);
-            }
-          })
-          .catch((error) => {
-            this.$message.error(error.message);
-          })
-          .finally(() => {
-            this.loading = false;
-          });
+        .delete("routes/api_routes/", {
+          data: { pk: pk },
+        })
+        .then((res) => {
+          let data = res.data;
+          if (data.code === 200) {
+            this.$message.success(data.message);
+            this.getApiData();
+            rows.splice(index, 1);
+          } else {
+            this.$message.error(data.message);
+          }
+        })
+        .catch((error) => {
+          this.$message.error(error.message);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
     // 编辑按钮，修改row.editable值 让这条可以进行修改
     editRow(row) {
@@ -256,27 +252,30 @@ export default {
       // 保存的数据 row
       this.loading = true;
       row.method_data_id_list = this.method_data_id_list
+      if(Array.isArray(row.pom_front_menu_routes_id)){ // 如果是列表类型取最后一位id
+        row.pom_front_menu_routes_id = row.pom_front_menu_routes_id.pop(); // 由于联机选择器是一个列表的值进行获取的，只需要获取最后一个元素即可(数据库也是根据前端菜单的id进行绑定的)
+      }
       this.$http
-          .put("routes/api_routes/", {
-            data: row,
-          })
-          .then((res) => {
-            let data = res.data;
-            if (data.code === 200) {
-              row.editable = false;
-              this.$message.success(data.message);
-              this.getApiData();
-            } else {
-              this.$message.error(data.message);
-            }
-          })
-          .catch((error) => {
-            this.$message.error(error.message);
-          })
-          .finally(() => {
-            this.loading = false;
-            this.method_data_id_list = [];
-          });
+        .put("routes/api_routes/", {
+          data: row,
+        })
+        .then((res) => {
+          let data = res.data;
+          if (data.code === 200) {
+            row.editable = false;
+            this.$message.success(data.message);
+            this.getApiData();
+          } else {
+            this.$message.error(data.message);
+          }
+        })
+        .catch((error) => {
+          this.$message.error(error.message);
+        })
+        .finally(() => {
+          this.loading = false;
+          this.method_data_id_list = [];
+        });
     },
     // 获取数据
     getApiData() {
@@ -287,22 +286,22 @@ export default {
         get_url = `routes/api_routes/?page=${this.page}`;
       }
       this.$http
-          .get(get_url)
-          .then((res) => {
-            let data = res.data;
-            if (data.code === 200) {
-              this.ApiData = data.data.data;
-              this.data_total = data.data.data_total;
-            } else {
-              this.firmData = [];
-            }
-          })
-          .catch((error) => {
-            this.$message.error(error.message);
-          })
-          .finally(() => {
-            this.page_status = 0;
-          });
+        .get(get_url)
+        .then((res) => {
+          let data = res.data;
+          if (data.code === 200) {
+            this.ApiData = data.data.data;
+            this.data_total = data.data.data_total;
+          } else {
+            this.firmData = [];
+          }
+        })
+        .catch((error) => {
+          this.$message.error(error.message);
+        })
+        .finally(() => {
+          this.page_status = 0;
+        });
     },
     // 页码功能
     nextPage(page) {

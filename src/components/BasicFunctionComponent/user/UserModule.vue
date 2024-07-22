@@ -341,17 +341,6 @@ export default {
     saveRow(row) {
       // 保存的数据 row
       this.loading = true;
-      if (this.positionId) {
-        row.position_id = this.positionId
-      }
-      if (this.roleId) {
-        row.role_id = this.roleId;
-      }
-      if (this.is_value !== "未选择") {
-        row.is_show = this.is_value
-      } else {
-        row.is_show = 1
-      }
       this.$http
         .put("users/info/", {
           data: row,

@@ -331,8 +331,7 @@ export default {
       this.getPrefixDate();
     },
     // 下拉框调用api方法
-    getDepartmentData(query) {
-      this.selectLoading = true;
+    getDepartmentData() {
       this.$http
         .get('foundation/department/?status=all')
         .then((res) => {
@@ -346,9 +345,6 @@ export default {
         .catch((error) => {
           this.$message.error(error.message);
         })
-        .finally(() => {
-          this.loading = false;
-        });
     },
   },
 };
