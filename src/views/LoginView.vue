@@ -107,8 +107,8 @@ export default {
             let data = res.data;
             if (data.code === 200) {
               this.$message.success(data.message);
-              localStorage.setItem("token", data.token); // 写入到浏览器缓存中
-              localStorage.setItem("user_info", JSON.stringify(data.data)); // 用户基本数据
+              localStorage.setItem("authorization", data.token); // 写入到浏览器缓存中
+              localStorage.setItem("user_name", data.data.user_name); // 用户名字写入缓存中
               let url_name = this.$route.query.url_name;
               if (url_name) {
                 this.$router.push({ name: url_name.toString() }); // 跳转到原来的网页

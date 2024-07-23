@@ -18,9 +18,9 @@ axios.defaults.timeout = 5000; // 超时时间
 axios.interceptors.request.use(
   function (config) {
     // 每次发起请求获取token，并且携带，没有就不携带后端报错
-    let token = localStorage.getItem("token");
-    if (token) {
-      config.headers["Authorization"] = token;
+    const authorization = localStorage.getItem("authorization");
+    if (authorization) {
+      config.headers["Authorization"] = authorization;
     }
     return config;
   },
@@ -42,7 +42,11 @@ axios.interceptors.response.use(
           error.message = "错误请求";
           break;
         case 401:
-          error.message = "未授权，请重新登录";
+          if(! error.response.data.error){
+            error.message = "未授权，请重新登录";
+          }else{
+            error.message = error.response.data.error
+          }
           window.localStorage.clear();
           setTimeout(() => {
             window.location.href = "/login";

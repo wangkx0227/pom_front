@@ -137,15 +137,15 @@ const router = new VueRouter({
 // 路由元信息设置网站title 路由守卫（检查当前是否处于登录状态，登录状态放行，非登录状态跳转登录）
 router.beforeEach((to, from, next) => {
   document.title = to.meta.title || "POM"; // 设置页面标题
-  const token = localStorage.getItem("token");
+  const authorization = localStorage.getItem("authorization");
   if (to.name === "login") {
-    if (token) {
+    if (authorization) {
       next({ name: "index" });
     } else {
       next();
     }
   } else {
-    if (!token) {
+    if (!authorization) {
       next({ name: "login" }); // 没有token就去登录
     } else {
       next();

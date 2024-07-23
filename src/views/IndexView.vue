@@ -48,17 +48,15 @@ export default {
     return {
       user_name: "",
       loading: false,
-      user_id: "",
     };
   },
   created() {
     setTimeout(() => {
       this.decisionPCPhone();
     }, 3000);
-    let user_info = JSON.parse(localStorage.getItem("user_info"));
-    if (user_info) {
-      this.user_name = user_info.user_name;
-      this.user_id = user_info.user_id;
+    let user_name = localStorage.getItem("user_name");
+    if (user_name) {
+      this.user_name = user_name;
     } else {
       this.user_name = "test";
     }
