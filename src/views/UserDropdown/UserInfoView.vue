@@ -119,18 +119,12 @@ export default {
     // 发送请求,修改密码
     updatePassword() {
       this.$http
-        .put("users/update_passwd/", { pwd: this.form.password, pk: this.user_id })
+        .put("users/update_passwd/", { pwd: this.form.password })
         .then((res) => {
           let data = res.data;
           if (data.code === 200) {
             localStorage.clear();
             this.$message.success(data.message);
-            setTimeout(() => {
-              this.$router.push({
-                name: "login",
-                query: { url_name: "user_info" },
-              });
-            }, 2000);
           } else {
             this.$message.error(data.message);
           }
@@ -140,6 +134,12 @@ export default {
         })
         .finally(() => {
           this.dialogVisible = false;
+          setTimeout(() => {
+              this.$router.push({
+                name: "login",
+                query: { url_name: "user_info" },
+              });
+            }, 1000);
         });
     },
     // 获取用户基本数据，无法获取延期审核人信息，与权限信息

@@ -20,7 +20,7 @@ axios.interceptors.request.use(
     // 每次发起请求获取token，并且携带，没有就不携带后端报错
     let token = localStorage.getItem("token");
     if (token) {
-      config.headers["User-Token"] = token;
+      config.headers["Authorization"] = token;
     }
     return config;
   },
@@ -44,7 +44,9 @@ axios.interceptors.response.use(
         case 401:
           error.message = "未授权，请重新登录";
           window.localStorage.clear();
-          window.location.href = "/login";
+          setTimeout(() => {
+            window.location.href = "/login";
+          }, 1000);
           break;
         case 403:
           error.message = "拒绝访问";

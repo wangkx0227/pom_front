@@ -90,8 +90,10 @@ export default {
       this.loading = true;
       if (!this.login.username) {
         this.$message.error("请输入用户名称！");
+        this.loading = false;
       } else if (!this.login.password) {
         this.$message.error("请输入密码！");
+        this.loading = false;
       } else {
         let data = {
           user_name: this.login.username,

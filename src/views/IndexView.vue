@@ -96,23 +96,18 @@ export default {
           if (data.code === 200) {
             localStorage.clear();
             this.$message.success(data.message);
-            setTimeout(() => {
-              this.$router.push({ name: "login" });
-            }, 2000);
           } else {
             this.$message.success(data.message);
           }
         })
         .catch((error) => {
-          if (error.response.status === 401) {
-            setTimeout(() => {
-              this.$router.push({ name: "login" });
-            }, 2000);
-          }
           this.$message.error(error.message);
         })
         .finally(() => {
           this.loading = false;
+          setTimeout(() => {
+              this.$router.push({ name: "login" });
+            }, 1000);
         });
     },
     // 用户访问记录
