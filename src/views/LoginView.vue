@@ -56,10 +56,11 @@ export default {
     encodePasswordWithSalt() {
       // 随机生成 10位盐值
       this.salt = Math.random().toString(36).substr(2, 10);
-      const combined = this.password + this.salt; // 密码和盐值拼接
+      const combined = this.login.password + this.salt; // 密码和盐值拼接
       return btoa(combined); // 使用 Base64 编码
     },
     loginClick() {
+      const ecnode_password = this.encodePasswordWithSalt();
       this.loading = true;
       if (!this.login.username) {
         this.$message.error("请输入用户名称！");
@@ -70,9 +71,10 @@ export default {
       } else {
         let data = {
           user_name: this.login.username,
-          password: this.login.password,
+          password: ecnode_password,
           checked: this.login.checked,
           active_name: this.activeName,
+          salt: this.salt
         };
         this.$http
           .post("users/login/", data)

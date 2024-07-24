@@ -1,6 +1,7 @@
 <template>
   <div class="userinfo" v-loading="loading">
-    <el-descriptions title="用户基本信息" direction="vertical" :column="4" border style="margin-right: 10px; margin-left: 10px">
+    <el-descriptions title="用户基本信息" direction="vertical" :column="4" border
+      style="margin-right: 10px; margin-left: 10px">
       <el-descriptions-item label="中文名称">
         {{ user_info_form.user_name }}
         <el-tag size="small">{{ user_info_form.position }}</el-tag>
@@ -120,13 +121,14 @@ export default {
     encodePasswordWithSalt() {
       // 随机生成 10位盐值
       this.salt = Math.random().toString(36).substr(2, 10);
-      const combined = this.password + this.salt; // 密码和盐值拼接
+      const combined = this.form.password + this.salt; // 密码和盐值拼接
       return btoa(combined); // 使用 Base64 编码
     },
     // 发送请求,修改密码
     updatePassword() {
+      const ecnode_password = this.encodePasswordWithSalt();
       this.$http
-        .put("users/update_passwd/", { pwd: this.form.password })
+        .put("users/update_passwd/", { pwd: ecnode_password, salt: this.salt })
         .then((res) => {
           let data = res.data;
           if (data.code === 200) {
