@@ -1,9 +1,8 @@
 <template>
-    
-    <el-dialog title="当前角色权限菜单展示" :visible.sync="P_dialogShow" width="30%" :before-close="P_dialogClose"
-       >
-       <el-skeleton  animated  :throttle="500"  :loading="skeletonLoading" style="width: 90% ;" >
-       </el-skeleton>
+
+    <el-dialog title="当前角色权限菜单展示" :visible.sync="P_dialogShow" width="30%" :before-close="P_dialogClose">
+        <el-skeleton animated :throttle="500" :loading="skeletonLoading" style="width: 90% ;">
+        </el-skeleton>
         <el-tree :data="p_tree_data" show-checkbox node-key="type" accordion :default-checked-keys="default_node"
             :props="KeyDefaultProps" @check-change="handleCheckChange" ref="treeRef">
         </el-tree>
@@ -40,7 +39,7 @@ export default {
     methods: {
         // 获取节点信息，当前设置的菜单权限列表
         getMenuPermission() {
-            
+
             this.$http
                 .get(`users/role_menu_permission/?pk=${this.role_pk}`)
                 .then((res) => {
@@ -213,17 +212,36 @@ export default {
             // checkedStatus 判断当前节点是否被选中
             // node_data 当前节点的数据
             // 使用 getCheckedNodes 方法获取当前所有选中的节点
-            const checkedNodes = tree.getCheckedNodes();
-            if (!checkedStatus) { // 当属性为flase时，那么就需要将列表的选中的剔除
-                this.handleNodeDataDel(node_data)
-            } else {
-                // 将选中的节点添加到列表中
-                this.handleNodeDataAdd(checkedNodes)
+            const checkedNodes = tree.getCheckedNodes(); // 获取全部被选中的节点
+            const checkedKeys = tree.getCheckedKeys(); // 获取全部被选中节点key值
+            // if (!checkedStatus) { // 当属性为flase时，那么就需要将列表的选中的剔除
+            //     this.handleNodeDataDel(node_data)
+            // } else {
+            //     // 将选中的节点添加到列表中
+            //     this.handleNodeDataAdd(checkedNodes)
+            // }
+            this.menu_id_list = [];
+            this.api_method_id_list = [];
+            for (let i = 0; i < checkedNodes.length; i++) {
+                let add_pk = checkedNodes[i].id
+                let add_type = checkedNodes[i].type
+                if (!add_type) {
+                    add_type = ''
+                }
+                let menu = add_type.match(/menu.*/); // 正则匹配是不是菜单类型的节点
+                let api = add_type.match(/api.*/); // 正则匹配是不是菜单类型的节点
+                if (menu) {
+                    this.menu_id_list.push({ type: add_type, id: add_pk })
+                }
+                if(api){
+                    this.api_method_id_list.push({ type: add_type, id: add_pk })
+                }
             }
         },
         // 确定最后的数据
         saveData() {
             this.S_loading = true;
+            this.S_loading = false;
             this.$http
                 .post("users/role_menu_permission/", {
                     data: {
