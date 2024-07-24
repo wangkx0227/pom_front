@@ -42,9 +42,9 @@ axios.interceptors.response.use(
           error.message = "错误请求";
           break;
         case 401:
-          if(! error.response.data.error){
+          if (!error.response.data.error) {
             error.message = "未授权，请重新登录";
-          }else{
+          } else {
             error.message = error.response.data.error
           }
           window.localStorage.clear();
@@ -53,7 +53,11 @@ axios.interceptors.response.use(
           }, 1000);
           break;
         case 403:
-          error.message = "拒绝访问";
+          if (!error.response.data.error) {
+            error.message = "拒绝访问";
+          } else {
+            error.message = error.response.data.error
+          }
           break;
         case 404:
           error.message = "请求错误,未找到该资源";
