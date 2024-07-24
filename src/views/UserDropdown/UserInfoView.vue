@@ -1,7 +1,6 @@
 <template>
   <div class="userinfo" v-loading="loading">
-    <el-descriptions title="用户基本信息" direction="vertical" :column="4" border
-      style="margin-right: 10px; margin-left: 10px">
+    <el-descriptions title="用户基本信息" direction="vertical" :column="4" border style="margin-right: 10px; margin-left: 10px">
       <el-descriptions-item label="中文名称">
         {{ user_info_form.user_name }}
         <el-tag size="small">{{ user_info_form.position }}</el-tag>
@@ -80,6 +79,7 @@ export default {
       loading: false, // 访问加载
       user_info_form: {}, // 获取的基础信息
       dialogVisible: false,
+      salt: "", // 盐值
       // 密码与确认密码
       form: {
         password: "",
@@ -116,6 +116,13 @@ export default {
         }
       });
     },
+    // 密码加盐
+    encodePasswordWithSalt() {
+      // 随机生成 10位盐值
+      this.salt = Math.random().toString(36).substr(2, 10);
+      const combined = this.password + this.salt; // 密码和盐值拼接
+      return btoa(combined); // 使用 Base64 编码
+    },
     // 发送请求,修改密码
     updatePassword() {
       this.$http
@@ -135,11 +142,11 @@ export default {
         .finally(() => {
           this.dialogVisible = false;
           setTimeout(() => {
-              this.$router.push({
-                name: "login",
-                query: { url_name: "user_info" },
-              });
-            }, 1000);
+            this.$router.push({
+              name: "login",
+              query: { url_name: "user_info" },
+            });
+          }, 1000);
         });
     },
     // 获取用户基本数据，无法获取延期审核人信息，与权限信息

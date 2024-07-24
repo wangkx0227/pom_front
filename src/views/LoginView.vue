@@ -1,37 +1,18 @@
 <template>
   <div class="login">
     <h3 class="login_title">POM系统登录</h3>
-    <el-tabs v-model="activeName"
-             v-loading="loading"
-             element-loading-text="正在登录"
-    >
+    <el-tabs v-model="activeName" v-loading="loading" element-loading-text="正在登录">
       <el-tab-pane label="中文名登录" name="first">
         <el-form :model="login" status-icon class="demo-ruleForm">
           <el-form-item prop="pass">
-            <el-input
-              type="text"
-              v-model="login.username"
-              placeholder="账户名"
-              suffix-icon="el-icon-user"
-            ></el-input>
+            <el-input type="text" v-model="login.username" placeholder="账户名" suffix-icon="el-icon-user"></el-input>
           </el-form-item>
           <el-form-item prop="checkPass">
-            <el-input
-              type="password"
-              v-model="login.password"
-              placeholder="密码"
-              show-password
-            ></el-input>
+            <el-input type="password" v-model="login.password" placeholder="密码" show-password></el-input>
           </el-form-item>
           <el-form-item>
             <el-checkbox v-model="login.checked">七天免登录</el-checkbox>
-            <el-button
-
-              type="primary"
-              style="width: 100%"
-              plain
-              @click="loginClick()"
-              >登录
+            <el-button type="primary" style="width: 100%" plain @click="loginClick()">登录
             </el-button>
           </el-form-item>
         </el-form>
@@ -39,30 +20,14 @@
       <el-tab-pane label="账户登录" name="second">
         <el-form :model="login" status-icon class="demo-ruleForm">
           <el-form-item prop="pass">
-            <el-input
-              type="text"
-              v-model="login.username"
-              placeholder="用户名"
-              suffix-icon="el-icon-user"
-            ></el-input>
+            <el-input type="text" v-model="login.username" placeholder="用户名" suffix-icon="el-icon-user"></el-input>
           </el-form-item>
           <el-form-item prop="checkPass">
-            <el-input
-              type="password"
-              v-model="login.password"
-              placeholder="密码"
-              show-password
-            ></el-input>
+            <el-input type="password" v-model="login.password" placeholder="密码" show-password></el-input>
           </el-form-item>
           <el-form-item>
             <el-checkbox v-model="login.checked">七天免登录</el-checkbox>
-            <el-button
-              :loading="loading"
-              type="primary"
-              style="width: 100%"
-              plain
-              @click="loginClick()"
-              >登录
+            <el-button :loading="loading" type="primary" style="width: 100%" plain @click="loginClick()">登录
             </el-button>
           </el-form-item>
         </el-form>
@@ -77,6 +42,7 @@ export default {
     return {
       loading: false,
       activeName: "first", // 默认选中选项卡
+      salt: "", // 盐值
       login: {
         username: "",
         password: "",
@@ -84,8 +50,15 @@ export default {
       },
     };
   },
-  created() {},
+  created() { },
   methods: {
+    // 密码加盐
+    encodePasswordWithSalt() {
+      // 随机生成 10位盐值
+      this.salt = Math.random().toString(36).substr(2, 10);
+      const combined = this.password + this.salt; // 密码和盐值拼接
+      return btoa(combined); // 使用 Base64 编码
+    },
     loginClick() {
       this.loading = true;
       if (!this.login.username) {
