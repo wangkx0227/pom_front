@@ -1,44 +1,19 @@
 <template>
   <div class="firm" v-loading="loading">
     <div class="head_search_add">
-      <el-button
-        type="info"
-        icon="el-icon-circle-plus-outline"
-        plain
-        @click="dialogDisplay"
-        >添加
+      <el-button v-if="method_list.includes('POST')" type="info" icon="el-icon-circle-plus-outline" plain
+        @click="dialogDisplay">添加
       </el-button>
-      <el-input
-        placeholder="请输入搜索公司名称"
-        v-model="search"
-        clearable
-        class="input_search"
-      >
+      <el-input placeholder="请输入搜索公司名称" v-model="search" clearable class="input_search">
       </el-input>
-      <el-button type="primary" icon="el-icon-search" plain @click="searchData"
-        >搜索
+      <el-button type="primary" icon="el-icon-search" plain @click="searchData">搜索
       </el-button>
-      <el-button
-        type="warning"
-        icon="el-icon-refresh-right"
-        plain
-        @click="reloadData"
-        >重置
+      <el-button type="warning" icon="el-icon-refresh-right" plain @click="reloadData">重置
       </el-button>
     </div>
     <div class="dialog">
-      <el-dialog
-        title="公司添加"
-        :visible.sync="dialogDisplayVar"
-        width="35%"
-        :before-close="handleClose"
-      >
-        <el-form
-          :model="addFirmForm"
-          label-position="top"
-          :rules="rules"
-          ref="addFirmRef"
-        >
+      <el-dialog title="公司添加" :visible.sync="dialogDisplayVar" width="35%" :before-close="handleClose">
+        <el-form :model="addFirmForm" label-position="top" :rules="rules" ref="addFirmRef">
           <el-form-item label="公司名称" prop="firm">
             <el-input v-model="addFirmForm.firm"></el-input>
           </el-form-item>
@@ -49,32 +24,21 @@
             <el-input v-model="addFirmForm.english"></el-input>
           </el-form-item>
           <el-form-item label="描述信息" prop="description">
-            <el-input
-              type="textarea"
-              v-model="addFirmForm.description"
-            ></el-input>
+            <el-input type="textarea" v-model="addFirmForm.description"></el-input>
           </el-form-item>
         </el-form>
         <template v-slot:footer>
-<div  class="dialog-footer">
-          <el-button @click="dialogClose('addFirmRef')">取 消</el-button>
-          <el-button
-            type="primary"
-            @click="addFirmData('addFirmRef')"
-            :loading="addLoading"
-            >立即创建
-          </el-button>
-        </div>
-</template>
+          <div class="dialog-footer">
+            <el-button @click="dialogClose('addFirmRef')">取 消</el-button>
+            <el-button type="primary" @click="addFirmData('addFirmRef')" :loading="addLoading">立即创建
+            </el-button>
+          </div>
+        </template>
       </el-dialog>
     </div>
     <div class="table_content">
       <el-table :data="firmData" style="width: 100%" max-height="580">
-        <el-table-column
-          prop="index"
-          label="#"
-          align="center"
-        ></el-table-column>
+        <el-table-column prop="index" label="#" align="center"></el-table-column>
         <el-table-column label="公司名称" align="center">
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.firm }}</span>
@@ -95,119 +59,60 @@
         </el-table-column>
         <el-table-column label="描述信息" align="center">
           <template v-slot="{ row }">
-            <el-tooltip
-              class="item"
-              effect="dark"
-              :content="row.description"
-              placement="bottom"
-              v-if="!row.editable"
-            >
+            <el-tooltip class="item" effect="dark" :content="row.description" placement="bottom" v-if="!row.editable">
               <div class="cell ellipsis">{{ row.description }}</div>
             </el-tooltip>
-            <el-input
-              type="textarea"
-              v-model="row.description"
-              v-else
-            ></el-input>
+            <el-input type="textarea" v-model="row.description" v-else></el-input>
           </template>
         </el-table-column>
         <el-table-column label="创建日期" align="center">
           <template v-slot="{ row }">
-            <el-tooltip
-              class="item"
-              effect="dark"
-              :content="row.create_date"
-              placement="bottom"
-            >
+            <el-tooltip class="item" effect="dark" :content="row.create_date" placement="bottom">
               <div class="cell ellipsis">{{ row.create_date }}</div>
             </el-tooltip>
           </template>
         </el-table-column>
         <el-table-column label="修改日期" align="center">
           <template v-slot="{ row }">
-            <el-tooltip
-              class="item"
-              effect="dark"
-              :content="row.update_date"
-              placement="bottom"
-            >
+            <el-tooltip class="item" effect="dark" :content="row.update_date" placement="bottom">
               <div class="cell ellipsis">{{ row.update_date }}</div>
             </el-tooltip>
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center">
           <template v-slot="scope">
-            <el-button
-              v-if="!scope.row.editable"
-              @click="editRow(scope.row)"
-              size="mini"
-              type="text"
-              >编辑
-            </el-button>
-            <el-button
-              v-else
-              @click="saveRow(scope.row)"
-              size="mini"
-              type="text"
-              >保存
-            </el-button>
-            |
-            <el-popover
-              v-if="!scope.row.editable"
-              placement="top"
-              width="160"
-              v-model="scope.row.visible"
-              trigger="manual"
-            >
-              <p>删除后无恢复，请问确定删除吗？</p>
-              <div style="text-align: right; margin: 0">
-                <el-button
-                  size="mini"
-                  type="text"
-                  @click="scope.row.visible = false"
-                  >取消
-                </el-button>
-                <el-button
-                  type="primary"
-                  size="mini"
-                  @click="deleteRow(scope.$index, firmData, scope.row)"
-                  >确定
-                </el-button>
-              </div>
-              <template v-slot:reference>
-<el-button
-                
-                size="mini"
-                type="text"
-                @click="deleteDisplay(scope.row)"
-                >删除
+            <div v-if="method_list.includes('PUT')" style="display: inline-block;">
+              <el-button v-if="!scope.row.editable" @click="editRow(scope.row)" size="mini" type="text">编辑
               </el-button>
-</template>
-            </el-popover>
-            <el-button
-              style="margin-left: 0"
-              v-else
-              @click="scope.row.editable = false"
-              size="mini"
-              type="text"
-              >取消
-            </el-button>
+              <el-button v-else @click="saveRow(scope.row)" size="mini" type="text">保存
+              </el-button>
+            </div>
+            |
+            <div v-if="method_list.includes('DELETE')" style="display: inline-block;">
+              <el-popover v-if="!scope.row.editable" placement="top" width="160" v-model="scope.row.visible"
+                trigger="manual">
+                <p>删除后无恢复，请问确定删除吗？</p>
+                <div style="text-align: right; margin: 0">
+                  <el-button size="mini" type="text" @click="scope.row.visible = false">取消
+                  </el-button>
+                  <el-button type="primary" size="mini" @click="deleteRow(scope.$index, firmData, scope.row)">确定
+                  </el-button>
+                </div>
+                <template v-slot:reference>
+                  <el-button size="mini" type="text" @click="deleteDisplay(scope.row)">删除
+                  </el-button>
+                </template>
+              </el-popover>
+              <el-button style="margin-left: 0" v-else @click="scope.row.editable = false" size="mini" type="text">取消
+              </el-button>
+            </div>
           </template>
         </el-table-column>
       </el-table>
     </div>
     <div class="pagination">
-      <el-pagination
-        hide-on-single-page
-        @current-change="currentPage"
-        @prev-click="prevPage"
-        @next-click="nextPage"
-        background
-        layout="total,prev, pager, next"
-        :page-size="10"
-        :total="data_total"
-        v-model:current-page="page"
-      >
+      <el-pagination hide-on-single-page @current-change="currentPage" @prev-click="prevPage" @next-click="nextPage"
+        background layout="total,prev, pager, next" :page-size="10" :total="data_total" v-model:current-page="page">
       </el-pagination>
     </div>
   </div>
@@ -258,6 +163,8 @@ export default {
       data_total: 0, // 数据总数
       page_status: 0, // 分页状态变量，当上下一页时进行改变，只有是0时点击数字页码会改变
       page: 1,
+      // 可访问权限列表
+      method_list: [],
     };
   },
   created() {
@@ -377,6 +284,8 @@ export default {
           if (data.code === 200) {
             this.firmData = data.data.data;
             this.data_total = data.data.data_total;
+            this.method_list = data.data.method_list;
+
           } else {
             this.firmData = [];
           }
