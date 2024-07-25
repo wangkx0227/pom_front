@@ -87,7 +87,9 @@
               <el-button v-else @click="saveRow(scope.row)" size="mini" type="text">保存
               </el-button>
             </div>
-            |
+            <div v-if="method_list.includes('PUT') || method_list.includes('DELETE')" style="display: inline;">
+              |
+            </div>
             <div v-if="method_list.includes('DELETE')" style="display: inline-block;">
               <el-popover v-if="!scope.row.editable" placement="top" width="160" v-model="scope.row.visible"
                 trigger="manual">
@@ -104,6 +106,11 @@
                 </template>
               </el-popover>
               <el-button style="margin-left: 0" v-else @click="scope.row.editable = false" size="mini" type="text">取消
+              </el-button>
+            </div>
+            <div v-if="method_list.includes('PUT')" style="display: inline-block;">
+              <el-button style="margin-left: 0" v-if="scope.row.editable" @click="scope.row.editable = false"
+                size="mini" type="text">取消
               </el-button>
             </div>
           </template>
