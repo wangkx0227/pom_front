@@ -2,7 +2,8 @@
     <div class="role" v-loading="loading">
         <el-card class="box-card">
             <div class="head_search_add">
-                <el-button type="info" icon="el-icon-circle-plus-outline" plain @click="dialogDisplay">添加
+                <el-button type="info" icon="el-icon-circle-plus-outline" plain @click="dialogDisplay"
+                    v-if="method_list.includes('POST')">添加
                 </el-button>
                 <el-input placeholder="请输入角色名称" v-model="search" clearable class="input_search">
                 </el-input>
@@ -65,42 +66,52 @@
                     </el-table-column>
                     <el-table-column label="操作" align="center">
                         <template v-slot="scope">
-                            <el-button size="mini" icon="el-icon-menu" type="text"
-                                @click="permissionsDdialog(scope.row)"></el-button>
-                            |
-                            <el-button style="margin-left: 0;" v-if="!scope.row.editable" @click="editRow(scope.row)"
-                                size="mini" type="text">编辑
-                            </el-button>
-                            <el-button style="margin-left: 0;" v-else @click="saveRow(scope.row)" size="mini"
-                                type="text">保存
-                            </el-button>
-                            |
-                            <el-popover v-if="!scope.row.editable" placement="top" width="160"
-                                v-model="scope.row.visible" trigger="manual">
-                                <p>删除后无恢复，请问确定删除吗？</p>
-                                <div style="text-align: right; margin: 0">
-                                    <el-button size="mini" type="text" @click="scope.row.visible = false">取消
-                                    </el-button>
-                                    <el-button type="primary" size="mini"
-                                        @click="deleteRow(scope.$index, roleData, scope.row)">确定
-                                    </el-button>
-                                </div>
-                                <template v-slot:reference>
-                                    <el-button size="mini" type="text" @click="deleteDisplay(scope.row)">删除
-                                    </el-button>
-                                </template>
-                            </el-popover>
-                            <el-button style="margin-left: 0" v-else @click="scope.row.editable = false" size="mini"
-                                type="text">取消
-                            </el-button>
+                            <div v-if="menu_permission_method_list.includes('GET')" style="display: inline;">
+                                <el-button size="mini" icon="el-icon-menu" type="text"
+                                    @click="permissionsDdialog(scope.row)"></el-button>
+                                |
+                            </div>
+                            <div v-if="method_list.includes('PUT')" style="display: inline-block;">
+                                <el-button style="margin-left: 0;" v-if="!scope.row.editable" @click="editRow(scope.row)"
+                                    size="mini" type="text">编辑
+                                </el-button>
+                                <el-button style="margin-left: 0;" v-else @click="saveRow(scope.row)" size="mini"
+                                    type="text">保存
+                                </el-button>
+                            </div>
+                            <div v-if="method_list.includes('PUT')" style="display: inline;">
+                                |
+                            </div>
+                            <div v-if="method_list.includes('DELETE')" style="display: inline-block;">
+                                <el-popover v-if="!scope.row.editable" placement="top" width="160"
+                                    v-model="scope.row.visible" trigger="manual">
+                                    <p>删除后无恢复，请问确定删除吗？</p>
+                                    <div style="text-align: right; margin: 0">
+                                        <el-button size="mini" type="text" @click="scope.row.visible = false">取消
+                                        </el-button>
+                                        <el-button type="primary" size="mini"
+                                            @click="deleteRow(scope.$index, roleData, scope.row)">确定
+                                        </el-button>
+                                    </div>
+                                    <template v-slot:reference>
+                                        <el-button size="mini" type="text" @click="deleteDisplay(scope.row)">删除
+                                        </el-button>
+                                    </template>
+                                </el-popover>
+                            </div>
+                            <div v-if="method_list.includes('PUT')" style="display: inline-block;">
+                                <el-button style="margin-left: 0" v-if="scope.row.editable"
+                                    @click="scope.row.editable = false" size="mini" type="text">取消
+                                </el-button>
+                            </div>
                         </template>
                     </el-table-column>
                 </el-table>
             </div>
             <div class="pagination">
                 <el-pagination hide-on-single-page @current-change="currentPage" @prev-click="prevPage"
-                    @next-click="nextPage" background layout="total,prev, pager, next" :page-size="10"
-                    :total="data_total" v-model:current-page="page">
+                    @next-click="nextPage" background layout="total,prev, pager, next" :page-size="10" :total="data_total"
+                    v-model:current-page="page">
                 </el-pagination>
             </div>
             <div class="permissions_dialog">
@@ -160,6 +171,9 @@ export default {
             // 展示菜单弹窗
             role_pk: "",
             showChild: false,
+            // 可访问权限列表
+            method_list: [], // role角色页面按钮
+            menu_permission_method_list: [], // 权限菜单设置
         };
     },
     created() {
@@ -288,6 +302,8 @@ export default {
                     if (data.code === 200) {
                         this.roleData = data.data.data;
                         this.data_total = data.data.data_total;
+                        this.method_list = data.data.method_list;
+                        this.menu_permission_method_list = data.data.menu_permission_method_list;
                     } else {
                         this.firmData = [];
                     }
@@ -346,10 +362,9 @@ export default {
             this.showChild = true;
             let role_pk = row.id
             this.$nextTick(() => {
-                this.$refs.permissions_dialog.openDialog(role_pk);
+                this.$refs.permissions_dialog.openDialog(role_pk,this.menu_permission_method_list);
             });
         },
-
     },
 }
 </script>

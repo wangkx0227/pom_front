@@ -57,6 +57,8 @@ export default {
             data_total: 0, // 数据总数
             page_status: 0, // 分页状态变量，当上下一页时进行改变，只有是0时点击数字页码会改变
             page: 1,
+            // 获取访问权限
+
         };
     },
     created() {

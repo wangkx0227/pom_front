@@ -1,7 +1,8 @@
 <template>
   <div class="prefix" v-loading="loading">
     <div class="head_search_add">
-      <el-button type="info" icon="el-icon-circle-plus-outline" plain @click="dialogDisplay">添加
+      <el-button type="info" icon="el-icon-circle-plus-outline" plain @click="dialogDisplay"
+        v-if="method_list.includes('POST')">添加
       </el-button>
       <el-input placeholder="请输入搜索前缀名称" v-model="search" clearable class="input_search">
       </el-input>
@@ -82,27 +83,36 @@
         </el-table-column>
         <el-table-column label="操作" align="center">
           <template v-slot="scope">
-            <el-button v-if="!scope.row.editable" @click="editRow(scope.row)" size="mini" type="text">编辑
-            </el-button>
-            <el-button v-else @click="saveRow(scope.row)" size="mini" type="text">保存
-            </el-button>
-            |
-            <el-popover v-if="!scope.row.editable" placement="top" width="160" v-model="scope.row.visible"
-              trigger="manual">
-              <p>删除后无恢复，请问确定删除吗？</p>
-              <div style="text-align: right; margin: 0">
-                <el-button size="mini" type="text" @click="scope.row.visible = false">取消
-                </el-button>
-                <el-button type="primary" size="mini" @click="deleteRow(scope.$index, prefixData, scope.row)">确定
-                </el-button>
-              </div>
-              <template v-slot:reference>
-                <el-button size="mini" type="text" @click="deleteDisplay(scope.row)">删除
-                </el-button>
-              </template>
-            </el-popover>
-            <el-button style="margin-left: 0" v-else @click="scope.row.editable = false" size="mini" type="text">取消
-            </el-button>
+            <div v-if="method_list.includes('PUT')" style="display: inline-block;">
+              <el-button v-if="!scope.row.editable" @click="editRow(scope.row)" size="mini" type="text">编辑
+              </el-button>
+              <el-button v-else @click="saveRow(scope.row)" size="mini" type="text">保存
+              </el-button>
+            </div>
+            <div v-if="method_list.includes('PUT') || method_list.includes('DELETE')" style="display: inline;">
+              |
+            </div>
+            <div v-if="method_list.includes('DELETE')" style="display: inline-block;">
+              <el-popover v-if="!scope.row.editable" placement="top" width="160" v-model="scope.row.visible"
+                trigger="manual">
+                <p>删除后无恢复，请问确定删除吗？</p>
+                <div style="text-align: right; margin: 0">
+                  <el-button size="mini" type="text" @click="scope.row.visible = false">取消
+                  </el-button>
+                  <el-button type="primary" size="mini" @click="deleteRow(scope.$index, prefixData, scope.row)">确定
+                  </el-button>
+                </div>
+                <template v-slot:reference>
+                  <el-button size="mini" type="text" @click="deleteDisplay(scope.row)">删除
+                  </el-button>
+                </template>
+              </el-popover>
+            </div>
+            <div v-if="method_list.includes('PUT')" style="display: inline-block;">
+              <el-button style="margin-left: 0" v-if="scope.row.editable" @click="scope.row.editable = false" size="mini"
+                type="text">取消
+              </el-button>
+            </div>
           </template>
         </el-table-column>
       </el-table>
@@ -159,6 +169,8 @@ export default {
       page: 1,
       // 下拉框
       departmentList: [], // 部门列表
+      // 可访问权限列表
+      method_list: [],
     };
   },
   created() {
@@ -280,6 +292,7 @@ export default {
           if (data.code === 200) {
             this.prefixData = data.data.data;
             this.data_total = data.data.data_total;
+            this.method_list = data.data.method_list;
           } else {
             this.firmData = [];
           }

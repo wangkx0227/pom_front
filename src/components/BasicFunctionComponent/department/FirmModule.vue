@@ -105,8 +105,6 @@
                   </el-button>
                 </template>
               </el-popover>
-              <el-button style="margin-left: 0" v-else @click="scope.row.editable = false" size="mini" type="text">取消
-              </el-button>
             </div>
             <div v-if="method_list.includes('PUT')" style="display: inline-block;">
               <el-button style="margin-left: 0" v-if="scope.row.editable" @click="scope.row.editable = false"

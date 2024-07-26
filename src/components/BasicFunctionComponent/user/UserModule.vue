@@ -1,7 +1,8 @@
 <template>
   <div class="users" v-loading="loading">
     <div class="head_search_add">
-      <el-button type="info" icon="el-icon-circle-plus-outline" plain @click="dialogDisplay">添加
+      <el-button type="info" icon="el-icon-circle-plus-outline" plain @click="dialogDisplay"
+        v-if="method_list.includes('POST')">添加
       </el-button>
       <el-input placeholder="请输入搜索用户姓名" v-model="search" clearable class="input_search">
       </el-input>
@@ -167,29 +168,41 @@
         </el-table-column>
         <el-table-column label="操作" align="center" width="180">
           <template v-slot="scope">
-            <el-button v-if="!scope.row.editable" @click="editRow(scope.row)" size="mini" type="text">编辑
-            </el-button>
-            <el-button v-else @click="saveRow(scope.row)" size="mini" type="text">保存
-            </el-button>
-            |
-            <el-popover v-if="!scope.row.editable" placement="top" width="160" v-model="scope.row.visible"
-              trigger="manual">
-              <p>删除后无恢复，请问确定删除吗？</p>
-              <div style="text-align: right; margin: 0">
-                <el-button size="mini" type="text" @click="scope.row.visible = false">取消
-                </el-button>
-                <el-button type="primary" size="mini" @click="deleteRow(scope.$index, usersData, scope.row)">确定
-                </el-button>
-              </div>
-              <template v-slot:reference>
-                <el-button size="mini" type="text" @click="deleteDisplay(scope.row)">删除
-                </el-button>
-              </template>
-            </el-popover>
-            <el-button style="margin-left: 0" v-else @click="scope.row.editable = false" size="mini" type="text">取消
-            </el-button>
-            |
-            <el-button style="margin-left: 0" @click="forceLogin(scope.row)" size="mini" type="text">强制退出
+            <div v-if="method_list.includes('PUT')" style="display: inline-block;">
+              <el-button v-if="!scope.row.editable" @click="editRow(scope.row)" size="mini" type="text">编辑
+              </el-button>
+              <el-button v-else @click="saveRow(scope.row)" size="mini" type="text">保存
+              </el-button>
+            </div>
+            <div v-if="method_list.includes('PUT') || method_list.includes('DELETE')" style="display: inline;">
+              |
+            </div>
+            <div v-if="method_list.includes('DELETE')" style="display: inline-block;">
+              <el-popover v-if="!scope.row.editable" placement="top" width="160" v-model="scope.row.visible"
+                trigger="manual">
+                <p>删除后无恢复，请问确定删除吗？</p>
+                <div style="text-align: right; margin: 0">
+                  <el-button size="mini" type="text" @click="scope.row.visible = false">取消
+                  </el-button>
+                  <el-button type="primary" size="mini" @click="deleteRow(scope.$index, usersData, scope.row)">确定
+                  </el-button>
+                </div>
+                <template v-slot:reference>
+                  <el-button size="mini" type="text" @click="deleteDisplay(scope.row)">删除
+                  </el-button>
+                </template>
+              </el-popover>
+            </div>
+            <div v-if="method_list.includes('PUT')" style="display: inline-block;">
+              <el-button style="margin-left: 0" v-if="scope.row.editable" @click="scope.row.editable = false" size="mini"
+                type="text">取消
+              </el-button>
+            </div>
+            <div v-if="ForceLogin_method_list.includes('POST')" style="display: inline;">
+              |
+            </div>
+            <el-button style="margin-left: 0" @click="forceLogin(scope.row)" size="mini" type="text"
+              v-if="ForceLogin_method_list.includes('POST')">强制退出
             </el-button>
           </template>
         </el-table-column>
@@ -288,13 +301,17 @@ export default {
       data_total: 0, // 数据总数
       page_status: 0, // 分页状态变量，当上下一页时进行改变，只有是0时点击数字页码会改变
       page: 1,
-  
+
       // 职位数据列表
       positionIdList: [],
       // 前缀数据列表
       prefixIdList: [],
       // 角色数据列表
       roleIdList: [],
+      // 可访问权限列表,关于用户的增删改查功能
+      method_list: [],
+      // 可访问权限列表，针对用户强制退出功能
+      ForceLogin_method_list: [],
 
     };
   },
@@ -304,6 +321,7 @@ export default {
     this.getPrefixData();
     this.getRoleData();
     this.getusersDate();
+    this.getForceLogin();
   },
   methods: {
     //删除按钮显示小弹框
@@ -430,6 +448,7 @@ export default {
           if (data.code === 200) {
             this.usersData = data.data.data;
             this.data_total = data.data.data_total;
+            this.method_list = data.data.method_list;
           } else {
             this.firmData = [];
           }
@@ -526,6 +545,23 @@ export default {
             this.$message.success(data.message);
           } else {
             this.$message.error(data.message);
+          }
+        })
+        .catch((error) => {
+          this.$message.error(error.message);
+        })
+        .finally(() => {
+          this.loading = false
+        });
+    },
+    //管理员强制退出功能权限获取
+    getForceLogin() {
+      this.$http
+        .get("users/force_exit/")
+        .then((res) => {
+          let data = res.data;
+          if (data.code === 200) {
+            this.ForceLogin_method_list = data.data
           }
         })
         .catch((error) => {

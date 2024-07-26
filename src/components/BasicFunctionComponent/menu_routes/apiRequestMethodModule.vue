@@ -1,92 +1,95 @@
 <template>
-    <div class="method">
-      <div class="head_search_add">
-        <el-button type="info" icon="el-icon-circle-plus-outline" plain @click="dialogDisplay">添加
-        </el-button>
-        <el-input placeholder="请输入角色名称" v-model="search" clearable class="input_search">
-        </el-input>
-        <el-button type="primary" icon="el-icon-search" plain @click="searchDate">搜索
-        </el-button>
-        <el-button type="warning" icon="el-icon-refresh-right" plain @click="reloadDate">重置
-        </el-button>
-      </div>
-      <div class="dialog">
-        <el-dialog title="角色添加" :visible.sync="dialogDisplayVar" width="35%" :before-close="requestMethodHandleClose">
-          <el-form :model="addRequestMethodForm" label-requestMethod="top" :rules="requestMethodRules" ref="addRequestMethodRef">
-            <el-form-item label="请求方法名称" prop="method_name">
-              <el-input v-model="addRequestMethodForm.method_name"></el-input>
-            </el-form-item>
-            <el-form-item label="请求方式(需要根据接口方式如：GET、POST、PUT、DELETE)" prop="method_way">
-              <el-input v-model="addRequestMethodForm.method_way"></el-input>
-            </el-form-item>
-            <el-form-item label="请求描述信息" prop="description">
-              <el-input type="textarea" v-model="addRequestMethodForm.description"></el-input>
-            </el-form-item>
-          </el-form>
-          <template v-slot:footer>
-            <div class="dialog-footer">
-              <el-button @click="dialogClose('addRequestMethodRef')">取 消</el-button>
-              <el-button type="primary" @click="addRequestMethodData('addRequestMethodRef')" :loading="addLoading">立即创建
+  <div class="method">
+    <div class="head_search_add">
+      <el-button type="info" icon="el-icon-circle-plus-outline" plain @click="dialogDisplay">添加
+      </el-button>
+      <el-input placeholder="请输入角色名称" v-model="search" clearable class="input_search">
+      </el-input>
+      <el-button type="primary" icon="el-icon-search" plain @click="searchDate">搜索
+      </el-button>
+      <el-button type="warning" icon="el-icon-refresh-right" plain @click="reloadDate">重置
+      </el-button>
+    </div>
+    <div class="dialog">
+      <el-dialog title="角色添加" :visible.sync="dialogDisplayVar" width="35%" :before-close="requestMethodHandleClose">
+        <el-form :model="addRequestMethodForm" label-requestMethod="top" :rules="requestMethodRules"
+          ref="addRequestMethodRef">
+          <el-form-item label="请求方法名称" prop="method_name">
+            <el-input v-model="addRequestMethodForm.method_name"></el-input>
+          </el-form-item>
+          <el-form-item label="请求方式(需要根据接口方式如：GET、POST、PUT、DELETE)" prop="method_way">
+            <el-input v-model="addRequestMethodForm.method_way"></el-input>
+          </el-form-item>
+          <el-form-item label="请求描述信息" prop="description">
+            <el-input type="textarea" v-model="addRequestMethodForm.description"></el-input>
+          </el-form-item>
+        </el-form>
+        <template v-slot:footer>
+          <div class="dialog-footer">
+            <el-button @click="dialogClose('addRequestMethodRef')">取 消</el-button>
+            <el-button type="primary" @click="addRequestMethodData('addRequestMethodRef')" :loading="addLoading">立即创建
+            </el-button>
+          </div>
+        </template>
+      </el-dialog>
+    </div>
+    <div class="table_content">
+      <el-table :data="requestMethodData" style="width: 100%" max-height="580">
+        <el-table-column prop="index" label="#" align="center"></el-table-column>
+        <el-table-column label="请求名称" align="center">
+          <template v-slot="{ row }">
+            <span v-if="!row.editable">{{ row.method_name }}</span>
+            <el-input v-model="row.method_name" v-else></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column label="请求方式" align="center">
+          <template v-slot="{ row }">
+            <span v-if="!row.editable">{{ row.method_way }}</span>
+            <el-input v-model="row.method_way" v-else></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column label="请求描述信息" align="center">
+          <template v-slot="{ row }">
+            <el-tooltip class="item" effect="dark" :content="row.description" placement="bottom" v-if="!row.editable">
+              <div class="cell ellipsis">{{ row.description }}</div>
+            </el-tooltip>
+            <el-input type="textarea" v-model="row.description" v-else></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column label="创建日期" align="center">
+          <template v-slot="{ row }">
+            <el-tooltip class="item" effect="dark" :content="row.create_date" placement="bottom">
+              <div class="cell ellipsis">{{ row.create_date }}</div>
+            </el-tooltip>
+          </template>
+        </el-table-column>
+        <el-table-column label="修改日期" align="center">
+          <template v-slot="{ row }">
+            <el-tooltip class="item" effect="dark" :content="row.update_date" placement="bottom">
+              <div class="cell ellipsis">{{ row.update_date }}</div>
+            </el-tooltip>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" align="center">
+          <template v-slot="scope">
+            <div v-if="method_list.includes('PUT')" style="display: inline-block;">
+              <el-button style="margin-left: 0;" v-if="!scope.row.editable" @click="editRow(scope.row)" size="mini"
+                type="text">编辑
+              </el-button>
+              <el-button style="margin-left: 0;" v-else @click="saveRow(scope.row)" size="mini" type="text">保存
               </el-button>
             </div>
-          </template>
-        </el-dialog>
-      </div>
-      <div class="table_content">
-        <el-table :data="requestMethodData" style="width: 100%" max-height="580">
-          <el-table-column prop="index" label="#" align="center"></el-table-column>
-          <el-table-column label="请求名称" align="center">
-            <template v-slot="{ row }">
-              <span v-if="!row.editable">{{ row.method_name }}</span>
-              <el-input v-model="row.method_name" v-else></el-input>
-            </template>
-          </el-table-column>
-          <el-table-column label="请求方式" align="center">
-            <template v-slot="{ row }">
-              <span v-if="!row.editable">{{ row.method_way }}</span>
-              <el-input v-model="row.method_way" v-else></el-input>
-            </template>
-          </el-table-column>
-          <el-table-column label="请求描述信息" align="center">
-            <template v-slot="{ row }">
-              <el-tooltip class="item" effect="dark" :content="row.description" placement="bottom"
-                          v-if="!row.editable">
-                <div class="cell ellipsis">{{ row.description }}</div>
-              </el-tooltip>
-              <el-input type="textarea" v-model="row.description" v-else></el-input>
-            </template>
-          </el-table-column>
-          <el-table-column label="创建日期" align="center">
-            <template v-slot="{ row }">
-              <el-tooltip class="item" effect="dark" :content="row.create_date" placement="bottom">
-                <div class="cell ellipsis">{{ row.create_date }}</div>
-              </el-tooltip>
-            </template>
-          </el-table-column>
-          <el-table-column label="修改日期" align="center">
-            <template v-slot="{ row }">
-              <el-tooltip class="item" effect="dark" :content="row.update_date" placement="bottom">
-                <div class="cell ellipsis">{{ row.update_date }}</div>
-              </el-tooltip>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" align="center">
-            <template v-slot="scope">
-              <el-button style="margin-left: 0;" v-if="!scope.row.editable" @click="editRow(scope.row)"
-                         size="mini" type="text">编辑
-              </el-button>
-              <el-button style="margin-left: 0;" v-else @click="saveRow(scope.row)" size="mini"
-                         type="text">保存
-              </el-button>
+            <div v-if="method_list.includes('PUT') || method_list.includes('DELETE')" style="display: inline;">
               |
-              <el-popover v-if="!scope.row.editable" placement="top" width="160"
-                          v-model="scope.row.visible" trigger="manual">
+            </div>
+            <div v-if="method_list.includes('DELETE')" style="display: inline-block;">
+              <el-popover v-if="!scope.row.editable" placement="top" width="160" v-model="scope.row.visible"
+                trigger="manual">
                 <p>删除后无恢复，请问确定删除吗？</p>
                 <div style="text-align: right; margin: 0">
                   <el-button size="mini" type="text" @click="scope.row.visible = false">取消
                   </el-button>
-                  <el-button type="primary" size="mini"
-                             @click="deleteRow(scope.$index, requestMethodData, scope.row)">确定
+                  <el-button type="primary" size="mini" @click="deleteRow(scope.$index, requestMethodData, scope.row)">确定
                   </el-button>
                 </div>
                 <template v-slot:reference>
@@ -94,25 +97,27 @@
                   </el-button>
                 </template>
               </el-popover>
-              <el-button style="margin-left: 0" v-else @click="scope.row.editable = false" size="mini"
-                         type="text">取消
+            </div>
+            <div v-if="method_list.includes('PUT')" style="display: inline-block;">
+              <el-button style="margin-left: 0" v-if="scope.row.editable" @click="scope.row.editable = false" size="mini"
+                type="text">取消
               </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
-      <div class="pagination">
-        <el-pagination hide-on-single-page @current-change="currentPage" @prev-click="prevPage"
-                       @next-click="nextPage" background layout="total,prev, pager, next" :page-size="10"
-                       :total="data_total" v-model:current-page="page">
-        </el-pagination>
-      </div>
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
+    <div class="pagination">
+      <el-pagination hide-on-single-page @current-change="currentPage" @prev-click="prevPage" @next-click="nextPage"
+        background layout="total,prev, pager, next" :page-size="10" :total="data_total" v-model:current-page="page">
+      </el-pagination>
+    </div>
+  </div>
 </template>
 
 <script>
 export default {
-name: "apiRequestMethodModule",
+  name: "apiRequestMethodModule",
   data() {
     let descriptionLen = (rule, value, callback) => {
       if (this.addRequestMethodForm.description.length >= 200) {
@@ -164,6 +169,8 @@ name: "apiRequestMethodModule",
       // 展示菜单弹窗
       requestMethod_pk: "",
       showChild: false,
+      // 权限控制
+      method_list: [],
     };
   },
   created() {
@@ -181,25 +188,25 @@ name: "apiRequestMethodModule",
       let pk = row.id;
       this.loading = true;
       this.$http
-          .delete("routes/api_method/", {
-            data: { pk: pk },
-          })
-          .then((res) => {
-            let data = res.data;
-            if (data.code === 200) {
-              this.$message.success(data.message);
-              this.getRequestMethodDate();
-              rows.splice(index, 1);
-            } else {
-              this.$message.error(data.message);
-            }
-          })
-          .catch((error) => {
-            this.$message.error(error.message);
-          })
-          .finally(() => {
-            this.loading = false;
-          });
+        .delete("routes/api_method/", {
+          data: { pk: pk },
+        })
+        .then((res) => {
+          let data = res.data;
+          if (data.code === 200) {
+            this.$message.success(data.message);
+            this.getRequestMethodDate();
+            rows.splice(index, 1);
+          } else {
+            this.$message.error(data.message);
+          }
+        })
+        .catch((error) => {
+          this.$message.error(error.message);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
     // 编辑按钮，修改row.editable值 让这条可以进行修改
     editRow(row) {
@@ -210,25 +217,25 @@ name: "apiRequestMethodModule",
       // 保存的数据 row
       this.loading = true;
       this.$http
-          .put("routes/api_method/", {
-            data: row,
-          })
-          .then((res) => {
-            let data = res.data;
-            if (data.code === 200) {
-              row.editable = false;
-              this.$message.success(data.message);
-              this.getRequestMethodDate();
-            } else {
-              this.$message.error(data.message);
-            }
-          })
-          .catch((error) => {
-            this.$message.error(error.message);
-          })
-          .finally(() => {
-            this.loading = false;
-          });
+        .put("routes/api_method/", {
+          data: row,
+        })
+        .then((res) => {
+          let data = res.data;
+          if (data.code === 200) {
+            row.editable = false;
+            this.$message.success(data.message);
+            this.getRequestMethodDate();
+          } else {
+            this.$message.error(data.message);
+          }
+        })
+        .catch((error) => {
+          this.$message.error(error.message);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
     // 显示弹框
     dialogDisplay() {
@@ -251,32 +258,32 @@ name: "apiRequestMethodModule",
       if (!this.addRequestMethodForm.method_name) {
         this.$message.error("请求方法名称属于必填项！");
         this.addLoading = false;
-      } else if (!this.addRequestMethodForm.method_way){
+      } else if (!this.addRequestMethodForm.method_way) {
         this.$message.error("请求方法属于必填项！");
         this.addLoading = false;
       } else {
         this.$http
-            .post("routes/api_method/", {
-              data: this.addRequestMethodForm,
-            })
-            .then((res) => {
-              let data = res.data;
-              if (data.code === 200) {
-                this.$message.success(data.message);
-                data.data.index = 1;
-                data.data.department = "新增"; // 给个默认值，进行显示
-                this.requestMethodData.unshift(data.data);
-                this.$refs[formName].resetFields();
-              } else {
-                this.$message.error(data.message);
-              }
-            })
-            .catch((error) => {
-              this.$message.error(error.message);
-            })
-            .finally(() => {
-              this.addLoading = false;
-            });
+          .post("routes/api_method/", {
+            data: this.addRequestMethodForm,
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.$message.success(data.message);
+              data.data.index = 1;
+              data.data.department = "新增"; // 给个默认值，进行显示
+              this.requestMethodData.unshift(data.data);
+              this.$refs[formName].resetFields();
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.addLoading = false;
+          });
       }
     },
     // 获取数据
@@ -288,22 +295,23 @@ name: "apiRequestMethodModule",
         get_url = `routes/api_method/?page=${this.page}`;
       }
       this.$http
-          .get(get_url)
-          .then((res) => {
-            let data = res.data;
-            if (data.code === 200) {
-              this.requestMethodData = data.data.data;
-              this.data_total = data.data.data_total;
-            } else {
-              this.firmData = [];
-            }
-          })
-          .catch((error) => {
-            this.$message.error(error.message);
-          })
-          .finally(() => {
-            this.page_status = 0;
-          });
+        .get(get_url)
+        .then((res) => {
+          let data = res.data;
+          if (data.code === 200) {
+            this.requestMethodData = data.data.data;
+            this.data_total = data.data.data_total;
+            this.method_list = data.data.method_list;
+          } else {
+            this.firmData = [];
+          }
+        })
+        .catch((error) => {
+          this.$message.error(error.message);
+        })
+        .finally(() => {
+          this.page_status = 0;
+        });
     },
     // 页码功能
     nextPage(page) {

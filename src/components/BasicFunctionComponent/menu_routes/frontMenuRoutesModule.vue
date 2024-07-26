@@ -7,7 +7,7 @@
                     <el-button size="mini" type="text" @click="loadVisibleMenuRouter = false">取消</el-button>
                     <el-button type="primary" size="mini" @click="addMenuRouter">确定</el-button>
                 </div>
-                <el-button slot="reference" icon="el-icon-refresh">加载菜单</el-button>
+                <el-button slot="reference" icon="el-icon-refresh" v-if="method_list.includes('POST')">加载菜单</el-button>
             </el-popover>
             <el-input placeholder="请输入搜索名称" v-model="search" clearable class="input_search">
             </el-input>
@@ -44,8 +44,8 @@
                             <el-tag v-if="row.father_menu_url_name">{{ row.father_menu_url_name }} </el-tag>
                         </div>
                         <div v-else>
-                            <el-select v-if="row.menu_type == 2 && row.access_control == 1" v-model="row.menu_id"
-                                clearable placeholder="请选择">
+                            <el-select v-if="row.menu_type == 2 && row.access_control == 1" v-model="row.menu_id" clearable
+                                placeholder="请选择">
                                 <el-option v-for="item in father_menu_data_list" :key="item.value" :label="item.label"
                                     :value="item.value">
                                 </el-option>
@@ -85,39 +85,46 @@
                         </div>
                     </template>
                 </el-table-column>
-                <el-table-column label="操作" align="center" width="180" >
+                <el-table-column label="操作" align="center" width="180">
                     <template v-slot="scope">
-                        <el-button v-if="!scope.row.editable" @click="editRow(scope.row)" size="mini" type="text">编辑
-                        </el-button>
-                        <el-button v-else @click="saveRow(scope.row)" size="mini" type="text">保存
-                        </el-button>
-                        |
-                        <el-popover v-if="!scope.row.editable" placement="top" width="160" v-model="scope.row.visible"
-                            trigger="manual">
-                            <p>删除后无恢复，请问确定删除吗？</p>
-                            <div style="text-align: right; margin: 0">
-                                <el-button size="mini" type="text" @click="scope.row.visible = false">取消
-                                </el-button>
-                                <el-button type="primary" size="mini"
-                                    @click="deleteRow(scope.$index, MenueData, scope.row)">确定
-                                </el-button>
-                            </div>
-                            <template v-slot:reference>
-                                <el-button size="mini" type="text" @click="deleteDisplay(scope.row)">删除
-                                </el-button>
-                            </template>
-                        </el-popover>
-                        <el-button style="margin-left: 0" v-else @click="scope.row.editable = false" size="mini"
-                            type="text">取消
-                        </el-button>
+                        <div v-if="method_list.includes('PUT')" style="display: inline-block;">
+                            <el-button v-if="!scope.row.editable" @click="editRow(scope.row)" size="mini" type="text">编辑
+                            </el-button>
+                            <el-button v-else @click="saveRow(scope.row)" size="mini" type="text">保存
+                            </el-button>
+                        </div>
+                        <div v-if="method_list.includes('PUT') || method_list.includes('DELETE')" style="display: inline;">
+                            |
+                        </div>
+                        <div v-if="method_list.includes('DELETE')" style="display: inline-block;">
+                            <el-popover v-if="!scope.row.editable" placement="top" width="160" v-model="scope.row.visible"
+                                trigger="manual">
+                                <p>删除后无恢复，请问确定删除吗？</p>
+                                <div style="text-align: right; margin: 0">
+                                    <el-button size="mini" type="text" @click="scope.row.visible = false">取消
+                                    </el-button>
+                                    <el-button type="primary" size="mini"
+                                        @click="deleteRow(scope.$index, MenueData, scope.row)">确定
+                                    </el-button>
+                                </div>
+                                <template v-slot:reference>
+                                    <el-button size="mini" type="text" @click="deleteDisplay(scope.row)">删除
+                                    </el-button>
+                                </template>
+                            </el-popover>
+                        </div>
+                        <div v-if="method_list.includes('PUT')" style="display: inline-block;">
+                            <el-button style="margin-left: 0" v-if="scope.row.editable" @click="scope.row.editable = false"
+                                size="mini" type="text">取消
+                            </el-button>
+                        </div>
                     </template>
                 </el-table-column>
             </el-table>
         </div>
         <div class="pagination">
-            <el-pagination hide-on-single-page @current-change="currentPage" @prev-click="prevPage"
-                @next-click="nextPage" background layout="total,prev, pager, next" :page-size="10" :total="data_total"
-                v-model:current-page="page">
+            <el-pagination hide-on-single-page @current-change="currentPage" @prev-click="prevPage" @next-click="nextPage"
+                background layout="total,prev, pager, next" :page-size="10" :total="data_total" v-model:current-page="page">
             </el-pagination>
         </div>
     </div>
@@ -152,6 +159,8 @@ export default {
             page: 1,
             // 加载按钮使用变量
             loadVisibleMenuRouter: false,
+            // 权限控制
+            method_list: [],
         };
     },
     created() {
@@ -259,6 +268,7 @@ export default {
                         this.MenueData = data.data.data;
                         this.father_menu_data_list = data.data.father_menu_data
                         this.data_total = data.data.data_total;
+                        this.method_list = data.data.method_list;
                     } else {
                         this.firmData = [];
                     }
