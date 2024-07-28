@@ -126,6 +126,22 @@ const routes = [
       },
     ],
   },
+  {
+    path: "/business_function",
+    name: "business_function",
+    meta: { title: "功能设置", icon: "el-icon-setting" },
+    component: () => import("@/views/IndexView.vue"),
+    children: [
+      // 功能菜单类别
+      {
+        path: "factory_bind_user", // 
+        name: "factory_bind_user",
+        component: () =>
+          import("@/views/BusinessFunctionMenu/FactoryBindUserView.vue"),
+        meta: { title: "工厂绑定用户" },
+      },
+    ],
+  },
 ];
 
 const router = new VueRouter({

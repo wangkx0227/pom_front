@@ -56,7 +56,7 @@
       <el-menu-item index="7-2">非订单类清单</el-menu-item>
       <el-menu-item index="7-3">订单类清单</el-menu-item>
       <el-menu-item index="7-4">事务变更设置</el-menu-item>
-      <el-menu-item index="7-1">工厂绑定FMR</el-menu-item>
+      <el-menu-item index="/business_function/factory_bind_user">工厂绑定FMR</el-menu-item>
 
     </el-submenu>
   </el-menu>
