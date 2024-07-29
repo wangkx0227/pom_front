@@ -1,13 +1,13 @@
 <template>
   <div class="Api" v-loading="loading">
     <div class="head_search_add">
-      <el-popover placement="top" width="160" v-model="loadVisibleApiRouter">
+      <el-popover placement="top" width="160" v-model="loadVisibleApiRouter" v-if="method_list.includes('POST')">
         <p>你确定重新加载当后端接口吗？</p>
         <div style="text-align: right; margin: 0">
           <el-button size="mini" type="text" @click="loadVisibleApiRouter = false">取消</el-button>
           <el-button type="primary" size="mini" @click="addApiRouter">确定</el-button>
         </div>
-        <el-button slot="reference" icon="el-icon-refresh" v-if="method_list.includes('POST')">加载菜单</el-button>
+        <el-button slot="reference" icon="el-icon-refresh" plain type="info" >加载菜单</el-button>
       </el-popover>
       <el-input placeholder="请输入搜索名称" v-model="search" clearable class="input_search">
       </el-input>
@@ -19,8 +19,8 @@
     <div class="table_content">
       <el-table :data="ApiData" style="width: 100%" max-height="580">
         <el-table-column prop="index" label="#" align="center" width="60"></el-table-column>
-        <el-table-column label="接口URL" align="center" prop="api_url" width="300"></el-table-column>
-        <el-table-column label="映射Class" align="center" prop="api_url_class" width="300"></el-table-column>
+        <el-table-column label="接口URL" align="center" prop="api_url" width="350"></el-table-column>
+        <el-table-column label="映射Class" align="center" prop="api_url_class" width="330"></el-table-column>
         <el-table-column label="名称" align="center" prop="api_url_name" width="150">
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.api_url_name }}</span>
@@ -301,6 +301,10 @@ export default {
             this.ApiData = data.data.data;
             this.data_total = data.data.data_total;
             this.method_list = data.data.method_list;
+            // 如果项目刚刚安装好后，需要有这些权限支撑
+            if (this.method_list.length === 0) {
+              this.method_list = ["GET", "PUT", "DELETE", "POST"]
+            }
           } else {
             this.firmData = [];
           }

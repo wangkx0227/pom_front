@@ -13,7 +13,7 @@
     <div class="dialog">
       <el-dialog title="角色添加" :visible.sync="dialogDisplayVar" width="35%" :before-close="requestMethodHandleClose">
         <el-form :model="addRequestMethodForm" label-requestMethod="top" :rules="requestMethodRules"
-          ref="addRequestMethodRef">
+                 ref="addRequestMethodRef">
           <el-form-item label="请求方法名称" prop="method_name">
             <el-input v-model="addRequestMethodForm.method_name"></el-input>
           </el-form-item>
@@ -74,7 +74,7 @@
           <template v-slot="scope">
             <div v-if="method_list.includes('PUT')" style="display: inline-block;">
               <el-button style="margin-left: 0;" v-if="!scope.row.editable" @click="editRow(scope.row)" size="mini"
-                type="text">编辑
+                         type="text">编辑
               </el-button>
               <el-button style="margin-left: 0;" v-else @click="saveRow(scope.row)" size="mini" type="text">保存
               </el-button>
@@ -84,12 +84,13 @@
             </div>
             <div v-if="method_list.includes('DELETE')" style="display: inline-block;">
               <el-popover v-if="!scope.row.editable" placement="top" width="160" v-model="scope.row.visible"
-                trigger="manual">
+                          trigger="manual">
                 <p>删除后无恢复，请问确定删除吗？</p>
                 <div style="text-align: right; margin: 0">
                   <el-button size="mini" type="text" @click="scope.row.visible = false">取消
                   </el-button>
-                  <el-button type="primary" size="mini" @click="deleteRow(scope.$index, requestMethodData, scope.row)">确定
+                  <el-button type="primary" size="mini" @click="deleteRow(scope.$index, requestMethodData, scope.row)">
+                    确定
                   </el-button>
                 </div>
                 <template v-slot:reference>
@@ -99,8 +100,9 @@
               </el-popover>
             </div>
             <div v-if="method_list.includes('PUT')" style="display: inline-block;">
-              <el-button style="margin-left: 0" v-if="scope.row.editable" @click="scope.row.editable = false" size="mini"
-                type="text">取消
+              <el-button style="margin-left: 0" v-if="scope.row.editable" @click="scope.row.editable = false"
+                         size="mini"
+                         type="text">取消
               </el-button>
             </div>
           </template>
@@ -109,7 +111,8 @@
     </div>
     <div class="pagination">
       <el-pagination hide-on-single-page @current-change="currentPage" @prev-click="prevPage" @next-click="nextPage"
-        background layout="total,prev, pager, next" :page-size="10" :total="data_total" v-model:current-page="page">
+                     background layout="total,prev, pager, next" :page-size="10" :total="data_total"
+                     v-model:current-page="page">
       </el-pagination>
     </div>
   </div>
@@ -143,7 +146,7 @@ export default {
       // 弹窗内的表单验证
       requestMethodRules: {
         method_name: [
-          { required: true, message: "请输入请求方式名称", trigger: "blur" },
+          {required: true, message: "请输入请求方式名称", trigger: "blur"},
           {
             min: 1,
             max: 15,
@@ -152,7 +155,7 @@ export default {
           },
         ],
         method_way: [
-          { required: true, message: "请输入请求方式", trigger: "blur" },
+          {required: true, message: "请输入请求方式", trigger: "blur"},
           {
             min: 1,
             max: 15,
@@ -160,7 +163,7 @@ export default {
             trigger: "blur",
           },
         ],
-        description: [{ validator: descriptionLen, trigger: "blur" }],
+        description: [{validator: descriptionLen, trigger: "blur"}],
       },
       // 分页
       data_total: 0, // 数据总数
@@ -188,25 +191,25 @@ export default {
       let pk = row.id;
       this.loading = true;
       this.$http
-        .delete("routes/api_method/", {
-          data: { pk: pk },
-        })
-        .then((res) => {
-          let data = res.data;
-          if (data.code === 200) {
-            this.$message.success(data.message);
-            this.getRequestMethodDate();
-            rows.splice(index, 1);
-          } else {
-            this.$message.error(data.message);
-          }
-        })
-        .catch((error) => {
-          this.$message.error(error.message);
-        })
-        .finally(() => {
-          this.loading = false;
-        });
+          .delete("routes/api_method/", {
+            data: {pk: pk},
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.$message.success(data.message);
+              this.getRequestMethodDate();
+              rows.splice(index, 1);
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.loading = false;
+          });
     },
     // 编辑按钮，修改row.editable值 让这条可以进行修改
     editRow(row) {
@@ -217,25 +220,25 @@ export default {
       // 保存的数据 row
       this.loading = true;
       this.$http
-        .put("routes/api_method/", {
-          data: row,
-        })
-        .then((res) => {
-          let data = res.data;
-          if (data.code === 200) {
-            row.editable = false;
-            this.$message.success(data.message);
-            this.getRequestMethodDate();
-          } else {
-            this.$message.error(data.message);
-          }
-        })
-        .catch((error) => {
-          this.$message.error(error.message);
-        })
-        .finally(() => {
-          this.loading = false;
-        });
+          .put("routes/api_method/", {
+            data: row,
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              row.editable = false;
+              this.$message.success(data.message);
+              this.getRequestMethodDate();
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.loading = false;
+          });
     },
     // 显示弹框
     dialogDisplay() {
@@ -263,27 +266,27 @@ export default {
         this.addLoading = false;
       } else {
         this.$http
-          .post("routes/api_method/", {
-            data: this.addRequestMethodForm,
-          })
-          .then((res) => {
-            let data = res.data;
-            if (data.code === 200) {
-              this.$message.success(data.message);
-              data.data.index = 1;
-              data.data.department = "新增"; // 给个默认值，进行显示
-              this.requestMethodData.unshift(data.data);
-              this.$refs[formName].resetFields();
-            } else {
-              this.$message.error(data.message);
-            }
-          })
-          .catch((error) => {
-            this.$message.error(error.message);
-          })
-          .finally(() => {
-            this.addLoading = false;
-          });
+            .post("routes/api_method/", {
+              data: this.addRequestMethodForm,
+            })
+            .then((res) => {
+              let data = res.data;
+              if (data.code === 200) {
+                this.$message.success(data.message);
+                data.data.index = 1;
+                data.data.department = "新增"; // 给个默认值，进行显示
+                this.requestMethodData.unshift(data.data);
+                this.$refs[formName].resetFields();
+              } else {
+                this.$message.error(data.message);
+              }
+            })
+            .catch((error) => {
+              this.$message.error(error.message);
+            })
+            .finally(() => {
+              this.addLoading = false;
+            });
       }
     },
     // 获取数据
@@ -295,23 +298,27 @@ export default {
         get_url = `routes/api_method/?page=${this.page}`;
       }
       this.$http
-        .get(get_url)
-        .then((res) => {
-          let data = res.data;
-          if (data.code === 200) {
-            this.requestMethodData = data.data.data;
-            this.data_total = data.data.data_total;
-            this.method_list = data.data.method_list;
-          } else {
-            this.firmData = [];
-          }
-        })
-        .catch((error) => {
-          this.$message.error(error.message);
-        })
-        .finally(() => {
-          this.page_status = 0;
-        });
+          .get(get_url)
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.requestMethodData = data.data.data;
+              this.data_total = data.data.data_total;
+              this.method_list = data.data.method_list;
+              // 如果项目刚刚安装好后，需要有这些权限支撑
+              if (this.method_list.length === 0) {
+                this.method_list = ["GET", "PUT", "DELETE", "POST"]
+              }
+            } else {
+              this.firmData = [];
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.page_status = 0;
+          });
     },
     // 页码功能
     nextPage(page) {
@@ -362,6 +369,7 @@ export default {
 
 <style>
 @import url("@/static/currency.css");
+
 @media screen and (max-width: 700px) {
   .requestMethod .el-tag {
     font-size: 9px;

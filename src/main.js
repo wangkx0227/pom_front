@@ -50,7 +50,7 @@ axios.interceptors.response.use(
           window.localStorage.clear();
           setTimeout(() => {
             window.location.href = "/login";
-          }, 1000);
+          }, 1500);
           break;
         case 403:
           if (!error.response.data.error) {
