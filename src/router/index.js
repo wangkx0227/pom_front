@@ -140,6 +140,20 @@ const routes = [
           import("@/views/BusinessFunctionMenu/FactoryBindUserView.vue"),
         meta: { title: "工厂绑定用户" },
       },
+      {
+        path: "no_order_matter", //
+        name: "no_order_matter",
+        component: () =>
+            import("@/views/BusinessFunctionMenu/NoOrderMatterView"),
+        meta: { title: "非订单类型" },
+      },
+      {
+        path: "order_matter", //
+        name: "order_matter",
+        component: () =>
+            import("@/views/BusinessFunctionMenu/OrderMatterView"),
+        meta: { title: "订单类型" },
+      },
     ],
   },
 ];

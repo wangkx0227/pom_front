@@ -52,9 +52,9 @@
         <i class="el-icon-setting"></i>
         <span>功能设置</span>
       </template>
+      <el-menu-item index="/business_function/no_order_matter">非订单</el-menu-item>
+      <el-menu-item index="/business_function/order_matter">订单类</el-menu-item>
       <el-menu-item index="7-6">事务规则设置</el-menu-item>
-      <el-menu-item index="7-2">非订单类清单</el-menu-item>
-      <el-menu-item index="7-3">订单类清单</el-menu-item>
       <el-menu-item index="7-4">事务变更设置</el-menu-item>
       <el-menu-item index="/business_function/factory_bind_user">工厂绑定FMR</el-menu-item>
 
