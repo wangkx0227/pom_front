@@ -2,7 +2,7 @@
   <div class="work" v-loading="loading">
     <div class="head_search_add">
       <el-button v-if="method_list.includes('POST')" type="info" icon="el-icon-circle-plus-outline" plain
-        @click="dialogDisplay">添加
+                 @click="dialogDisplay">添加
       </el-button>
       <el-input placeholder="请输入非订单事项名称" v-model="search" clearable class="input_search">
       </el-input>
@@ -12,19 +12,29 @@
       </el-button>
     </div>
     <div class="dialog">
-      <el-dialog title="公司添加" :visible.sync="dialogDisplayVar" width="35%" :before-close="handleClose">
+      <el-dialog title="非订单事项添加" :visible.sync="dialogDisplayVar" width="35%" :before-close="handleClose">
+        <el-alert
+            title="注意："
+            type="warning"
+            description="生成的天数：最大30天，最小1天。状态默认是开启的。">
+        </el-alert>
         <el-form :model="addWorkForm" label-position="top" :rules="rules" ref="addWorkRef">
-          <el-form-item label="公司名称" prop="Work">
-            <el-input v-model="addWorkForm.Work"></el-input>
+          <el-form-item label="事项名称" prop="matter_name">
+            <el-input v-model="addWorkForm.matter_name"></el-input>
           </el-form-item>
-          <el-form-item label="名称缩写" prop="abbr">
-            <el-input v-model="addWorkForm.abbr"></el-input>
+          <el-form-item label="状态" prop="is_show">
+            <el-switch
+                v-model="addWorkForm.is_show"
+                active-color="#13ce66"
+                inactive-color="#ff4949"
+                active-text="开"
+                inactive-text="关"
+            >
+            </el-switch>
           </el-form-item>
-          <el-form-item label="英文名称" prop="english">
-            <el-input v-model="addWorkForm.english"></el-input>
-          </el-form-item>
-          <el-form-item label="描述信息" prop="description">
-            <el-input type="textarea" v-model="addWorkForm.description"></el-input>
+          <el-form-item label="提前生成天数" prop="lead_time_day">
+            <el-input-number v-model="addWorkForm.lead_time_day" controls-position="right" :min="1"
+                             :max="30"></el-input-number>
           </el-form-item>
         </el-form>
         <template v-slot:footer>
@@ -39,7 +49,7 @@
     <div class="table_content">
       <el-table :data="WorkData" style="width: 100%" max-height="580">
         <el-table-column prop="index" label="#" align="center"></el-table-column>
-        <el-table-column label="事项名称" align="center"  width="350">
+        <el-table-column label="事项名称" align="center" width="350">
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.matter_name }}</span>
             <el-input v-model="row.matter_name" v-else></el-input>
@@ -50,6 +60,8 @@
             <el-switch
                 v-if="!row.editable"
                 v-model="row.switch_value"
+                active-color="#13ce66"
+                inactive-color="#ff4949"
                 disabled
                 active-text="开"
                 inactive-text="关"
@@ -59,16 +71,19 @@
                 v-else
                 v-model="row.switch_value"
                 @change="changeSwitch($event,row)"
+                active-color="#13ce66"
+                inactive-color="#ff4949"
                 active-text="开"
                 inactive-text="关"
             >
             </el-switch>
           </template>
         </el-table-column>
-        <el-table-column label="提前天数生成" align="center" >
+        <el-table-column label="提前天数生成" align="center" width="200">
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.lead_time_day }}天</span>
-            <el-input v-model="row.lead_time_day" v-else></el-input>
+            <el-input-number v-model="row.lead_time_day" :min="1" :max="30" v-else
+                             controls-position="right"></el-input-number>
           </template>
         </el-table-column>
         <el-table-column label="创建日期" align="center" width="180">
@@ -98,7 +113,7 @@
             </div>
             <div v-if="method_list.includes('DELETE')" style="display: inline-block;">
               <el-popover v-if="!scope.row.editable" placement="top" width="160" v-model="scope.row.visible"
-                trigger="manual">
+                          trigger="manual">
                 <p>删除后无恢复，请问确定删除吗？</p>
                 <div style="text-align: right; margin: 0">
                   <el-button size="mini" type="text" @click="scope.row.visible = false">取消
@@ -114,7 +129,7 @@
             </div>
             <div v-if="method_list.includes('PUT')" style="display: inline-block;">
               <el-button style="margin-left: 0" v-if="scope.row.editable" @click="scope.row.editable = false"
-                size="mini" type="text">取消
+                         size="mini" type="text">取消
               </el-button>
             </div>
           </template>
@@ -123,7 +138,8 @@
     </div>
     <div class="pagination">
       <el-pagination hide-on-single-page @current-change="currentPage" @prev-click="prevPage" @next-click="nextPage"
-        background layout="total,prev, pager, next" :page-size="10" :total="data_total" v-model:current-page="page">
+                     background layout="total,prev, pager, next" :page-size="10" :total="data_total"
+                     v-model:current-page="page">
       </el-pagination>
     </div>
   </div>
@@ -133,11 +149,6 @@
 export default {
   name: "WorkModule",
   data() {
-    let descriptionLen = (rule, value, callback) => {
-      if (this.addWorkForm.description.length >= 200) {
-        callback(new Error("长度在不能超出 200 个字符"));
-      }
-    };
     return {
       search: "",
       loading: false, // 数据加载样式
@@ -146,10 +157,9 @@ export default {
       dialogDisplayVar: false,
       //  添加弹出框数据
       addWorkForm: {
-        Work: "",
-        abbr: "",
-        english: "",
-        description: "",
+        matter_name: "",
+        is_show: true,
+        lead_time_day: "",
       },
       // 弹出框内输入框大小
       formLabelWidth: "120px",
@@ -157,18 +167,15 @@ export default {
       addLoading: false,
       // 弹窗内的表单验证
       rules: {
-        Work: [
-          { required: true, message: "请输入公司名称", trigger: "blur" },
+        matter_name: [
+          {required: true, message: "请输事务的名称", trigger: "blur"},
           {
             min: 1,
             max: 15,
-            message: "长度在 1 到 15 个字符之间",
+            message: "长度在 1 到 99 个字符之间",
             trigger: "blur",
           },
         ],
-        description: [{ validator: descriptionLen, trigger: "blur" }],
-        abbr: [],
-        english: [],
       },
       // 分页
       data_total: 0, // 数据总数
@@ -192,22 +199,22 @@ export default {
       let pk = row.id;
       this.loading = true;
       this.$http
-        .delete("business_function/no_order_matter/", {
-          data: { pk: pk },
-        })
-        .then((res) => {
-          let data = res.data;
-          if (data.code === 200) {
-            this.$message.success(data.message);
-            this.getWorkData();
-            rows.splice(index, 1);
-          } else {
-            this.$message.error(data.message);
-          }
-        })
-        .catch((error) => {
-          this.$message.error(error.message);
-        })
+          .delete("business_function/no_order_matter/", {
+            data: {pk: pk},
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.$message.success(data.message);
+              this.getWorkData();
+              rows.splice(index, 1);
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
     },
     // 编辑按钮，修改row.editable值 让这条可以进行修改
     editRow(row) {
@@ -218,22 +225,22 @@ export default {
       // 保存的数据 row
       this.loading = true;
       this.$http
-        .put("business_function/no_order_matter/", {
-          data: row,
-        })
-        .then((res) => {
-          let data = res.data;
-          if (data.code === 200) {
-            row.editable = false;
-            this.$message.success(data.message);
-            this.getWorkData();
-          } else {
-            this.$message.error(data.message);
-          }
-        })
-        .catch((error) => {
-          this.$message.error(error.message);
-        })
+          .put("business_function/no_order_matter/", {
+            data: row,
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              row.editable = false;
+              this.$message.success(data.message);
+              this.getWorkData();
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
     },
     // 显示弹框
     dialogDisplay() {
@@ -253,31 +260,32 @@ export default {
     // 弹窗内创建按钮
     addWorkData(formName) {
       this.addLoading = true;
-      if (!this.addWorkForm.Work) {
-        this.$message.error("公司名称是必填项！");
+      if (!this.addWorkForm.matter_name) {
+        this.$message.error("事务名称是必填项！");
         this.addLoading = false;
       } else {
+        this.addWorkForm.is_show = this.addWorkForm.is_show ? 1 : 0;
         this.$http
-          .post("foundation/Work/", {
-            data: this.addWorkForm,
-          })
-          .then((res) => {
-            let data = res.data;
-            if (data.code === 200) {
-              this.$message.success(data.message);
-              data.data.index = 1;
-              this.WorkData.unshift(data.data);
-              this.$refs[formName].resetFields();
-            } else {
-              this.$message.error(data.message);
-            }
-          })
-          .catch((error) => {
-            this.$message.error(error.message);
-          })
-          .finally(() => {
-            this.addLoading = false;
-          });
+            .post("business_function/no_order_matter/", {
+              data: this.addWorkForm,
+            })
+            .then((res) => {
+              let data = res.data;
+              if (data.code === 200) {
+                this.$message.success(data.message);
+                data.data.index = 1;
+                this.WorkData.unshift(data.data);
+                this.$refs[formName].resetFields();
+              } else {
+                this.$message.error(data.message);
+              }
+            })
+            .catch((error) => {
+              this.$message.error(error.message);
+            })
+            .finally(() => {
+              this.addLoading = false;
+            });
       }
     },
     // 获取数据
@@ -289,28 +297,28 @@ export default {
         get_url = `business_function/no_order_matter/?page=${this.page}`;
       }
       this.$http
-        .get(get_url)
-        .then((res) => {
-          let data = res.data;
-          if (data.code === 200) {
-            this.WorkData = data.data.data;
-            this.data_total = data.data.data_total;
-            this.method_list = data.data.method_list;
-            // 如果项目刚刚安装好后，需要有这些权限支撑
-            if (this.method_list.length === 0) {
-              this.method_list = ["GET", "PUT", "DELETE", "POST"]
+          .get(get_url)
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.WorkData = data.data.data;
+              this.data_total = data.data.data_total;
+              this.method_list = data.data.method_list;
+              // 如果项目刚刚安装好后，需要有这些权限支撑
+              if (this.method_list.length === 0) {
+                this.method_list = ["GET", "PUT", "DELETE", "POST"]
+              }
+            } else {
+              this.WorkData = [];
             }
-          } else {
-            this.WorkData = [];
-          }
-        })
-        .catch((error) => {
-          this.$message.error(error.message);
-        })
-        .finally(() => {
-          this.page_status = 0;
-          this.loading = false;
-        });
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.page_status = 0;
+            this.loading = false;
+          });
     },
     // 页码功能
     nextPage(page) {
@@ -351,9 +359,8 @@ export default {
       this.getWorkData();
     },
     // 开关方法变动回调函数。
-    changeSwitch(newValue,row) {
+    changeSwitch(newValue, row) {
       row.is_show = newValue ? 1 : 0;
-      console.log(row.is_show)
     }
   },
 };

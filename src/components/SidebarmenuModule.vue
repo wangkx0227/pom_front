@@ -5,6 +5,7 @@
       :default-active="activeIndex"
       @open="handleOpen"
       @close="handleClose"
+      unique-opened
   >
     <el-menu-item index="/index/dashboard_info/">
       <i class="el-icon-pie-chart"></i>
