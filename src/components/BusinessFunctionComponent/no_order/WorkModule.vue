@@ -19,23 +19,47 @@
             description="生成的天数：最大30天，最小1天。状态默认是开启的。">
         </el-alert>
         <el-form :model="addWorkForm" label-position="top" :rules="rules" ref="addWorkRef">
-          <el-form-item label="事项名称" prop="matter_name">
-            <el-input v-model="addWorkForm.matter_name"></el-input>
-          </el-form-item>
-          <el-form-item label="状态" prop="is_show">
-            <el-switch
-                v-model="addWorkForm.is_show"
-                active-color="#13ce66"
-                inactive-color="#ff4949"
-                active-text="开"
-                inactive-text="关"
-            >
-            </el-switch>
-          </el-form-item>
-          <el-form-item label="提前生成天数" prop="lead_time_day">
-            <el-input-number v-model="addWorkForm.lead_time_day" controls-position="right" :min="1"
-                             :max="30"></el-input-number>
-          </el-form-item>
+          <el-row :gutter="24">
+            <el-col :span="24">
+              <el-form-item label="事项名称" prop="matter_name">
+                <el-input v-model="addWorkForm.matter_name"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="状态" prop="is_show">
+                <el-switch
+                    v-model="addWorkForm.is_show"
+                    active-color="#13ce66"
+                    inactive-color="#ff4949"
+                    active-text="开"
+                    inactive-text="关"
+                >
+                </el-switch>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="提前生成天数" prop="lead_time_day">
+                <el-input-number v-model="addWorkForm.lead_time_day" controls-position="right" :min="1"
+                                 :max="30"></el-input-number>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="绑定用户">
+                <el-cascader
+                    clearable
+                    collapse-tags
+                    :props="{ multiple: true }"
+                    :options="user_data_list"
+                    v-model="user_id_list"
+                    :show-all-levels="false">
+                  <template slot-scope="{ node, data }">
+                    <span>{{ data.label }}</span>
+                    <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
+                  </template>
+                </el-cascader>
+              </el-form-item>
+            </el-col>
+          </el-row>
         </el-form>
         <template v-slot:footer>
           <div class="dialog-footer">
@@ -55,7 +79,7 @@
             <el-input v-model="row.matter_name" v-else></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="状态" align="center">
+        <el-table-column label="状态" align="center" width="100">
           <template v-slot="{ row }">
             <el-switch
                 v-if="!row.editable"
@@ -86,21 +110,31 @@
                              controls-position="right"></el-input-number>
           </template>
         </el-table-column>
-        <el-table-column label="创建日期" align="center" width="180">
+        <el-table-column label="绑定用户" align="center" width="180">
           <template v-slot="{ row }">
-            <el-tooltip class="item" effect="dark" :content="row.create_date" placement="bottom">
-              <div class="cell ellipsis">{{ row.create_date }}</div>
+            <el-tooltip v-if="!row.editable" class="item" effect="dark" :content="row.users" placement="bottom">
+              <span>{{ row.users.substring(0, 10) }}
+              <span v-if="row.users && row.users.length >= 10">...</span></span>
             </el-tooltip>
+            <el-cascader
+                clearable v-else
+                collapse-tags
+                :props="{ multiple: true }"
+                :options="user_data_list"
+                v-model="user_id_list"
+                :show-all-levels="false">
+              <template slot-scope="{ node, data }">
+                <span>{{ data.label }}</span>
+                <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
+              </template>
+            </el-cascader>
           </template>
         </el-table-column>
-        <el-table-column label="修改日期" align="center" width="180">
-          <template v-slot="{ row }">
-            <el-tooltip class="item" effect="dark" :content="row.update_date" placement="bottom">
-              <div class="cell ellipsis">{{ row.update_date }}</div>
-            </el-tooltip>
-          </template>
+        <el-table-column label="创建日期" align="center" width="180" prop="create_date">
         </el-table-column>
-        <el-table-column label="操作" align="center">
+        <el-table-column label="修改日期" align="center" width="180" prop="update_date">
+        </el-table-column>
+        <el-table-column label="操作" align="center" width="180">
           <template v-slot="scope">
             <div v-if="method_list.includes('PUT')" style="display: inline-block;">
               <el-button v-if="!scope.row.editable" @click="editRow(scope.row)" size="mini" type="text">编辑
@@ -160,6 +194,7 @@ export default {
         matter_name: "",
         is_show: true,
         lead_time_day: "",
+        user_id_list: [],
       },
       // 弹出框内输入框大小
       formLabelWidth: "120px",
@@ -183,13 +218,36 @@ export default {
       page: 1,
       // 可访问权限列表
       method_list: [],
+      // 用户信息列表
+      user_data_list: [],
+      user_id_list: [], // 存储用户的id列表
     };
   },
   created() {
     this.loading = true;
+    this.getUsers()
     this.getWorkData();
   },
   methods: {
+    // 获取用户信息
+    getUsers() {
+      this.$http
+          .get("users/info/?status=classification")
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.user_data_list = data.data;
+            } else {
+              this.user_data_list = [];
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+    },
     //删除按钮显示小弹框
     deleteDisplay(row) {
       row.visible = true;
@@ -222,7 +280,13 @@ export default {
     },
     // 修改保存按钮
     saveRow(row) {
-      // 保存的数据 row
+      row.user_id_list = [];
+      if (this.user_id_list.length >= 1) {
+        for (let i = 0; i < this.user_id_list.length; i++) {
+          let user_id = this.user_id_list[i].pop();
+          row.user_id_list.push(user_id);
+        }
+      }
       this.loading = true;
       this.$http
           .put("business_function/no_order_matter/", {
@@ -240,7 +304,10 @@ export default {
           })
           .catch((error) => {
             this.$message.error(error.message);
-          })
+          }).finally(() => {
+        this.user_id_list = [];
+      })
+
     },
     // 显示弹框
     dialogDisplay() {
@@ -260,6 +327,12 @@ export default {
     // 弹窗内创建按钮
     addWorkData(formName) {
       this.addLoading = true;
+      if (this.user_id_list.length >= 1) {
+        for (let i = 0; i < this.user_id_list.length; i++) {
+          let user_id = this.user_id_list[i].pop();
+          this.addWorkForm.user_id_list.push(user_id);
+        }
+      }
       if (!this.addWorkForm.matter_name) {
         this.$message.error("事务名称是必填项！");
         this.addLoading = false;
@@ -284,6 +357,8 @@ export default {
               this.$message.error(error.message);
             })
             .finally(() => {
+              this.user_id_list = [];
+              this.addWorkForm.is_show = true;
               this.addLoading = false;
             });
       }
