@@ -2,7 +2,7 @@
   <div class="department" v-loading="loading">
     <div class="head_search_add">
       <el-button type="info" icon="el-icon-circle-plus-outline" plain @click="dialogDisplay"
-        v-if="method_list.includes('POST')">添加
+                 v-if="method_list.includes('POST')">添加
       </el-button>
       <el-input placeholder="请输入搜索部门名称" v-model="search" clearable class="input_search">
       </el-input>
@@ -18,9 +18,10 @@
             <el-input v-model="addDepartmentForm.department"></el-input>
           </el-form-item>
           <el-form-item label="关联公司">
-            <el-select popper-class="select_class" v-model="addDepartmentForm.firmIdList" multiple collapse-tags clearable
-              placeholder="请选择">
-              <el-option v-for="item in FirmDataList" :key="item.id" :label="item.firm" :value="item.id">
+            <el-select popper-class="select_class" v-model="addDepartmentForm.RuleIdList" multiple collapse-tags
+                       clearable
+                       placeholder="请选择">
+              <el-option v-for="item in RuleDataList" :key="item.id" :label="item.Rule" :value="item.id">
               </el-option>
             </el-select>
           </el-form-item>
@@ -38,50 +39,37 @@
       </el-dialog>
     </div>
     <div class="table_content">
-      <el-table :data="DepartmentData" style="width: 100%" max-height="580">
+      <el-table :data="RuleData" style="width: 100%" max-height="580">
         <el-table-column prop="index" label="#" align="center"></el-table-column>
-        <el-table-column label="部门名称" align="center">
+        <el-table-column label="规则名称" align="center">
           <template v-slot="{ row }">
-            <span v-if="!row.editable">{{ row.department }}</span>
-            <el-input v-model="row.department" v-else></el-input>
+            <span v-if="!row.editable">{{ row.rule_name }}</span>
+            <el-input v-model="row.rule_name" v-else></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="描述信息" align="center">
+        <el-table-column label="规则模式" align="center">
           <template v-slot="{ row }">
-            <el-tooltip class="item" effect="dark" :content="row.description" placement="bottom" v-if="!row.editable">
-              <div class="cell ellipsis">{{ row.description }}</div>
-            </el-tooltip>
-            <el-input type="textarea" v-model="row.description" v-else></el-input>
+            <span v-if="!row.editable">{{ row.rule_mode }}</span>
+            <el-input v-model="row.rule_mode" v-else></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="创建日期" align="center">
+        <el-table-column label="间隔时间" align="center">
           <template v-slot="{ row }">
-            <el-tooltip class="item" effect="dark" :content="row.create_date" placement="bottom">
-              <div class="cell ellipsis">{{ row.create_date }}</div>
-            </el-tooltip>
+            <span v-if="!row.editable">{{ row.interval_time }}</span>
+            <el-input v-model="row.interval_time" v-else></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="修改日期" align="center">
+        <el-table-column label="是否禁用" align="center">
           <template v-slot="{ row }">
-            <el-tooltip class="item" effect="dark" :content="row.update_date" placement="bottom">
-              <div class="cell ellipsis">{{ row.update_date }}</div>
-            </el-tooltip>
+            <span v-if="!row.editable">{{ row.is_show }}</span>
+            <el-input v-model="row.is_show" v-else></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="归属公司" align="center">
-          <template v-slot="{ row }">
-            <div class="tag-group" v-if="!row.editable">
-              <el-tag style="margin-right: 2px" v-for="firm_name in row.firm_name_list" :key="firm_name" type="success"
-                effect="plain">
-                {{ firm_name }}
-              </el-tag>
-            </div>
-            <el-select v-else v-model="FirmIdList" style="margin-left: 20px" multiple collapse-tags clearable>
-              <el-option v-for="item in FirmDataList" :key="item.id" :label="item.firm" :value="item.id">
-              </el-option>
-            </el-select>
-          </template>
+        <el-table-column label="创建日期" align="center" prop="create_date">
         </el-table-column>
+        <el-table-column label="修改日期" align="center" prop="update_date">
+        </el-table-column>
+
         <el-table-column label="操作" align="center">
           <template v-slot="scope">
             <div v-if="method_list.includes('PUT')" style="display: inline-block;">
@@ -95,7 +83,7 @@
             </div>
             <div v-if="method_list.includes('DELETE')" style="display: inline-block;">
               <el-popover v-if="!scope.row.editable" placement="top" width="160" v-model="scope.row.visible"
-                trigger="manual">
+                          trigger="manual">
                 <p>删除后无恢复，请问确定删除吗？</p>
                 <div style="text-align: right; margin: 0">
                   <el-button size="mini" type="text" @click="scope.row.visible = false">取消
@@ -110,8 +98,9 @@
               </el-popover>
             </div>
             <div v-if="method_list.includes('PUT')" style="display: inline-block;">
-              <el-button style="margin-left: 0" v-if="scope.row.editable" @click="scope.row.editable = false" size="mini"
-                type="text">取消
+              <el-button style="margin-left: 0" v-if="scope.row.editable" @click="scope.row.editable = false"
+                         size="mini"
+                         type="text">取消
               </el-button>
             </div>
           </template>
@@ -120,7 +109,8 @@
     </div>
     <div class="pagination">
       <el-pagination hide-on-single-page @current-change="currentPage" @prev-click="prevPage" @next-click="nextPage"
-        background layout="total,prev, pager, next" :page-size="10" :total="data_total" v-model:current-page="page">
+                     background layout="total,prev, pager, next" :page-size="10" :total="data_total"
+                     v-model:current-page="page">
       </el-pagination>
     </div>
   </div>
@@ -128,7 +118,7 @@
 
 <script>
 export default {
-  name: "DepartmentModule",
+  name: "RoleModule",
   data() {
     let descriptionLen = (rule, value, callback) => {
       if (this.addDepartmentForm.description.length >= 200) {
@@ -136,15 +126,23 @@ export default {
       }
     };
     return {
+      // 规则列表
+      event_list: [
+        {label: "分", value: 0, event_value: 'second'},
+        {label: "时", value: 1, event_value: 'minute'},
+        {label: "日", value: 2, event_value: 'day'},
+        {label: "月", value: 3, event_value: 'month'},
+        {label: "周", value: 4, event_value: 'week'},
+      ],
       search: "",
       loading: false, // 数据加载样式
-      DepartmentData: [],
+      RuleData: [],
       // 弹出框控制变量
       dialogDisplayVar: false,
       //  添加弹出框数据
       addDepartmentForm: {
         department: "",
-        firmIdList: [],
+        RuleIdList: [],
         description: "",
       },
       // 弹出框内输入框大小
@@ -154,7 +152,7 @@ export default {
       // 弹窗内的表单验证
       DepartmentRules: {
         department: [
-          { required: true, message: "请输入部门名称", trigger: "blur" },
+          {required: true, message: "请输入部门名称", trigger: "blur"},
           {
             min: 1,
             max: 15,
@@ -162,23 +160,19 @@ export default {
             trigger: "blur",
           },
         ],
-        description: [{ validator: descriptionLen, trigger: "blur" }],
+        description: [{validator: descriptionLen, trigger: "blur"}],
       },
       // 分页
       data_total: 0, // 数据总数
       page_status: 0, // 分页状态变量，当上下一页时进行改变，只有是0时点击数字页码会改变
       page: 1,
-      // 下拉框
-      FirmIdList: [], // 公司id列表
-      FirmDataList: [], // 搜索后的列表
       // 权限
       method_list: [],
     };
   },
   created() {
     this.loading = true;
-    this.getDepartmentData();
-    this.getFirmData();
+    this.getRuleData();
   },
   methods: {
     //删除按钮显示小弹框
@@ -190,22 +184,22 @@ export default {
       let pk = row.id;
       this.loading = true;
       this.$http
-        .delete("foundation/department/", {
-          data: { pk: pk },
-        })
-        .then((res) => {
-          let data = res.data;
-          if (data.code === 200) {
-            this.$message.success(data.message);
-            this.getDepartmentData();
-            rows.splice(index, 1);
-          } else {
-            this.$message.error(data.message);
-          }
-        })
-        .catch((error) => {
-          this.$message.error(error.message);
-        })
+          .delete("foundation/department/", {
+            data: {pk: pk},
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.$message.success(data.message);
+              this.getDepartmentData();
+              rows.splice(index, 1);
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
     },
     // 编辑按钮，修改row.editable值 让这条可以进行修改
     editRow(row) {
@@ -215,25 +209,25 @@ export default {
     saveRow(row) {
       // 保存的数据 row
       this.loading = true;
-      row.firm_id_list = this.FirmIdList; // 部门绑定公司的id列表
+      row.Rule_id_list = this.RuleIdList; // 部门绑定公司的id列表
 
       this.$http
-        .put("foundation/department/", {
-          data: row,
-        })
-        .then((res) => {
-          let data = res.data;
-          if (data.code === 200) {
-            row.editable = false;
-            this.$message.success(data.message);
-            this.getDepartmentData();
-          } else {
-            this.$message.error(data.message);
-          }
-        })
-        .catch((error) => {
-          this.$message.error(error.message);
-        })
+          .put("foundation/department/", {
+            data: row,
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              row.editable = false;
+              this.$message.success(data.message);
+              this.getDepartmentData();
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
     },
     // 显示弹框
     dialogDisplay() {
@@ -258,57 +252,61 @@ export default {
         this.addLoading = false;
       } else {
         this.$http
-          .post("foundation/department/", {
-            data: this.addDepartmentForm,
-          })
-          .then((res) => {
-            let data = res.data;
-            if (data.code === 200) {
-              this.$message.success(data.message);
-              data.data.index = 1;
-              this.DepartmentData.unshift(data.data);
-              this.$refs[formName].resetFields();
-              this.FirmDataSearch = [];
-            } else {
-              this.$message.error(data.message);
-            }
-          })
-          .catch((error) => {
-            console.log(error);
-            this.$message.error(error.message);
-          })
-          .finally(() => {
-            this.addLoading = false;
-          });
+            .post("foundation/department/", {
+              data: this.addDepartmentForm,
+            })
+            .then((res) => {
+              let data = res.data;
+              if (data.code === 200) {
+                this.$message.success(data.message);
+                data.data.index = 1;
+                this.DepartmentData.unshift(data.data);
+                this.$refs[formName].resetFields();
+                this.RuleDataSearch = [];
+              } else {
+                this.$message.error(data.message);
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+              this.$message.error(error.message);
+            })
+            .finally(() => {
+              this.addLoading = false;
+            });
       }
     },
     // 获取数据
-    getDepartmentData() {
+    getRuleData() {
       let get_url;
       if (this.search) {
-        get_url = `foundation/department/?page=${this.page}&search=${this.search}`;
+        get_url = `business_function/no_order_matter_rule/?page=${this.page}&search=${this.search}`;
       } else {
-        get_url = `foundation/department/?page=${this.page}`;
+        get_url = `business_function/no_order_matter_rule/?page=${this.page}`;
       }
       this.$http
-        .get(get_url)
-        .then((res) => {
-          let data = res.data;
-          if (data.code === 200) {
-            this.DepartmentData = data.data.data;
-            this.data_total = data.data.data_total;
-            this.method_list = data.data.method_list;
-          } else {
-            this.firmData = [];
-          }
-        })
-        .catch((error) => {
-          this.$message.error(error.message);
-        })
-        .finally(() => {
-          this.page_status = 0;
-          this.loading = false;
-        });
+          .get(get_url)
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.RuleData = data.data.data;
+              this.data_total = data.data.data_total;
+              this.method_list = data.data.method_list;
+              // 如果项目刚刚安装好后，需要有这些权限支撑
+              if (this.method_list.length === 0) {
+                this.method_list = ["GET", "PUT", "DELETE", "POST"]
+              }
+            } else {
+              this.RuleData = [];
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.page_status = 0;
+            this.loading = false;
+          });
     },
     // 页码功能
     nextPage(page) {
@@ -347,26 +345,6 @@ export default {
     reloadData() {
       this.search = "";
       this.getDepartmentData();
-    },
-    // 远程下拉框搜索,使用方法
-    // 通过查询参数，模糊查询公司名称
-    getFirmData() {
-      this.$http
-        .get("foundation/firm/?status=all")
-        .then((res) => {
-          let data = res.data;
-          if (data.code === 200) {
-            this.FirmDataList = data.data;
-          } else {
-            this.FirmDataList = [];
-          }
-        })
-        .catch((error) => {
-          this.$message.error(error.message);
-        })
-        .finally(() => {
-          this.loading = false;
-        });
     },
   },
 };
