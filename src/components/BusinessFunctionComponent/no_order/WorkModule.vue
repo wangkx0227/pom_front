@@ -16,7 +16,7 @@
         <el-alert
             title="注意："
             type="warning"
-            description="生成的天数：最大30天，最小1天。状态默认是开启的。">
+            description="默认状态是开启的，附件是默认需要上传的，添加时根据需求进行修改。">
         </el-alert>
         <el-form :model="addWorkForm" label-position="top" :rules="rules" ref="addWorkRef">
           <el-row :gutter="24">
@@ -38,9 +38,11 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="提前生成天数" prop="lead_time_day">
-                <el-input-number v-model="addWorkForm.lead_time_day" controls-position="right" :min="1"
-                                 :max="30"></el-input-number>
+              <el-form-item label="是否上传附件" prop="is_file">
+                <el-select v-model="addWorkForm.is_file" collapse-tags clearable placeholder="请输选择">
+                  <el-option v-for="item in is_file_list" :key="item.value" :label="item.label" :value="item.value">
+                  </el-option>
+                </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -103,9 +105,13 @@
             </el-switch>
           </template>
         </el-table-column>
-        <el-table-column label="提前天数生成" align="center" width="200">
+        <el-table-column label="是否上传附件" align="center" width="200">
           <template v-slot="{ row }">
-            <span v-if="!row.editable">{{ row.lead_time_day }}天</span>
+            <span v-if="!row.editable">{{ row.is_file ? "是" : "否" }} </span>
+            <el-select v-else v-model="row.is_file" collapse-tags clearable placeholder="请输选择">
+              <el-option v-for="item in is_file_list" :key="item.value" :label="item.label" :value="item.value">
+              </el-option>
+            </el-select>
             <el-input-number v-model="row.lead_time_day" :min="1" :max="30" v-else
                              controls-position="right"></el-input-number>
           </template>
@@ -184,20 +190,16 @@ export default {
   name: "WorkModule",
   data() {
     return {
-      search: "",
+      search: "", // 搜索
+      WorkData: [], // 查询
       loading: false, // 数据加载样式
-      WorkData: [],
-      // 弹出框控制变量
-      dialogDisplayVar: false,
-      //  添加弹出框数据
+      //  添加弹出框数据 添加使用变量
       addWorkForm: {
         matter_name: "",
         is_show: true,
-        lead_time_day: "",
+        is_file: 1,
         user_id_list: [],
       },
-      // 弹出框内输入框大小
-      formLabelWidth: "120px",
       // 控制弹窗创建按钮
       addLoading: false,
       // 弹窗内的表单验证
@@ -212,6 +214,11 @@ export default {
           },
         ],
       },
+      // 弹出框内输入框大小
+      formLabelWidth: "120px",
+      // 弹出框控制变量
+      dialogDisplayVar: false,
+
       // 分页
       data_total: 0, // 数据总数
       page_status: 0, // 分页状态变量，当上下一页时进行改变，只有是0时点击数字页码会改变
@@ -221,6 +228,12 @@ export default {
       // 用户信息列表
       user_data_list: [],
       user_id_list: [], // 存储用户的id列表
+
+      // 是否上传附件
+      is_file_list: [
+        {label: '否', value: 0},
+        {label: '是', value: 1},
+      ],
     };
   },
   created() {

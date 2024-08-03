@@ -12,8 +12,8 @@
       </el-button>
     </div>
     <div class="dialog">
-      <el-dialog title="部门添加" :visible.sync="dialogDisplayVar" width="35%" :before-close="handleClose">
-        <el-form :model="addDepartmentForm" label-position="top" :rules="DepartmentRules" ref="addDepartmentRef">
+      <el-dialog title="添加规则" :visible.sync="dialogDisplayVar" width="35%" :before-close="handleClose">
+        <el-form :model="addDepartmentForm" label-position="top" :rules="DepartmentRules" ref="addRuleRef">
           <el-form-item label="部门名称" prop="department">
             <el-input v-model="addDepartmentForm.department"></el-input>
           </el-form-item>
@@ -31,8 +31,8 @@
         </el-form>
         <template v-slot:footer>
           <div class="dialog-footer">
-            <el-button @click="dialogClose('addDepartmentRef')">取 消</el-button>
-            <el-button type="primary" @click="addDepartmentData('addDepartmentRef')" :loading="addLoading">立即创建
+            <el-button @click="dialogClose('addRuleRef')">取 消</el-button>
+            <el-button type="primary" @click="addRuleData('addRuleRef')" :loading="addLoading">立即创建
             </el-button>
           </div>
         </template>
@@ -53,13 +53,13 @@
             <el-input v-model="row.rule_mode" v-else></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="间隔时间" align="center">
+        <el-table-column label="生成提前时间（天）" align="center">
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.interval_time }}</span>
             <el-input v-model="row.interval_time" v-else></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="是否禁用" align="center">
+        <el-table-column label="当前状态" align="center">
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.is_show }}</span>
             <el-input v-model="row.is_show" v-else></el-input>
@@ -88,7 +88,7 @@
                 <div style="text-align: right; margin: 0">
                   <el-button size="mini" type="text" @click="scope.row.visible = false">取消
                   </el-button>
-                  <el-button type="primary" size="mini" @click="deleteRow(scope.$index, DepartmentData, scope.row)">确定
+                  <el-button type="primary" size="mini" @click="deleteRow(scope.$index, RuleData, scope.row)">确定
                   </el-button>
                 </div>
                 <template v-slot:reference>
@@ -126,6 +126,8 @@ export default {
       }
     };
     return {
+      //
+      RuleDataList:[],
       // 规则列表
       event_list: [
         {label: "分", value: 0, event_value: 'second'},
@@ -134,9 +136,14 @@ export default {
         {label: "月", value: 3, event_value: 'month'},
         {label: "周", value: 4, event_value: 'week'},
       ],
+      //规则当前状态
+      rule_status: [
+        {label: '未激活', value: 0, status_value: 'inactive'},
+        {label: '激活', value: 1, status_value: 'active '},
+      ],
       search: "",
       loading: false, // 数据加载样式
-      RuleData: [],
+      RuleData: [], // 存储数据的列表
       // 弹出框控制变量
       dialogDisplayVar: false,
       //  添加弹出框数据
@@ -184,14 +191,14 @@ export default {
       let pk = row.id;
       this.loading = true;
       this.$http
-          .delete("foundation/department/", {
+          .delete("business_function/no_order_matter_rule/", {
             data: {pk: pk},
           })
           .then((res) => {
             let data = res.data;
             if (data.code === 200) {
               this.$message.success(data.message);
-              this.getDepartmentData();
+              this.getRuleData();
               rows.splice(index, 1);
             } else {
               this.$message.error(data.message);
@@ -210,7 +217,6 @@ export default {
       // 保存的数据 row
       this.loading = true;
       row.Rule_id_list = this.RuleIdList; // 部门绑定公司的id列表
-
       this.$http
           .put("foundation/department/", {
             data: row,
@@ -220,7 +226,7 @@ export default {
             if (data.code === 200) {
               row.editable = false;
               this.$message.success(data.message);
-              this.getDepartmentData();
+              this.getRuleData();
             } else {
               this.$message.error(data.message);
             }
@@ -237,15 +243,15 @@ export default {
     dialogClose(formName) {
       this.dialogDisplayVar = false;
       this.$refs[formName].resetFields();
-      this.getDepartmentData(); // 进行回调，重新载入一下数据
+      this.getRuleData(); // 进行回调，重新载入一下数据
     },
     // ×关闭
     handleClose() {
       this.dialogDisplayVar = false;
-      this.getDepartmentData(); // 进行回调，重新载入一下数据
+      this.getRuleData(); // 进行回调，重新载入一下数据
     },
     // 弹窗内创建按钮
-    addDepartmentData(formName) {
+    addRuleData(formName) {
       this.addLoading = true;
       if (!this.addDepartmentForm.department) {
         this.$message.error("部门名称属于必填项！");
@@ -260,7 +266,7 @@ export default {
               if (data.code === 200) {
                 this.$message.success(data.message);
                 data.data.index = 1;
-                this.DepartmentData.unshift(data.data);
+                this.RuleData.unshift(data.data);
                 this.$refs[formName].resetFields();
                 this.RuleDataSearch = [];
               } else {
@@ -314,21 +320,21 @@ export default {
       this.page_status = page;
       this.page = page;
       // 下一页按钮
-      this.getDepartmentData();
+      this.getRuleData();
     },
     prevPage(page) {
       this.loading = true;
       this.page_status = page;
       this.page = page;
       // 上一页按钮
-      this.getDepartmentData();
+      this.getRuleData();
     },
     currentPage(page) {
       this.loading = true;
       this.page = page;
       // 点击按钮触发
       if (this.page_status === 0) {
-        this.getDepartmentData();
+        this.getRuleData();
       }
     },
     // 搜索功能
@@ -336,15 +342,15 @@ export default {
       this.loading = true;
       if (this.search) {
         this.page = 1;
-        this.getDepartmentData();
+        this.getRuleData();
       } else {
-        this.getDepartmentData();
+        this.getRuleData();
       }
     },
     // 重置
     reloadData() {
       this.search = "";
-      this.getDepartmentData();
+      this.getRuleData();
     },
   },
 };
