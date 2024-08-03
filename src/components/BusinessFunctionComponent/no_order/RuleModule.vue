@@ -65,14 +65,14 @@
     <div class="table_content">
       <el-table :data="RuleData" style="width: 100%" max-height="580">
         <el-table-column prop="index" label="#" align="center"></el-table-column>
-        <el-table-column label="规则名称" align="center">
+        <el-table-column label="规则名称" align="center" width="200">
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.rule_name }}</span>
             <el-input v-model="row.rule_name" v-else></el-input>
 
           </template>
         </el-table-column>
-        <el-table-column label="规则模式" align="center">
+        <el-table-column label="规则模式" align="center" width="150">
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.rule_mode ? "长期" : "一次性" }}</span>
             <el-select v-else v-model="row.rule_mode" collapse-tags clearable placeholder="请输选择">
@@ -81,14 +81,14 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column label="生成提前时间（天）" align="center" width="200">
+        <el-table-column label="生成提前时间（天）" align="center" width="180">
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.rule_advance_days }}</span>
             <el-input-number v-model="row.rule_advance_days" :min="1" :max="100" v-else
                              controls-position="right"></el-input-number>
           </template>
         </el-table-column>
-        <el-table-column label="当前状态" align="center">
+        <el-table-column label="当前状态" align="center" width="200">
           <template v-slot="{ row }">
             <el-switch
                 v-if="!row.editable"
@@ -112,9 +112,9 @@
             </el-switch>
           </template>
         </el-table-column>
-        <el-table-column label="创建日期" align="center" prop="create_date"></el-table-column>
-        <el-table-column label="修改日期" align="center" prop="update_date"></el-table-column>
-        <el-table-column label="操作" align="center">
+        <el-table-column label="创建日期" align="center" prop="create_date" width="180"></el-table-column>
+        <el-table-column label="修改日期" align="center" prop="update_date" width="180"></el-table-column>
+        <el-table-column label="操作" align="center" width="180">
           <template v-slot="scope">
             <div v-if="method_list.includes('PUT')" style="display: inline-block;">
               <el-button v-if="!scope.row.editable" @click="editRow(scope.row)" size="mini" type="text">编辑
@@ -123,7 +123,7 @@
               </el-button>
             </div>
             <div v-if="method_list.includes('PUT') || method_list.includes('DELETE')" style="display: inline;">
-              |
+              <el-divider direction="vertical"></el-divider>
             </div>
             <div v-if="method_list.includes('DELETE')" style="display: inline-block;">
               <el-popover v-if="!scope.row.editable" placement="top" width="160" v-model="scope.row.visible"

@@ -68,7 +68,7 @@
               <div v-if="menu_permission_method_list.includes('GET')" style="display: inline;">
                 <el-button size="mini" icon="el-icon-menu" type="text"
                            @click="permissionsDdialog(scope.row)"></el-button>
-                |
+                <el-divider direction="vertical"></el-divider>
               </div>
               <div v-if="method_list.includes('PUT')" style="display: inline-block;">
                 <el-button style="margin-left: 0;" v-if="!scope.row.editable" @click="editRow(scope.row)"
@@ -79,7 +79,7 @@
                 </el-button>
               </div>
               <div v-if="method_list.includes('PUT')" style="display: inline;">
-                |
+                <el-divider direction="vertical"></el-divider>
               </div>
               <div v-if="method_list.includes('DELETE')" style="display: inline-block;">
                 <el-popover v-if="!scope.row.editable" placement="top" width="160"

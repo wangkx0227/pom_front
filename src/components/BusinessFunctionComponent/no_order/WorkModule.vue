@@ -81,7 +81,7 @@
             <el-input v-model="row.matter_name" v-else></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="状态" align="center" width="100">
+        <el-table-column label="状态" align="center" width="180">
           <template v-slot="{ row }">
             <el-switch
                 v-if="!row.editable"
@@ -105,7 +105,7 @@
             </el-switch>
           </template>
         </el-table-column>
-        <el-table-column label="是否上传附件" align="center" width="200">
+        <el-table-column label="是否上传附件" align="center" width="180">
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.is_file ? "是" : "否" }} </span>
             <el-select v-else v-model="row.is_file" collapse-tags clearable placeholder="请输选择">
@@ -147,7 +147,7 @@
               </el-button>
             </div>
             <div v-if="method_list.includes('PUT') || method_list.includes('DELETE')" style="display: inline;">
-              |
+              <el-divider direction="vertical"></el-divider>
             </div>
             <div v-if="method_list.includes('DELETE')" style="display: inline-block;">
               <el-popover v-if="!scope.row.editable" placement="top" width="160" v-model="scope.row.visible"

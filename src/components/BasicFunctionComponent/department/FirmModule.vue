@@ -88,7 +88,7 @@
               </el-button>
             </div>
             <div v-if="method_list.includes('PUT') || method_list.includes('DELETE')" style="display: inline;">
-              |
+              <el-divider direction="vertical"></el-divider>
             </div>
             <div v-if="method_list.includes('DELETE')" style="display: inline-block;">
               <el-popover v-if="!scope.row.editable" placement="top" width="160" v-model="scope.row.visible"

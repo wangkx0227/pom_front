@@ -1,5 +1,5 @@
 <template>
-    <div class="users_access" v-loading="loading">
+    <div class="factory_bind_user" v-loading="loading">
         <el-card class="box-card">
             <div class="head_search_add">
                 <el-popover placement="top" width="160" style="margin-right: 5px;" v-model="loadVisibleApiFactory">
@@ -22,15 +22,15 @@
             <div class="table_content">
                 <el-table :data="factoryData" style="width: 100%" max-height="580">
                     <el-table-column prop="index" label="#" align="center"></el-table-column>
-                    <el-table-column label="工厂名称" align="center" prop="factory_name">
+                    <el-table-column label="工厂名称" align="center" prop="factory_name" width="350">
                     </el-table-column>
-                    <el-table-column label="工厂代码" align="center" prop="factory_code">
+                    <el-table-column label="工厂代码" align="center" prop="factory_code" width="120">
                     </el-table-column>
-                    <el-table-column label="载入时间" align="center" prop="create_date">
+                    <el-table-column label="载入时间" align="center" prop="create_date" width="180">
                     </el-table-column>
-                    <el-table-column label="修改时间" align="center" prop="update_date">
+                    <el-table-column label="修改时间" align="center" prop="update_date" width="180">
                     </el-table-column>
-                    <el-table-column label="绑定用户" align="center">
+                    <el-table-column label="绑定用户" align="center" width="180">
                         <template v-slot="{ row }">
                             <div class="tag-group" v-if="!row.editable">
                                 <el-tag v-if="row.user_id">{{ row.user_name }}</el-tag>
@@ -44,7 +44,7 @@
                             </el-cascader>
                         </template>
                     </el-table-column>
-                    <el-table-column label="操作" align="center">
+                    <el-table-column label="操作" align="center" width="180">
                         <template v-slot="scope">
                             <div v-if="method_list.includes('PUT')" style="display: inline-block;">
                                 <el-button v-if="!scope.row.editable" @click="editRow(scope.row)" size="mini"
@@ -54,7 +54,7 @@
                                 </el-button>
                             </div>
                             <div v-if="method_list.includes('PUT') && scope.row.editable" style="display: inline;">
-                                |
+                              <el-divider direction="vertical"></el-divider>
                             </div>
                             <div v-if="method_list.includes('PUT')" style="display: inline-block;">
                                 <el-button style="margin-left: 0" v-if="scope.row.editable"
@@ -76,11 +76,8 @@
 </template>
 
 <script>
-
-
-// 角色对应权限菜单的的展示弹窗
 export default {
-    name: "UsersAccessView",
+    name: "FactoryBindUser",
     data() {
         return {
             loadVisibleApiFactory: false,
@@ -276,49 +273,4 @@ export default {
 
 <style>
 @import url("@/static/currency.css");
-@media screen and (max-width: 700px) {
-    .users_access .el-tag {
-        font-size: 9px;
-        padding: 1px 4px;
-        height: 16px;
-        line-height: 13px;
-        border-radius: 1px;
-        margin: 2px 0 2px 2px;
-    }
-
-    .el-select-dropdown__wrap ul {
-        flex-direction: column !important;
-    }
-
-    .el-select-dropdown__wrap .el-select-dropdown__item {
-        height: 20px !important;
-        line-height: 20px !important;
-        font-size: 9px !important;
-        margin: 0 auto !important;
-        padding: 0 13px !important;
-        width: 90%;
-    }
-
-    .el-select-dropdown__wrap .el-select-dropdown__item span {
-        font-size: 9px !important;
-    }
-
-    .el-select-dropdown.is-multiple .el-select-dropdown__item.selected::after {
-        right: 11px !important;
-        font-size: 9px !important;
-    }
-
-    .el-select-dropdown__empty {
-        font-size: 7px !important;
-    }
-
-    .el-select-dropdown__wrap ul {
-        flex-direction: column !important;
-    }
-
-    .el-form-item__content .el-select .el-select__tags .el-select__input {
-        font-size: 9px;
-        margin-left: 5px;
-    }
-}
 </style>
