@@ -112,8 +112,6 @@
               <el-option v-for="item in is_file_list" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
             </el-select>
-            <el-input-number v-model="row.lead_time_day" :min="1" :max="30" v-else
-                             controls-position="right"></el-input-number>
           </template>
         </el-table-column>
         <el-table-column label="绑定用户" align="center" width="180">

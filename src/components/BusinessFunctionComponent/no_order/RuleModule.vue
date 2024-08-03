@@ -1,10 +1,10 @@
 <template>
-  <div class="department" v-loading="loading">
+  <div class="rule" v-loading="loading">
     <div class="head_search_add">
       <el-button type="info" icon="el-icon-circle-plus-outline" plain @click="dialogDisplay"
                  v-if="method_list.includes('POST')">添加
       </el-button>
-      <el-input placeholder="请输入搜索部门名称" v-model="search" clearable class="input_search">
+      <el-input placeholder="请输入规则名称" v-model="search" clearable class="input_search">
       </el-input>
       <el-button type="primary" icon="el-icon-search" plain @click="searchData">搜索
       </el-button>
@@ -13,21 +13,45 @@
     </div>
     <div class="dialog">
       <el-dialog title="添加规则" :visible.sync="dialogDisplayVar" width="35%" :before-close="handleClose">
-        <el-form :model="addDepartmentForm" label-position="top" :rules="DepartmentRules" ref="addRuleRef">
-          <el-form-item label="部门名称" prop="department">
-            <el-input v-model="addDepartmentForm.department"></el-input>
-          </el-form-item>
-          <el-form-item label="关联公司">
-            <el-select popper-class="select_class" v-model="addDepartmentForm.RuleIdList" multiple collapse-tags
-                       clearable
-                       placeholder="请选择">
-              <el-option v-for="item in RuleDataList" :key="item.id" :label="item.Rule" :value="item.id">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="描述信息" prop="description">
-            <el-input type="textarea" v-model="addDepartmentForm.description"></el-input>
-          </el-form-item>
+        <el-alert
+            title="注意："
+            type="warning"
+            description="默认状态是开启的，默认模式长期，默认提前生成天数1天，添加时根据需求进行修改。">
+        </el-alert>
+        <el-form :model="addRuleForm" label-position="top" :rules="RuleRules" ref="addRuleRef">
+          <el-row :gutter="24">
+            <el-col :span="24">
+              <el-form-item label="规则名称" prop="rule_name">
+                <el-input v-model="addRuleForm.rule_name"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="规则模式">
+                <el-select v-model="addRuleForm.rule_mode" collapse-tags clearable placeholder="请输选择">
+                  <el-option v-for="item in rule_mode_list" :key="item.value" :label="item.label" :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="提前生成天数(1-100)">
+                <el-input-number v-model="addRuleForm.rule_advance_days" :min="1" :max="100"
+                                 controls-position="right"></el-input-number>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="状态">
+                <el-switch
+                    v-model="addRuleForm.switch_value"
+                    active-color="#13ce66"
+                    inactive-color="#ff4949"
+                    active-text="激活"
+                    inactive-text="未激活"
+                >
+                </el-switch>
+              </el-form-item>
+            </el-col>
+          </el-row>
         </el-form>
         <template v-slot:footer>
           <div class="dialog-footer">
@@ -45,31 +69,51 @@
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.rule_name }}</span>
             <el-input v-model="row.rule_name" v-else></el-input>
+
           </template>
         </el-table-column>
         <el-table-column label="规则模式" align="center">
           <template v-slot="{ row }">
-            <span v-if="!row.editable">{{ row.rule_mode }}</span>
-            <el-input v-model="row.rule_mode" v-else></el-input>
+            <span v-if="!row.editable">{{ row.rule_mode ? "长期" : "一次性" }}</span>
+            <el-select v-else v-model="row.rule_mode" collapse-tags clearable placeholder="请输选择">
+              <el-option v-for="item in rule_mode_list" :key="item.value" :label="item.label" :value="item.value">
+              </el-option>
+            </el-select>
           </template>
         </el-table-column>
-        <el-table-column label="生成提前时间（天）" align="center">
+        <el-table-column label="生成提前时间（天）" align="center" width="200">
           <template v-slot="{ row }">
-            <span v-if="!row.editable">{{ row.interval_time }}</span>
-            <el-input v-model="row.interval_time" v-else></el-input>
+            <span v-if="!row.editable">{{ row.rule_advance_days }}</span>
+            <el-input-number v-model="row.rule_advance_days" :min="1" :max="100" v-else
+                             controls-position="right"></el-input-number>
           </template>
         </el-table-column>
         <el-table-column label="当前状态" align="center">
           <template v-slot="{ row }">
-            <span v-if="!row.editable">{{ row.is_show }}</span>
-            <el-input v-model="row.is_show" v-else></el-input>
+            <el-switch
+                v-if="!row.editable"
+                v-model="row.switch_value"
+                active-color="#13ce66"
+                inactive-color="#ff4949"
+                disabled
+                active-text="激活"
+                inactive-text="未激活"
+            >
+            </el-switch>
+            <el-switch
+                v-else
+                v-model="row.switch_value"
+                @change="changeSwitch($event,row)"
+                active-color="#13ce66"
+                inactive-color="#ff4949"
+                active-text="激活"
+                inactive-text="未激活"
+            >
+            </el-switch>
           </template>
         </el-table-column>
-        <el-table-column label="创建日期" align="center" prop="create_date">
-        </el-table-column>
-        <el-table-column label="修改日期" align="center" prop="update_date">
-        </el-table-column>
-
+        <el-table-column label="创建日期" align="center" prop="create_date"></el-table-column>
+        <el-table-column label="修改日期" align="center" prop="update_date"></el-table-column>
         <el-table-column label="操作" align="center">
           <template v-slot="scope">
             <div v-if="method_list.includes('PUT')" style="display: inline-block;">
@@ -120,14 +164,7 @@
 export default {
   name: "RoleModule",
   data() {
-    let descriptionLen = (rule, value, callback) => {
-      if (this.addDepartmentForm.description.length >= 200) {
-        callback(new Error("长度在不能超出 200 个字符"));
-      }
-    };
     return {
-      //
-      RuleDataList:[],
       // 规则列表
       event_list: [
         {label: "分", value: 0, event_value: 'second'},
@@ -136,10 +173,10 @@ export default {
         {label: "月", value: 3, event_value: 'month'},
         {label: "周", value: 4, event_value: 'week'},
       ],
-      //规则当前状态
-      rule_status: [
-        {label: '未激活', value: 0, status_value: 'inactive'},
-        {label: '激活', value: 1, status_value: 'active '},
+      // 模式
+      rule_mode_list: [
+        {label: "一次性", value: 0},
+        {label: "长期", value: 1},
       ],
       search: "",
       loading: false, // 数据加载样式
@@ -147,32 +184,32 @@ export default {
       // 弹出框控制变量
       dialogDisplayVar: false,
       //  添加弹出框数据
-      addDepartmentForm: {
-        department: "",
-        RuleIdList: [],
-        description: "",
+      addRuleForm: {
+        rule_name: "",
+        rule_mode: 1,
+        rule_advance_days: 1,
+        switch_value: true,
+      },
+      // 弹窗内的表单验证
+      RuleRules: {
+        rule_name: [
+          {required: true, message: "请输入规则名称", trigger: "blur"},
+          {
+            min: 1,
+            max: 15,
+            message: "长度在 1 到 30 个字符之间",
+            trigger: "blur",
+          },
+        ],
       },
       // 弹出框内输入框大小
       formLabelWidth: "120px",
       // 控制弹窗创建按钮
       addLoading: false,
-      // 弹窗内的表单验证
-      DepartmentRules: {
-        department: [
-          {required: true, message: "请输入部门名称", trigger: "blur"},
-          {
-            min: 1,
-            max: 15,
-            message: "长度在 1 到 15 个字符之间",
-            trigger: "blur",
-          },
-        ],
-        description: [{validator: descriptionLen, trigger: "blur"}],
-      },
       // 分页
+      page: 1,
       data_total: 0, // 数据总数
       page_status: 0, // 分页状态变量，当上下一页时进行改变，只有是0时点击数字页码会改变
-      page: 1,
       // 权限
       method_list: [],
     };
@@ -216,9 +253,8 @@ export default {
     saveRow(row) {
       // 保存的数据 row
       this.loading = true;
-      row.Rule_id_list = this.RuleIdList; // 部门绑定公司的id列表
       this.$http
-          .put("foundation/department/", {
+          .put("business_function/no_order_matter_rule/", {
             data: row,
           })
           .then((res) => {
@@ -253,13 +289,14 @@ export default {
     // 弹窗内创建按钮
     addRuleData(formName) {
       this.addLoading = true;
-      if (!this.addDepartmentForm.department) {
+      if (!this.addRuleForm.rule_name) {
         this.$message.error("部门名称属于必填项！");
         this.addLoading = false;
       } else {
+        this.addRuleForm.is_show = this.addRuleForm.switch_value ? 1 : 0;
         this.$http
-            .post("foundation/department/", {
-              data: this.addDepartmentForm,
+            .post("business_function/no_order_matter_rule/", {
+              data: this.addRuleForm,
             })
             .then((res) => {
               let data = res.data;
@@ -268,13 +305,11 @@ export default {
                 data.data.index = 1;
                 this.RuleData.unshift(data.data);
                 this.$refs[formName].resetFields();
-                this.RuleDataSearch = [];
               } else {
                 this.$message.error(data.message);
               }
             })
             .catch((error) => {
-              console.log(error);
               this.$message.error(error.message);
             })
             .finally(() => {
@@ -339,19 +374,19 @@ export default {
     },
     // 搜索功能
     searchData() {
+      this.page = 1;
       this.loading = true;
-      if (this.search) {
-        this.page = 1;
-        this.getRuleData();
-      } else {
-        this.getRuleData();
-      }
+      this.getRuleData();
     },
     // 重置
     reloadData() {
       this.search = "";
       this.getRuleData();
     },
+    // 开关方法变动回调函数。
+    changeSwitch(newValue, row) {
+      row.is_show = newValue ? 1 : 0;
+    }
   },
 };
 </script>
