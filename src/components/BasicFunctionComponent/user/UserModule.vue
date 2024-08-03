@@ -80,24 +80,24 @@
     </div>
     <div class="table_content">
       <el-table :data="usersData" style="width: 100%" max-height="580">
-        <el-table-column prop="index" label="#" align="center" width="60"></el-table-column>
-        <el-table-column label="姓名" align="center" width="120">
+        <el-table-column prop="index" label="#" align="center"></el-table-column>
+        <el-table-column label="姓名" align="center" width="180">
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.user_name }}</span>
             <el-input v-model="row.user_name" v-else></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="登录名称" align="center" prop="login_name" width="80">
+        <el-table-column label="登录名称" align="center" prop="login_name" width="180">
         </el-table-column>
-        <el-table-column label="密码" align="center" prop="passwd" width="80">
+        <el-table-column label="密码" align="center" prop="passwd" width="180">
         </el-table-column>
-        <el-table-column label="邮箱" align="center" width="200">
+        <el-table-column label="邮箱" align="center" width="180">
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.email }}</span>
             <el-input v-model="row.email" v-else></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="账户状态" align="center" width="150">
+        <el-table-column label="账户状态" align="center" width="180">
           <template v-slot="{ row }">
             <div class="tag-group" v-if="!row.editable">
               <el-tag v-if="row.is_show">正常</el-tag>
@@ -111,7 +111,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="用户唯一ID" align="center" width="150">
+        <el-table-column label="用户唯一ID" align="center" width="180">
           <template v-slot="{ row }">
             <el-tag>{{ row.prefix }}-{{ row.user_id }}</el-tag>
           </template>
@@ -590,66 +590,5 @@ export default {
     },
 
   },
-}
-  ;
+};
 </script>
-
-<style>
-@media screen and (max-width: 700px) {
-  .users .el-tag {
-    font-size: 9px;
-    padding: 1px 4px;
-    height: 16px;
-    line-height: 13px;
-    border-radius: 1px;
-    margin: 2px 0 2px 2px;
-  }
-
-  .el-select-dropdown__wrap ul {
-    flex-direction: column !important;
-  }
-
-  .el-select-dropdown__wrap .el-select-dropdown__item {
-    height: 20px !important;
-    line-height: 20px !important;
-    font-size: 9px !important;
-    margin: 0 auto !important;
-    padding: 0 13px !important;
-    width: 90%;
-  }
-
-  .el-select-dropdown__wrap .el-select-dropdown__item span {
-    font-size: 9px !important;
-  }
-
-  .el-select-dropdown.is-multiple .el-select-dropdown__item.selected::after {
-    right: 11px !important;
-    font-size: 9px !important;
-  }
-
-  .el-select-dropdown__empty {
-    font-size: 7px !important;
-  }
-
-  .el-select-dropdown__wrap ul {
-    flex-direction: column !important;
-  }
-
-  .el-form-item__content .el-select .el-select__tags .el-select__input {
-    font-size: 9px;
-    margin-left: 5px;
-  }
-
-  .el-input__suffix {
-    top: 1px !important;
-  }
-
-  .el-input .el-input__clear {
-    font-size: 9px !important;
-  }
-
-  .el-form-item .el-select .el-input .el-select__caret {
-    font-size: 9px !important;
-  }
-}
-</style>

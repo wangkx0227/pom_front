@@ -2,7 +2,7 @@
   <div class="prefix" v-loading="loading">
     <div class="head_search_add">
       <el-button type="info" icon="el-icon-circle-plus-outline" plain @click="dialogDisplay"
-        v-if="method_list.includes('POST')">添加
+                 v-if="method_list.includes('POST')">添加
       </el-button>
       <el-input placeholder="请输入搜索前缀名称" v-model="search" clearable class="input_search">
       </el-input>
@@ -37,12 +37,11 @@
       </el-dialog>
     </div>
     <div class="table_content">
-      <el-table :data="prefixData" style="width: 100%" max-height="580">
+      <el-table :data="prefixData" style="width: 100%" max-height="640">
         <el-table-column prop="index" label="#" align="center"></el-table-column>
-        <el-table-column label="前缀名称(非中文)" align="center">
+        <el-table-column label="前缀名称(非中文)" align="center" width="180">
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.prefix }}</span>
-
             <el-input v-model="row.prefix" v-else></el-input>
           </template>
         </el-table-column>
@@ -54,21 +53,11 @@
             <el-input type="textarea" v-model="row.description" v-else></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="创建日期" align="center">
-          <template v-slot="{ row }">
-            <el-tooltip class="item" effect="dark" :content="row.create_date" placement="bottom">
-              <div class="cell ellipsis">{{ row.create_date }}</div>
-            </el-tooltip>
-          </template>
+        <el-table-column label="创建日期" align="center" prop="create_date" width="180">
         </el-table-column>
-        <el-table-column label="修改日期" align="center">
-          <template v-slot="{ row }">
-            <el-tooltip class="item" effect="dark" :content="row.update_date" placement="bottom">
-              <div class="cell ellipsis">{{ row.update_date }}</div>
-            </el-tooltip>
-          </template>
+        <el-table-column label="修改日期" align="center"  prop="update_date" width="180">
         </el-table-column>
-        <el-table-column label="归属部门" align="center">
+        <el-table-column label="归属部门" align="center" width="180">
           <template v-slot="{ row }">
             <div class="tag-group" v-if="!row.editable">
               <el-tag style="margin-right: 2px" type="success" effect="plain">
@@ -81,7 +70,7 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center">
+        <el-table-column label="操作" align="center" width="180">
           <template v-slot="scope">
             <div v-if="method_list.includes('PUT')" style="display: inline-block;">
               <el-button v-if="!scope.row.editable" @click="editRow(scope.row)" size="mini" type="text">编辑
@@ -94,7 +83,7 @@
             </div>
             <div v-if="method_list.includes('DELETE')" style="display: inline-block;">
               <el-popover v-if="!scope.row.editable" placement="top" width="160" v-model="scope.row.visible"
-                trigger="manual">
+                          trigger="manual">
                 <p>删除后无恢复，请问确定删除吗？</p>
                 <div style="text-align: right; margin: 0">
                   <el-button size="mini" type="text" @click="scope.row.visible = false">取消
@@ -109,8 +98,9 @@
               </el-popover>
             </div>
             <div v-if="method_list.includes('PUT')" style="display: inline-block;">
-              <el-button style="margin-left: 0" v-if="scope.row.editable" @click="scope.row.editable = false" size="mini"
-                type="text">取消
+              <el-button style="margin-left: 0" v-if="scope.row.editable" @click="scope.row.editable = false"
+                         size="mini"
+                         type="text">取消
               </el-button>
             </div>
           </template>
@@ -119,7 +109,8 @@
     </div>
     <div class="pagination">
       <el-pagination hide-on-single-page @current-change="currentPage" @prev-click="prevPage" @next-click="nextPage"
-        background layout="total,prev, pager, next" :page-size="10" :total="data_total" v-model:current-page="page">
+                     background layout="total,prev, pager, next" :page-size="10" :total="data_total"
+                     v-model:current-page="page">
       </el-pagination>
     </div>
   </div>
@@ -153,7 +144,7 @@ export default {
       // 弹窗内的表单验证
       prefixRules: {
         prefix: [
-          { required: true, message: "请输入前缀", trigger: "blur" },
+          {required: true, message: "请输入前缀", trigger: "blur"},
           {
             min: 1,
             max: 15,
@@ -161,7 +152,7 @@ export default {
             trigger: "blur",
           },
         ],
-        description: [{ validator: descriptionLen, trigger: "blur" }],
+        description: [{validator: descriptionLen, trigger: "blur"}],
       },
       // 分页
       data_total: 0, // 数据总数
@@ -188,22 +179,22 @@ export default {
       let pk = row.id;
       this.loading = true;
       this.$http
-        .delete("foundation/prefix/", {
-          data: { pk: pk },
-        })
-        .then((res) => {
-          let data = res.data;
-          if (data.code === 200) {
-            this.$message.success(data.message);
-            this.getPrefixDate();
-            rows.splice(index, 1);
-          } else {
-            this.$message.error(data.message);
-          }
-        })
-        .catch((error) => {
-          this.$message.error(error.message);
-        })
+          .delete("foundation/prefix/", {
+            data: {pk: pk},
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.$message.success(data.message);
+              this.getPrefixDate();
+              rows.splice(index, 1);
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
     },
     // 编辑按钮，修改row.editable值 让这条可以进行修改
     editRow(row) {
@@ -214,22 +205,22 @@ export default {
       // 保存的数据 row
       this.loading = true;
       this.$http
-        .put("foundation/prefix/", {
-          data: row,
-        })
-        .then((res) => {
-          let data = res.data;
-          if (data.code === 200) {
-            row.editable = false;
-            this.$message.success(data.message);
-            this.getPrefixDate();
-          } else {
-            this.$message.error(data.message);
-          }
-        })
-        .catch((error) => {
-          this.$message.error(error.message);
-        })
+          .put("foundation/prefix/", {
+            data: row,
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              row.editable = false;
+              this.$message.success(data.message);
+              this.getPrefixDate();
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
     },
     // 显示弹框
     dialogDisplay() {
@@ -254,27 +245,27 @@ export default {
         this.addLoading = false;
       } else {
         this.$http
-          .post("foundation/prefix/", {
-            data: this.addPrefixForm,
-          })
-          .then((res) => {
-            let data = res.data;
-            if (data.code === 200) {
-              this.$message.success(data.message);
-              data.data.index = 1;
-              data.data.department = "新增"; // 给个默认值，进行显示
-              this.prefixData.unshift(data.data);
-              this.$refs[formName].resetFields();
-            } else {
-              this.$message.error(data.message);
-            }
-          })
-          .catch((error) => {
-            this.$message.error(error.message);
-          })
-          .finally(() => {
-            this.addLoading = false;
-          });
+            .post("foundation/prefix/", {
+              data: this.addPrefixForm,
+            })
+            .then((res) => {
+              let data = res.data;
+              if (data.code === 200) {
+                this.$message.success(data.message);
+                data.data.index = 1;
+                data.data.department = "新增"; // 给个默认值，进行显示
+                this.prefixData.unshift(data.data);
+                this.$refs[formName].resetFields();
+              } else {
+                this.$message.error(data.message);
+              }
+            })
+            .catch((error) => {
+              this.$message.error(error.message);
+            })
+            .finally(() => {
+              this.addLoading = false;
+            });
       }
     },
     // 获取数据
@@ -286,24 +277,24 @@ export default {
         get_url = `foundation/prefix/?page=${this.page}`;
       }
       this.$http
-        .get(get_url)
-        .then((res) => {
-          let data = res.data;
-          if (data.code === 200) {
-            this.prefixData = data.data.data;
-            this.data_total = data.data.data_total;
-            this.method_list = data.data.method_list;
-          } else {
-            this.firmData = [];
-          }
-        })
-        .catch((error) => {
-          this.$message.error(error.message);
-        })
-        .finally(() => {
-          this.page_status = 0;
-          this.loading = false;
-        });
+          .get(get_url)
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.prefixData = data.data.data;
+              this.data_total = data.data.data_total;
+              this.method_list = data.data.method_list;
+            } else {
+              this.firmData = [];
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.page_status = 0;
+            this.loading = false;
+          });
     },
     // 页码功能
     nextPage(page) {
@@ -346,67 +337,20 @@ export default {
     // 下拉框调用api方法
     getDepartmentData() {
       this.$http
-        .get('foundation/department/?status=all')
-        .then((res) => {
-          let data = res.data;
-          if (data.code === 200) {
-            this.departmentList = data.data;
-          } else {
-            this.departmentList = [];
-          }
-        })
-        .catch((error) => {
-          this.$message.error(error.message);
-        })
+          .get('foundation/department/?status=all')
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.departmentList = data.data;
+            } else {
+              this.departmentList = [];
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
     },
   },
 };
 </script>
 
-<style>
-@media screen and (max-width: 700px) {
-  .prefix .el-tag {
-    font-size: 9px;
-    padding: 1px 4px;
-    height: 16px;
-    line-height: 13px;
-    border-radius: 1px;
-    margin: 2px 0 2px 2px;
-  }
-
-  .el-select-dropdown__wrap ul {
-    flex-direction: column !important;
-  }
-
-  .el-select-dropdown__wrap .el-select-dropdown__item {
-    height: 20px !important;
-    line-height: 20px !important;
-    font-size: 9px !important;
-    margin: 0 auto !important;
-    padding: 0 13px !important;
-    width: 90%;
-  }
-
-  .el-select-dropdown__wrap .el-select-dropdown__item span {
-    font-size: 9px !important;
-  }
-
-  .el-select-dropdown.is-multiple .el-select-dropdown__item.selected::after {
-    right: 11px !important;
-    font-size: 9px !important;
-  }
-
-  .el-select-dropdown__empty {
-    font-size: 7px !important;
-  }
-
-  .el-select-dropdown__wrap ul {
-    flex-direction: column !important;
-  }
-
-  .el-form-item__content .el-select .el-select__tags .el-select__input {
-    font-size: 9px;
-    margin-left: 5px;
-  }
-}
-</style>

@@ -1,13 +1,13 @@
 <template>
   <div class="menu">
     <div class="head_search_add">
-      <el-popover placement="top" width="160" v-model="loadVisibleMenuRouter"  v-if="method_list.includes('POST')">
+      <el-popover placement="top" width="160" v-model="loadVisibleMenuRouter" v-if="method_list.includes('POST')">
         <p>你确定重新加载当前菜单信息吗？</p>
         <div style="text-align: right; margin: 0">
           <el-button size="mini" type="text" @click="loadVisibleMenuRouter = false">取消</el-button>
           <el-button type="primary" size="mini" @click="addMenuRouter">确定</el-button>
         </div>
-        <el-button slot="reference" icon="el-icon-refresh"  plain type="info" >加载菜单</el-button>
+        <el-button slot="reference" icon="el-icon-refresh" plain type="info">加载菜单</el-button>
       </el-popover>
       <el-input placeholder="请输入搜索名称" v-model="search" clearable class="input_search">
       </el-input>
@@ -17,13 +17,13 @@
       </el-button>
     </div>
     <div class="table_content">
-      <el-table :data="MenueData" style="width: 100%" max-height="580">
-        <el-table-column prop="index" label="#" align="center" width="60"></el-table-column>
-        <el-table-column prop="menu_url" label="路径" align="center" width="230"></el-table-column>
-        <el-table-column prop="menu_url_alias" label="路径别名" align="center" width="200"></el-table-column>
-        <el-table-column prop="menu_url_name" label="路径名称" align="center" width="150"></el-table-column>
+      <el-table :data="MenueData" style="width: 100%" max-height="640">
+        <el-table-column prop="index" label="#" align="center"></el-table-column>
+        <el-table-column prop="menu_url" label="路径" align="center" width="350"></el-table-column>
+        <el-table-column prop="menu_url_alias" label="路径别名" align="center" width="180"></el-table-column>
+        <el-table-column prop="menu_url_name" label="路径名称" align="center" width="180"></el-table-column>
         <el-table-column prop="menu_url_icon" label="路径图标" align="center" width="180"></el-table-column>
-        <el-table-column label="是否需要权限控制" align="center" width="150">
+        <el-table-column label="是否需要权限控制" align="center" width="180">
           <template v-slot="{ row }">
             <div class="tag-group" v-if="!row.editable">
               <el-tag v-if="row.access_control">需要</el-tag>
@@ -38,7 +38,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="父菜单" align="center" width="150">
+        <el-table-column label="父菜单" align="center" width="180">
           <template v-slot="{ row }">
             <div class="tag-group" v-if="!row.editable">
               <el-tag v-if="row.father_menu_url_name">{{ row.father_menu_url_name }}</el-tag>
@@ -55,21 +55,13 @@
         </el-table-column>
         <el-table-column label="作用" align="center" width="180">
           <template v-slot="{ row }">
-            <el-tooltip class="item" effect="dark" :content="row.description" placement="bottom"
-                        v-if="!row.editable">
-              <div class="cell ellipsis">{{ row.description }}</div>
-            </el-tooltip>
+            <span v-if="!row.editable">{{ row.description }}</span>
             <el-input type="textarea" v-model="row.description" v-else></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="加载日期" align="center" width="180">
-          <template v-slot="{ row }">
-            <el-tooltip class="item" effect="dark" :content="row.create_date" placement="bottom">
-              <div class="cell ellipsis">{{ row.create_date }}</div>
-            </el-tooltip>
-          </template>
+        <el-table-column label="加载日期" align="center" width="180" prop="create_date">
         </el-table-column>
-        <el-table-column label="菜单类型" align="center" width="150">
+        <el-table-column label="菜单类型" align="center" width="180">
           <template v-slot="{ row }">
             <div class="tag-group" v-if="!row.editable">
               <el-tag v-if="row.menu_type == 0" type="info">不做菜单</el-tag>
@@ -136,7 +128,7 @@ export default {
   name: "menuModule",
   data() {
     return {
-      visible:false,
+      visible: false,
       // 加载按钮使用变量
       loadVisibleMenuRouter: false,
       // 展示当前菜单类型
@@ -333,50 +325,3 @@ export default {
 }
 </script>
 
-<style>
-@media screen and (max-width: 700px) {
-  .menu .el-tag {
-    font-size: 9px;
-    padding: 1px 4px;
-    height: 16px;
-    line-height: 13px;
-    border-radius: 1px;
-    margin: 2px 0 2px 2px;
-  }
-
-  .el-select-dropdown__wrap ul {
-    flex-direction: column !important;
-  }
-
-  .el-select-dropdown__wrap .el-select-dropdown__item {
-    height: 20px !important;
-    line-height: 20px !important;
-    font-size: 9px !important;
-    margin: 0 auto !important;
-    padding: 0 13px !important;
-    width: 90%;
-  }
-
-  .el-select-dropdown__wrap .el-select-dropdown__item span {
-    font-size: 9px !important;
-  }
-
-  .el-select-dropdown.is-multiple .el-select-dropdown__item.selected::after {
-    right: 11px !important;
-    font-size: 9px !important;
-  }
-
-  .el-select-dropdown__empty {
-    font-size: 7px !important;
-  }
-
-  .el-select-dropdown__wrap ul {
-    flex-direction: column !important;
-  }
-
-  .el-form-item__content .el-select .el-select__tags .el-select__input {
-    font-size: 9px;
-    margin-left: 5px;
-  }
-}
-</style>

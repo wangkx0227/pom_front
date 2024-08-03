@@ -17,11 +17,11 @@
       </el-button>
     </div>
     <div class="table_content">
-      <el-table :data="ApiData" style="width: 100%" max-height="580">
-        <el-table-column prop="index" label="#" align="center" width="60"></el-table-column>
+      <el-table :data="ApiData" style="width: 100%" max-height="640">
+        <el-table-column prop="index" label="#" align="center" ></el-table-column>
         <el-table-column label="接口URL" align="center" prop="api_url" width="350"></el-table-column>
         <el-table-column label="映射Class" align="center" prop="api_url_class" width="330"></el-table-column>
-        <el-table-column label="名称" align="center" prop="api_url_name" width="150">
+        <el-table-column label="名称" align="center" prop="api_url_name" width="180">
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.api_url_name }}</span>
             <el-input v-model="row.api_url_name" v-else></el-input>
@@ -35,7 +35,7 @@
             <el-input type="textarea" v-model="row.description" v-else></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="请求方式" align="center" width="200">
+        <el-table-column label="请求方式" align="center" width="300">
           <template v-slot="{ row }">
             <div class="tag-group" v-if="!row.editable">
               <span>{{ row.method_data_string }}</span>
@@ -50,7 +50,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="是否需要权限控制" align="center" width="150">
+        <el-table-column label="是否需要权限控制" align="center" width="180">
           <template v-slot="{ row }">
             <div class="tag-group" v-if="!row.editable">
               <el-tag v-if="row.access_control">需要</el-tag>
@@ -64,7 +64,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="绑定的前端页面" align="center" width="150">
+        <el-table-column label="绑定的前端页面" align="center" width="180">
           <template v-slot="{ row }">
             <div class="tag-group" v-if="!row.editable">
               <el-tag v-if="row.pom_front_menu_routes_id">{{ row.menu_url_name }}</el-tag>
@@ -361,51 +361,3 @@ export default {
   },
 }
 </script>
-
-<style>
-@media screen and (max-width: 700px) {
-  .Api .el-tag {
-    font-size: 9px;
-    padding: 1px 4px;
-    height: 16px;
-    line-height: 13px;
-    border-radius: 1px;
-    margin: 2px 0 2px 2px;
-  }
-
-  .el-select-dropdown__wrap ul {
-    flex-direction: column !important;
-  }
-
-  .el-select-dropdown__wrap .el-select-dropdown__item {
-    height: 20px !important;
-    line-height: 20px !important;
-    font-size: 9px !important;
-    margin: 0 auto !important;
-    padding: 0 13px !important;
-    width: 90%;
-  }
-
-  .el-select-dropdown__wrap .el-select-dropdown__item span {
-    font-size: 9px !important;
-  }
-
-  .el-select-dropdown.is-multiple .el-select-dropdown__item.selected::after {
-    right: 11px !important;
-    font-size: 9px !important;
-  }
-
-  .el-select-dropdown__empty {
-    font-size: 7px !important;
-  }
-
-  .el-select-dropdown__wrap ul {
-    flex-direction: column !important;
-  }
-
-  .el-form-item__content .el-select .el-select__tags .el-select__input {
-    font-size: 9px;
-    margin-left: 5px;
-  }
-}
-</style>

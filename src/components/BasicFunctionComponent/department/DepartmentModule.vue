@@ -38,7 +38,7 @@
       </el-dialog>
     </div>
     <div class="table_content">
-      <el-table :data="DepartmentData" style="width: 100%" max-height="580">
+      <el-table :data="DepartmentData" style="width: 100%" max-height="640">
         <el-table-column prop="index" label="#" align="center"></el-table-column>
         <el-table-column label="部门名称" align="center">
           <template v-slot="{ row }">
@@ -54,21 +54,11 @@
             <el-input type="textarea" v-model="row.description" v-else></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="创建日期" align="center">
-          <template v-slot="{ row }">
-            <el-tooltip class="item" effect="dark" :content="row.create_date" placement="bottom">
-              <div class="cell ellipsis">{{ row.create_date }}</div>
-            </el-tooltip>
-          </template>
+        <el-table-column label="创建日期" align="center" width="180" prop="create_date">
         </el-table-column>
-        <el-table-column label="修改日期" align="center">
-          <template v-slot="{ row }">
-            <el-tooltip class="item" effect="dark" :content="row.update_date" placement="bottom">
-              <div class="cell ellipsis">{{ row.update_date }}</div>
-            </el-tooltip>
-          </template>
+        <el-table-column label="修改日期" align="center" width="180" prop="update_date">
         </el-table-column>
-        <el-table-column label="归属公司" align="center">
+        <el-table-column label="归属公司" align="center" width="500">
           <template v-slot="{ row }">
             <div class="tag-group" v-if="!row.editable">
               <el-tag style="margin-right: 2px" v-for="firm_name in row.firm_name_list" :key="firm_name" type="success"
@@ -82,7 +72,7 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center">
+        <el-table-column label="操作" align="center" width="180">
           <template v-slot="scope">
             <div v-if="method_list.includes('PUT')" style="display: inline-block;">
               <el-button v-if="!scope.row.editable" @click="editRow(scope.row)" size="mini" type="text">编辑
@@ -372,94 +362,3 @@ export default {
 };
 </script>
 
-<style>
-@media screen and (max-width: 700px) {
-  .department .el-tag {
-    font-size: 9px;
-    padding: 1px 4px;
-    height: 16px;
-    line-height: 13px;
-    border-radius: 1px;
-    margin: 2px 0 2px 2px;
-  }
-
-  .department .cell .el-select {
-    margin-left: -10px !important;
-  }
-
-  .department .cell .el-select .el-input__inner {
-    font-size: 9px !important;
-  }
-
-  .department .el-form-item__content .el-select {
-    position: static;
-    line-height: 35px !important;
-  }
-
-  .department .cell .el-select .el-select__tags {
-    max-width: 70px !important;
-  }
-
-  .department .cell .el-select .el-select__input {
-    font-size: 9px !important;
-    margin-left: 2px !important;
-    max-width: 70px !important;
-  }
-
-  .department .el-select .el-tag {
-    padding: 0;
-  }
-
-  .department .el-tag .el-icon-close {
-    height: 9px !important;
-    width: 9px !important;
-    font-size: 6px !important;
-    line-height: 9px !important;
-    right: 0.5px !important;
-  }
-
-  .department .el-tag .el-select__tags-text {
-    padding: 1px;
-  }
-
-  .department .el-select .el-select__tags {
-    flex-wrap: nowrap;
-    align-items: center;
-  }
-
-  .el-select-dropdown {
-    /*top: 252px !important;*/
-  }
-
-  .el-select-dropdown__wrap ul {
-    flex-direction: column !important;
-  }
-
-  .el-select-dropdown__wrap .el-select-dropdown__item {
-    height: 20px !important;
-    line-height: 20px !important;
-  }
-
-  .el-select-dropdown__wrap .el-select-dropdown__item span {
-    font-size: 9px !important;
-  }
-
-  .el-select-dropdown.is-multiple .el-select-dropdown__item.selected::after {
-    right: 11px !important;
-    font-size: 9px !important;
-  }
-
-  .el-select-dropdown__empty {
-    font-size: 9px !important;
-  }
-
-  .el-form-item__content .el-select .el-select__tags {
-    top: 54%;
-  }
-
-  .el-form-item__content .el-select .el-select__tags .el-select__input {
-    font-size: 9px;
-    margin-left: 5px;
-  }
-}
-</style>

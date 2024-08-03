@@ -32,7 +32,7 @@
         </el-dialog>
       </div>
       <div class="table_content">
-        <el-table :data="roleData" style="width: 100%" max-height="580">
+        <el-table :data="roleData" style="width: 100%" max-height="640">
           <el-table-column prop="index" label="#" align="center"></el-table-column>
           <el-table-column label="角色名称" align="center">
             <template v-slot="{ row }">
@@ -49,21 +49,11 @@
               <el-input type="textarea" v-model="row.description" v-else></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="创建日期" align="center">
-            <template v-slot="{ row }">
-              <el-tooltip class="item" effect="dark" :content="row.create_date" placement="bottom">
-                <div class="cell ellipsis">{{ row.create_date }}</div>
-              </el-tooltip>
-            </template>
+          <el-table-column label="创建日期" align="center" width="180" prop="create_date">
           </el-table-column>
-          <el-table-column label="修改日期" align="center">
-            <template v-slot="{ row }">
-              <el-tooltip class="item" effect="dark" :content="row.update_date" placement="bottom">
-                <div class="cell ellipsis">{{ row.update_date }}</div>
-              </el-tooltip>
-            </template>
+          <el-table-column label="修改日期" align="center" width="180" prop="update_date">
           </el-table-column>
-          <el-table-column label="操作" align="center">
+          <el-table-column label="操作" align="center" width="180">
             <template v-slot="scope">
               <div v-if="menu_permission_method_list.includes('GET')" style="display: inline;">
                 <el-button size="mini" icon="el-icon-menu" type="text"
@@ -380,50 +370,4 @@ export default {
 
 <style>
 @import url("@/static/currency.css");
-
-@media screen and (max-width: 700px) {
-  .role .el-tag {
-    font-size: 9px;
-    padding: 1px 4px;
-    height: 16px;
-    line-height: 13px;
-    border-radius: 1px;
-    margin: 2px 0 2px 2px;
-  }
-
-  .el-select-dropdown__wrap ul {
-    flex-direction: column !important;
-  }
-
-  .el-select-dropdown__wrap .el-select-dropdown__item {
-    height: 20px !important;
-    line-height: 20px !important;
-    font-size: 9px !important;
-    margin: 0 auto !important;
-    padding: 0 13px !important;
-    width: 90%;
-  }
-
-  .el-select-dropdown__wrap .el-select-dropdown__item span {
-    font-size: 9px !important;
-  }
-
-  .el-select-dropdown.is-multiple .el-select-dropdown__item.selected::after {
-    right: 11px !important;
-    font-size: 9px !important;
-  }
-
-  .el-select-dropdown__empty {
-    font-size: 7px !important;
-  }
-
-  .el-select-dropdown__wrap ul {
-    flex-direction: column !important;
-  }
-
-  .el-form-item__content .el-select .el-select__tags .el-select__input {
-    font-size: 9px;
-    margin-left: 5px;
-  }
-}
 </style>
