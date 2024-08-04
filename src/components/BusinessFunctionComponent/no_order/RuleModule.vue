@@ -16,30 +16,16 @@
         <el-alert
             title="注意："
             type="warning"
-            description="默认状态是开启的，默认模式长期，默认提前生成天数1天，添加时根据需求进行修改。">
+            description="默认状态是开启的，默认模式长期，默认提前生成天数1天，提前生成天数如果大于整个事项的周期天数，就会造成异常，添加时根据需求进行修改。">
         </el-alert>
         <el-form :model="addRuleForm" label-position="top" :rules="RuleRules" ref="addRuleRef">
           <el-row :gutter="24">
-            <el-col :span="24">
+            <el-col :span="16">
               <el-form-item label="规则名称" prop="rule_name">
                 <el-input v-model="addRuleForm.rule_name"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="12">
-              <el-form-item label="规则模式">
-                <el-select v-model="addRuleForm.rule_mode" collapse-tags clearable placeholder="请输选择">
-                  <el-option v-for="item in rule_mode_list" :key="item.value" :label="item.label" :value="item.value">
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="提前生成天数(1-100)">
-                <el-input-number v-model="addRuleForm.rule_advance_days" :min="1" :max="100"
-                                 controls-position="right"></el-input-number>
-              </el-form-item>
-            </el-col>
-            <el-col :span="24">
+            <el-col :span="8">
               <el-form-item label="状态">
                 <el-switch
                     v-model="addRuleForm.switch_value"
@@ -49,6 +35,57 @@
                     inactive-text="未激活"
                 >
                 </el-switch>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="规则模式">
+                <el-select v-model="addRuleForm.rule_mode" collapse-tags clearable placeholder="请输选择">
+                  <el-option v-for="item in rule_mode_list" :key="item.value" :label="item.label" :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="提前生成天数(1-100)">
+                <el-input-number v-model="addRuleForm.rule_advance_days" :min="1" :max="100"
+                                 controls-position="right"></el-input-number>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="规则类型">
+                <el-select v-model="addRuleForm.rule_event_type" collapse-tags clearable placeholder="请输选择">
+                  <el-option v-for="item in rule_event_type_list" :key="item.value" :label="item.label"
+                             :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="星期(1-7)：" v-show="addRuleForm.rule_event_type === 'week'">
+                <el-select v-model="addRuleForm.rule_event_week" collapse-tags clearable placeholder="请输选择">
+                  <el-option v-for="item in rule_event_week_list" :key="item.value" :label="item.label"
+                             :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="月份(1-12)：" v-show="addRuleForm.rule_event_type === 'month' || addRuleForm.rule_event_type === 'year' ">
+                <el-select v-model="addRuleForm.rule_event_month" collapse-tags clearable placeholder="请输选择" multiple
+                           collapse-tags>
+                  <el-option v-for="item in rule_event_month_list" :key="item.value" :label="item.label"
+                             :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="日期(1-31)：" v-show="addRuleForm.rule_event_type === 'month' || addRuleForm.rule_event_type === 'year'">
+                <el-select v-model="addRuleForm.rule_event_day" collapse-tags clearable placeholder="请输选择">
+                  <el-option v-for="item in rule_event_day_list" :key="item.value" :label="item.label"
+                             :value="item.value">
+                  </el-option>
+                </el-select>
               </el-form-item>
             </el-col>
           </el-row>
@@ -166,13 +203,70 @@ export default {
   data() {
     return {
       // 规则列表
-      event_list: [
-        {label: "分", value: 0, event_value: 'second'},
-        {label: "时", value: 1, event_value: 'minute'},
-        {label: "日", value: 2, event_value: 'day'},
-        {label: "月", value: 3, event_value: 'month'},
-        {label: "周", value: 4, event_value: 'week'},
+      rule_event_type_list: [
+        {label: "每周", value: 'week'},
+        {label: "每月", value: 'month'},
+        {label: "每年", value: 'year'},
       ],
+      // 星期列表列表
+      rule_event_week_list: [
+        {label: "周一", value: '1'},
+        {label: "周二", value: '2'},
+        {label: "周三", value: '3'},
+        {label: "周四", value: '4'},
+        {label: "周五", value: '5'},
+        {label: "周六", value: '6'},
+        {label: "周日", value: '7'},
+      ],
+      // 月分列表
+      rule_event_month_list: [
+        {label: "一月", value: '1'},
+        {label: "二月", value: '2'},
+        {label: "三月", value: '3'},
+        {label: "四月", value: '4'},
+        {label: "五月", value: '5'},
+        {label: "六月", value: '6'},
+        {label: "七月", value: '7'},
+        {label: "八月", value: '8'},
+        {label: "九月", value: '9'},
+        {label: "十月", value: '10'},
+        {label: "十一月", value: '11'},
+        {label: "十二月", value: '12'},
+      ],
+      // 日期列表
+      rule_event_day_list: [
+        {"label": "一号", "value": 1},
+        {"label": "二号", "value": 2},
+        {"label": "三号", "value": 3},
+        {"label": "四号", "value": 4},
+        {"label": "五号", "value": 5},
+        {"label": "六号", "value": 6},
+        {"label": "七号", "value": 7},
+        {"label": "八号", "value": 8},
+        {"label": "九号", "value": 9},
+        {"label": "十号", "value": 10},
+        {"label": "十一号", "value": 11},
+        {"label": "十二号", "value": 12},
+        {"label": "十三号", "value": 13},
+        {"label": "十四号", "value": 14},
+        {"label": "十五号", "value": 15},
+        {"label": "十六号", "value": 16},
+        {"label": "十七号", "value": 17},
+        {"label": "十八号", "value": 18},
+        {"label": "十九号", "value": 19},
+        {"label": "二十号", "value": 20},
+        {"label": "二十一号", "value": 21},
+        {"label": "二十二号", "value": 22},
+        {"label": "二十三号", "value": 23},
+        {"label": "二十四号", "value": 24},
+        {"label": "二十五号", "value": 25},
+        {"label": "二十六号", "value": 26},
+        {"label": "二十七号", "value": 27},
+        {"label": "二十八号", "value": 28},
+        {"label": "二十九号", "value": 29},
+        {"label": "三十号", "value": 30},
+      ],
+
       // 模式
       rule_mode_list: [
         {label: "一次性", value: 0},
@@ -189,6 +283,11 @@ export default {
         rule_mode: 1,
         rule_advance_days: 1,
         switch_value: true,
+        rule_event_type: '',
+        rule_event_week: '',
+        rule_event_month: '',
+        rule_event_day: '',
+
       },
       // 弹窗内的表单验证
       RuleRules: {

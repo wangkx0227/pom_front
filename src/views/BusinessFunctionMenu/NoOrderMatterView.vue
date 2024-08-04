@@ -1,5 +1,5 @@
 <template>
-  <div class="department_info">
+  <div class="no_order_matter">
     <el-card class="box-card">
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="事项规则" name="rule">

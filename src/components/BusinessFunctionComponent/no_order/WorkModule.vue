@@ -16,7 +16,7 @@
         <el-alert
             title="注意："
             type="warning"
-            description="默认状态是开启的，附件是默认需要上传的，添加时根据需求进行修改。">
+            description="默认状态是开启的，附件是默认需要上传的，添加时根据需求进行修改。请添加事项时绑定用户与规则，才会正常执行，不然不会执行。">
         </el-alert>
         <el-form :model="addWorkForm" label-position="top" :rules="rules" ref="addWorkRef">
           <el-row :gutter="24">
@@ -84,7 +84,7 @@
     <div class="table_content">
       <el-table :data="WorkData" style="width: 100%">
         <el-table-column prop="index" label="#" align="center"></el-table-column>
-        <el-table-column label="事项名称" align="center" width="350">
+        <el-table-column label="事项名称" align="center" width="500">
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.matter_name }}</span>
             <el-input v-model="row.matter_name" v-else></el-input>
