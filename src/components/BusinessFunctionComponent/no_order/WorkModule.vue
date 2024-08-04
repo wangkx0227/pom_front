@@ -73,7 +73,7 @@
       </el-dialog>
     </div>
     <div class="table_content">
-      <el-table :data="WorkData" style="width: 100%" max-height="580">
+      <el-table :data="WorkData" style="width: 100%">
         <el-table-column prop="index" label="#" align="center"></el-table-column>
         <el-table-column label="事项名称" align="center" width="350">
           <template v-slot="{ row }">

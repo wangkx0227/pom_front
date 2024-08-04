@@ -2,7 +2,7 @@
   <div class="firm" v-loading="loading">
     <div class="head_search_add">
       <el-button v-if="method_list.includes('POST')" type="info" icon="el-icon-circle-plus-outline" plain
-        @click="dialogDisplay">添加
+                 @click="dialogDisplay">添加
       </el-button>
       <el-input placeholder="请输入搜索公司名称" v-model="search" clearable class="input_search">
       </el-input>
@@ -37,7 +37,8 @@
       </el-dialog>
     </div>
     <div class="table_content">
-      <el-table :data="firmData" style="width: 100%" max-height="640">
+      <el-table :data="firmData" style="width: 100%">
+        <!--        问题修改-->
         <el-table-column prop="index" label="#" align="center"></el-table-column>
         <el-table-column label="公司名称" align="center">
           <template v-slot="{ row }">
@@ -82,7 +83,7 @@
             </div>
             <div v-if="method_list.includes('DELETE')" style="display: inline-block;">
               <el-popover v-if="!scope.row.editable" placement="top" width="160" v-model="scope.row.visible"
-                trigger="manual">
+                          trigger="manual">
                 <p>删除后无恢复，请问确定删除吗？</p>
                 <div style="text-align: right; margin: 0">
                   <el-button size="mini" type="text" @click="scope.row.visible = false">取消
@@ -98,7 +99,7 @@
             </div>
             <div v-if="method_list.includes('PUT')" style="display: inline-block;">
               <el-button style="margin-left: 0" v-if="scope.row.editable" @click="scope.row.editable = false"
-                size="mini" type="text">取消
+                         size="mini" type="text">取消
               </el-button>
             </div>
           </template>
@@ -107,7 +108,8 @@
     </div>
     <div class="pagination">
       <el-pagination hide-on-single-page @current-change="currentPage" @prev-click="prevPage" @next-click="nextPage"
-        background layout="total,prev, pager, next" :page-size="10" :total="data_total" v-model:current-page="page">
+                     background layout="total,prev, pager, next" :page-size="10" :total="data_total"
+                     v-model:current-page="page">
       </el-pagination>
     </div>
   </div>
@@ -142,7 +144,7 @@ export default {
       // 弹窗内的表单验证
       rules: {
         firm: [
-          { required: true, message: "请输入公司名称", trigger: "blur" },
+          {required: true, message: "请输入公司名称", trigger: "blur"},
           {
             min: 1,
             max: 15,
@@ -150,7 +152,7 @@ export default {
             trigger: "blur",
           },
         ],
-        description: [{ validator: descriptionLen, trigger: "blur" }],
+        description: [{validator: descriptionLen, trigger: "blur"}],
         abbr: [],
         english: [],
       },
@@ -176,22 +178,22 @@ export default {
       let pk = row.id;
       this.loading = true;
       this.$http
-        .delete("foundation/firm/", {
-          data: { pk: pk },
-        })
-        .then((res) => {
-          let data = res.data;
-          if (data.code === 200) {
-            this.$message.success(data.message);
-            this.getFirmData();
-            rows.splice(index, 1);
-          } else {
-            this.$message.error(data.message);
-          }
-        })
-        .catch((error) => {
-          this.$message.error(error.message);
-        })
+          .delete("foundation/firm/", {
+            data: {pk: pk},
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.$message.success(data.message);
+              this.getFirmData();
+              rows.splice(index, 1);
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
     },
     // 编辑按钮，修改row.editable值 让这条可以进行修改
     editRow(row) {
@@ -202,22 +204,22 @@ export default {
       // 保存的数据 row
       this.loading = true;
       this.$http
-        .put("foundation/firm/", {
-          data: row,
-        })
-        .then((res) => {
-          let data = res.data;
-          if (data.code === 200) {
-            row.editable = false;
-            this.$message.success(data.message);
-            this.getFirmData();
-          } else {
-            this.$message.error(data.message);
-          }
-        })
-        .catch((error) => {
-          this.$message.error(error.message);
-        })
+          .put("foundation/firm/", {
+            data: row,
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              row.editable = false;
+              this.$message.success(data.message);
+              this.getFirmData();
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
     },
     // 显示弹框
     dialogDisplay() {
@@ -242,26 +244,26 @@ export default {
         this.addLoading = false;
       } else {
         this.$http
-          .post("foundation/firm/", {
-            data: this.addFirmForm,
-          })
-          .then((res) => {
-            let data = res.data;
-            if (data.code === 200) {
-              this.$message.success(data.message);
-              data.data.index = 1;
-              this.firmData.unshift(data.data);
-              this.$refs[formName].resetFields();
-            } else {
-              this.$message.error(data.message);
-            }
-          })
-          .catch((error) => {
-            this.$message.error(error.message);
-          })
-          .finally(() => {
-            this.addLoading = false;
-          });
+            .post("foundation/firm/", {
+              data: this.addFirmForm,
+            })
+            .then((res) => {
+              let data = res.data;
+              if (data.code === 200) {
+                this.$message.success(data.message);
+                data.data.index = 1;
+                this.firmData.unshift(data.data);
+                this.$refs[formName].resetFields();
+              } else {
+                this.$message.error(data.message);
+              }
+            })
+            .catch((error) => {
+              this.$message.error(error.message);
+            })
+            .finally(() => {
+              this.addLoading = false;
+            });
       }
     },
     // 获取数据
@@ -273,25 +275,25 @@ export default {
         get_url = `foundation/firm/?page=${this.page}`;
       }
       this.$http
-        .get(get_url)
-        .then((res) => {
-          let data = res.data;
-          if (data.code === 200) {
-            this.firmData = data.data.data;
-            this.data_total = data.data.data_total;
-            this.method_list = data.data.method_list;
+          .get(get_url)
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.firmData = data.data.data;
+              this.data_total = data.data.data_total;
+              this.method_list = data.data.method_list;
 
-          } else {
-            this.firmData = [];
-          }
-        })
-        .catch((error) => {
-          this.$message.error(error.message);
-        })
-        .finally(() => {
-          this.page_status = 0;
-          this.loading = false;
-        });
+            } else {
+              this.firmData = [];
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.page_status = 0;
+            this.loading = false;
+          });
     },
     // 页码功能
     nextPage(page) {

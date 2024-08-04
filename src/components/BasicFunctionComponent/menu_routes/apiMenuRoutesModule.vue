@@ -17,7 +17,7 @@
       </el-button>
     </div>
     <div class="table_content">
-      <el-table :data="ApiData" style="width: 100%" max-height="640">
+      <el-table :data="ApiData" style="width: 100%">
         <el-table-column prop="index" label="#" align="center" ></el-table-column>
         <el-table-column label="接口URL" align="center" prop="api_url" width="350"></el-table-column>
         <el-table-column label="映射Class" align="center" prop="api_url_class" width="330"></el-table-column>

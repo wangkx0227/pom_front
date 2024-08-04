@@ -20,7 +20,7 @@
                 </el-button>
             </div>
             <div class="table_content">
-                <el-table :data="factoryData" style="width: 100%" max-height="580">
+                <el-table :data="factoryData" style="width: 100%">
                     <el-table-column prop="index" label="#" align="center"></el-table-column>
                     <el-table-column label="工厂名称" align="center" prop="factory_name" width="350">
                     </el-table-column>

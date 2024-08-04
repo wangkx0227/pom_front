@@ -7,7 +7,7 @@ import axios from "axios";
 import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
 import "bootstrap/dist/css/bootstrap.css";
-import "@/static/basecss.css"; //自适应静态文件
+import "@/static/pombase.css"; //自适应静态文件
 Vue.config.productionTip = false;
 
 // 全局默认值，url设置

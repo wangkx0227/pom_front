@@ -37,7 +37,7 @@
       </el-dialog>
     </div>
     <div class="table_content">
-      <el-table :data="prefixData" style="width: 100%" max-height="640">
+      <el-table :data="prefixData" style="width: 100%">
         <el-table-column prop="index" label="#" align="center"></el-table-column>
         <el-table-column label="前缀名称(非中文)" align="center" width="180">
           <template v-slot="{ row }">
