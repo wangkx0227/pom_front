@@ -61,6 +61,15 @@
                 </el-cascader>
               </el-form-item>
             </el-col>
+            <el-col :span="12">
+              <el-form-item label="绑定规则">
+                <el-select v-model="addWorkForm.no_order_matter_rule_id" collapse-tags clearable
+                           placeholder="请输选择">
+                  <el-option v-for="item in rule_data_list" :key="item.value" :label="item.label" :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
           </el-row>
         </el-form>
         <template v-slot:footer>
@@ -134,6 +143,15 @@
             </el-cascader>
           </template>
         </el-table-column>
+        <el-table-column label="绑定规则" align="center" width="180">
+          <template v-slot="{ row }">
+            <span v-if="!row.editable">{{ row.rule_name }}</span>
+            <el-select v-else v-model="row.no_order_matter_rule_id" collapse-tags clearable placeholder="请输选择">
+              <el-option v-for="item in rule_data_list" :key="item.value" :label="item.label" :value="item.value">
+              </el-option>
+            </el-select>
+          </template>
+        </el-table-column>
         <el-table-column label="创建日期" align="center" width="180" prop="create_date">
         </el-table-column>
         <el-table-column label="修改日期" align="center" width="180" prop="update_date">
@@ -197,6 +215,7 @@ export default {
         is_show: true,
         is_file: 1,
         user_id_list: [],
+        no_order_matter_rule_id: "",
       },
       // 控制弹窗创建按钮
       addLoading: false,
@@ -223,6 +242,8 @@ export default {
       page: 1,
       // 可访问权限列表
       method_list: [],
+      // 绑定规则列表
+      rule_data_list: [],
       // 用户信息列表
       user_data_list: [],
       user_id_list: [], // 存储用户的id列表
@@ -236,7 +257,8 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getUsers()
+    this.getUsers();
+    this.getRules();
     this.getWorkData();
   },
   methods: {
@@ -250,6 +272,25 @@ export default {
               this.user_data_list = data.data;
             } else {
               this.user_data_list = [];
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+    },
+    // 获取规则
+    getRules() {
+      this.$http
+          .get("business_function/no_order_matter_rule/?status=all")
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.rule_data_list = data.data;
+            } else {
+              this.rule_data_list = [];
             }
           })
           .catch((error) => {
