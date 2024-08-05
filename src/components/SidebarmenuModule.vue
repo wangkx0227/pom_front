@@ -55,9 +55,10 @@
       </template>
       <el-menu-item index="/business_function/no_order_matter">非订单</el-menu-item>
       <el-menu-item index="/business_function/order_matter">订单类</el-menu-item>
-      <el-menu-item index="7-6">事务规则设置</el-menu-item>
-      <el-menu-item index="7-4">事务变更设置</el-menu-item>
-      <el-menu-item index="/business_function/factory_bind_user">工厂绑定FMR</el-menu-item>
+      <el-menu-item index="7-6">事务关闭</el-menu-item>
+      <el-menu-item index="7-4">事务变更</el-menu-item>
+      <el-menu-item index="/business_function/factory_bind_user">工厂绑定</el-menu-item>
+      <el-menu-item index="/business_function/factory_bind_user">报表配置</el-menu-item>
 
     </el-submenu>
   </el-menu>
