@@ -55,7 +55,7 @@
         </el-table-column>
         <el-table-column label="创建日期" align="center" prop="create_date" width="180">
         </el-table-column>
-        <el-table-column label="修改日期" align="center"  prop="update_date" width="180">
+        <el-table-column label="修改日期" align="center" prop="update_date" width="180">
         </el-table-column>
         <el-table-column label="归属部门" align="center" width="180">
           <template v-slot="{ row }">
@@ -241,7 +241,10 @@ export default {
     addPrefixData(formName) {
       this.addLoading = true;
       if (!this.addPrefixForm.prefix) {
-        this.$message.error("部门名称属于必填项！");
+        this.$message.error("前缀名称属于必填项！");
+        this.addLoading = false;
+      } else if (!this.addPrefixForm.department_id) {
+        this.$message.error("部门属于必填项！");
         this.addLoading = false;
       } else {
         this.$http
