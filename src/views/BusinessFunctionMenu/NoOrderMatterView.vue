@@ -8,6 +8,9 @@
         <el-tab-pane label="事务管理" name="work">
           <component :is="workComponent" v-if="activeName === 'work'"/>
         </el-tab-pane>
+        <el-tab-pane label="事务生成记录" name="work_log">
+          <component :is="workLogComponent" v-if="activeName === 'work_log'"/>
+        </el-tab-pane>
       </el-tabs>
     </el-card>
   </div>
@@ -22,6 +25,7 @@ export default {
       // 使用懒加载形式加载组件
       ruleComponent: () => import("@/components/BusinessFunctionComponent/no_order/RuleModule"),
       workComponent: () => import("@/components/BusinessFunctionComponent/no_order/WorkModule"),
+      workLogComponent: () => import("@/components/BusinessFunctionComponent/no_order/WorkLogModule"),
     };
   },
   methods: {
