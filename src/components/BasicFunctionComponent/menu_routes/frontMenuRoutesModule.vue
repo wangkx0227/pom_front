@@ -23,6 +23,22 @@
         <el-table-column prop="menu_url_alias" label="路径别名" align="center" width="180"></el-table-column>
         <el-table-column prop="menu_url_name" label="路径名称" align="center" width="180"></el-table-column>
         <el-table-column prop="menu_url_icon" label="路径图标" align="center" width="180"></el-table-column>
+        <el-table-column label="菜单类型" align="center" width="180">
+          <template v-slot="{ row }">
+            <div class="tag-group" v-if="!row.editable">
+              <el-tag v-for="item in menu_type_list" :key="item.value" v-if="row.menu_type === item.value" type="info">
+                {{ item.label }}
+              </el-tag>
+            </div>
+            <div v-else>
+              <el-select v-model="row.menu_type" clearable placeholder="请选择">
+                <el-option v-for="item in menu_type_list" :key="item.value" :label="item.label"
+                           :value="item.value">
+                </el-option>
+              </el-select>
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column label="是否需要权限控制" align="center" width="180">
           <template v-slot="{ row }">
             <div class="tag-group" v-if="!row.editable">
@@ -44,7 +60,7 @@
               <el-tag v-if="row.father_menu_url_name">{{ row.father_menu_url_name }}</el-tag>
             </div>
             <div v-else>
-              <el-select v-if="row.menu_type == 2 && row.access_control == 1" v-model="row.menu_id" clearable
+              <el-select v-if="row.menu_type === 2 && row.access_control === 1" v-model="row.menu_id" clearable
                          placeholder="请选择">
                 <el-option v-for="item in father_menu_data_list" :key="item.value" :label="item.label"
                            :value="item.value">
@@ -53,6 +69,7 @@
             </div>
           </template>
         </el-table-column>
+
         <el-table-column label="作用" align="center" width="180">
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.description }}</span>
@@ -61,22 +78,7 @@
         </el-table-column>
         <el-table-column label="加载日期" align="center" width="180" prop="create_date">
         </el-table-column>
-        <el-table-column label="菜单类型" align="center" width="180">
-          <template v-slot="{ row }">
-            <div class="tag-group" v-if="!row.editable">
-              <el-tag v-if="row.menu_type == 0" type="info">不做菜单</el-tag>
-              <el-tag v-else-if="row.menu_type == 1">一级菜单</el-tag>
-              <el-tag v-else-if="row.menu_type == 2" type="success">二级菜单</el-tag>
-            </div>
-            <div v-else>
-              <el-select v-model="row.menu_type" clearable placeholder="请选择">
-                <el-option v-for="item in menu_type_list" :key="item.value" :label="item.label"
-                           :value="item.value">
-                </el-option>
-              </el-select>
-            </div>
-          </template>
-        </el-table-column>
+
         <el-table-column label="操作" align="center" width="180">
           <template v-slot="scope">
             <div v-if="method_list.includes('PUT')" style="display: inline-block;">

@@ -70,7 +70,8 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="月份(1-12)：" v-show="addRuleForm.rule_event_type === 'month' || addRuleForm.rule_event_type === 'year' ">
+              <el-form-item label="月份(1-12)："
+                            v-show="addRuleForm.rule_event_type === 'month' || addRuleForm.rule_event_type === 'year' ">
                 <el-select v-model="addRuleForm.rule_event_month" collapse-tags clearable placeholder="请输选择" multiple
                            collapse-tags>
                   <el-option v-for="item in rule_event_month_list" :key="item.value" :label="item.label"
@@ -80,7 +81,8 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="日期(1-31)：" v-show="addRuleForm.rule_event_type === 'month' || addRuleForm.rule_event_type === 'year'">
+              <el-form-item label="日期(1-31)："
+                            v-show="addRuleForm.rule_event_type === 'month' || addRuleForm.rule_event_type === 'year'">
                 <el-select v-model="addRuleForm.rule_event_day" collapse-tags clearable placeholder="请输选择">
                   <el-option v-for="item in rule_event_day_list" :key="item.value" :label="item.label"
                              :value="item.value">
@@ -111,14 +113,16 @@
         </el-table-column>
         <el-table-column label="规则模式" align="center" width="150">
           <template v-slot="{ row }">
-            <span v-if="!row.editable">{{ row.rule_mode ? "长期" : "一次性" }}</span>
+            <span v-if="!row.editable">
+              <el-tag>{{ row.rule_mode ? "长期" : "一次性" }}</el-tag>
+            </span>
             <el-select v-else v-model="row.rule_mode" collapse-tags clearable placeholder="请输选择">
               <el-option v-for="item in rule_mode_list" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column label="生成提前时间（天）" align="center" width="180">
+        <el-table-column label="生成提前时间（天）" align="center" width="200">
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.rule_advance_days }}</span>
             <el-input-number v-model="row.rule_advance_days" :min="1" :max="100" v-else
@@ -147,6 +151,69 @@
                 inactive-text="未激活"
             >
             </el-switch>
+          </template>
+        </el-table-column>
+        <el-table-column label="规则类型" align="center" width="180">
+          <template v-slot="{ row }">
+            <span v-if="!row.editable">
+              <el-tag v-for="item in rule_event_type_list" :key="item.value"
+                      v-if="row.rule_event_type===item.value">{{ item.label }}</el-tag>
+            </span>
+            <el-select v-else v-model="row.rule_event_type" collapse-tags clearable placeholder="请输选择">
+              <el-option v-for="item in rule_event_type_list" :key="item.value" :label="item.label"
+                         :value="item.value">
+              </el-option>
+            </el-select>
+          </template>
+        </el-table-column>
+        <el-table-column label="规则类型(星期)" align="center" width="180">
+          <template v-slot="{ row }">
+            <div v-show="!row.editable">
+              <el-tag v-for="item in rule_event_week_list" :key="item.value"
+                      v-if="row.rule_event_week.toString() === item.value ">{{ item.label }}
+              </el-tag>
+            </div>
+            <div v-show="row.editable">
+              <el-select v-show="row.rule_event_type === 'week'" v-model="row.rule_event_week" collapse-tags clearable
+                         placeholder="请输选择">
+                <el-option v-for="item in rule_event_week_list" :key="item.value" :label="item.label"
+                           :value="item.value">
+                </el-option>
+              </el-select>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="规则类型(月)" align="center" width="180">
+          <template v-slot="{ row }">
+            <div v-show="!row.editable">
+                <el-tag v-show="row.rule_event_month">{{ row.rule_event_month}}</el-tag>
+            </div>
+            <div v-show="row.editable">
+              <el-select v-show="row.rule_event_type === 'month' || row.rule_event_type === 'year' " multiple collapse-tags
+                         v-model="row.rule_event_month_list" collapse-tags clearable placeholder="请输选择">
+                <el-option v-for="item in rule_event_month_list" :key="item.value" :label="item.label"
+                           :value="item.value">
+                </el-option>
+              </el-select>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="规则类型(日)" align="center" width="180">
+          <template v-slot="{ row }">
+            <div v-show="!row.editable">
+              <el-tag v-for="item in rule_event_day_list" :key="item.value"
+                      v-if="row.rule_event_day === item.value.toString() ">{{ item.label }}
+              </el-tag>
+            </div>
+            <div v-show="row.editable">
+              <el-select v-show="row.rule_event_type === 'month' || row.rule_event_type === 'year' "
+                         v-model="row.rule_event_day" collapse-tags clearable placeholder="请输选择">
+                <el-option v-for="item in rule_event_day_list" :key="item.value" :label="item.label"
+                           :value="item.value">
+                </el-option>
+              </el-select>
+            </div>
+
           </template>
         </el-table-column>
         <el-table-column label="创建日期" align="center" prop="create_date" width="180"></el-table-column>
@@ -235,36 +302,36 @@ export default {
       ],
       // 日期列表
       rule_event_day_list: [
-        {"label": "一号", "value": 1},
-        {"label": "二号", "value": 2},
-        {"label": "三号", "value": 3},
-        {"label": "四号", "value": 4},
-        {"label": "五号", "value": 5},
-        {"label": "六号", "value": 6},
-        {"label": "七号", "value": 7},
-        {"label": "八号", "value": 8},
-        {"label": "九号", "value": 9},
-        {"label": "十号", "value": 10},
-        {"label": "十一号", "value": 11},
-        {"label": "十二号", "value": 12},
-        {"label": "十三号", "value": 13},
-        {"label": "十四号", "value": 14},
-        {"label": "十五号", "value": 15},
-        {"label": "十六号", "value": 16},
-        {"label": "十七号", "value": 17},
-        {"label": "十八号", "value": 18},
-        {"label": "十九号", "value": 19},
-        {"label": "二十号", "value": 20},
-        {"label": "二十一号", "value": 21},
-        {"label": "二十二号", "value": 22},
-        {"label": "二十三号", "value": 23},
-        {"label": "二十四号", "value": 24},
-        {"label": "二十五号", "value": 25},
-        {"label": "二十六号", "value": 26},
-        {"label": "二十七号", "value": 27},
-        {"label": "二十八号", "value": 28},
-        {"label": "二十九号", "value": 29},
-        {"label": "三十号", "value": 30},
+        {"label": "一号", "value": "1"},
+        {"label": "二号", "value": '2'},
+        {"label": "三号", "value": '3'},
+        {"label": "四号", "value": '4'},
+        {"label": "五号", "value": '5'},
+        {"label": "六号", "value": '6'},
+        {"label": "七号", "value": '7'},
+        {"label": "八号", "value": '8'},
+        {"label": "九号", "value": '9'},
+        {"label": "十号", "value": '10'},
+        {"label": "十一号", "value": '11'},
+        {"label": "十二号", "value": '12'},
+        {"label": "十三号", "value": '13'},
+        {"label": "十四号", "value": '14'},
+        {"label": "十五号", "value": '15'},
+        {"label": "十六号", "value": '16'},
+        {"label": "十七号", "value": '17'},
+        {"label": "十八号", "value": '18'},
+        {"label": "十九号", "value": '19'},
+        {"label": "二十号", "value": '20'},
+        {"label": "二十一号", "value": '21'},
+        {"label": "二十二号", "value": '22'},
+        {"label": "二十三号", "value": '23'},
+        {"label": "二十四号", "value": '24'},
+        {"label": "二十五号", "value": '25'},
+        {"label": "二十六号", "value": '26'},
+        {"label": "二十七号", "value": '27'},
+        {"label": "二十八号", "value": '28'},
+        {"label": "二十九号", "value": '29'},
+        {"label": "三十号", "value": '30'},
       ],
 
       // 模式
@@ -351,6 +418,15 @@ export default {
     // 修改保存按钮
     saveRow(row) {
       // 保存的数据 row
+      if (row.rule_event_type === 'week' && row.rule_event_week) {
+        row.rule_event_month = [];
+        row.rule_event_day = '';
+      }
+      if (row.rule_event_type === 'month' || row.rule_event_type === 'year') {
+        if (row.rule_event_month_list.length > 0 && row.rule_event_day) {
+          row.rule_event_week = '';
+        }
+      }
       this.loading = true;
       this.$http
           .put("business_function/no_order_matter_rule/", {
@@ -389,31 +465,50 @@ export default {
     addRuleData(formName) {
       this.addLoading = true;
       if (!this.addRuleForm.rule_name) {
-        this.$message.error("部门名称属于必填项！");
+        this.$message.error("事项规则属于必填项！");
+        this.addLoading = false;
+      } else if (!this.addRuleForm.rule_event_type) {
+        this.$message.error("事项规则类型属于必填项！");
         this.addLoading = false;
       } else {
-        this.addRuleForm.is_show = this.addRuleForm.switch_value ? 1 : 0;
-        this.$http
-            .post("business_function/no_order_matter_rule/", {
-              data: this.addRuleForm,
-            })
-            .then((res) => {
-              let data = res.data;
-              if (data.code === 200) {
-                this.$message.success(data.message);
-                data.data.index = 1;
-                this.RuleData.unshift(data.data);
-                this.$refs[formName].resetFields();
-              } else {
-                this.$message.error(data.message);
-              }
-            })
-            .catch((error) => {
-              this.$message.error(error.message);
-            })
-            .finally(() => {
-              this.addLoading = false;
-            });
+        let save_rule_status = true;
+        if (this.addRuleForm.rule_event_type === 'week') {
+          if (!this.addRuleForm.rule_event_week) {
+            this.$message.error("星期属于必填项！");
+            save_rule_status = false;
+            this.addLoading = false;
+          }
+        } else if (this.addRuleForm.rule_event_type === 'month' || this.addRuleForm.rule_event_type === 'year') {
+          if (this.addRuleForm.rule_event_month.length === 0 || !this.addRuleForm.rule_event_day) {
+            this.$message.error("月份与日期属于必填项！");
+            save_rule_status = false;
+            this.addLoading = false;
+          }
+        }
+        if (save_rule_status) {
+          this.addRuleForm.is_show = this.addRuleForm.switch_value ? 1 : 0;
+          this.$http
+              .post("business_function/no_order_matter_rule/", {
+                data: this.addRuleForm,
+              })
+              .then((res) => {
+                let data = res.data;
+                if (data.code === 200) {
+                  this.$message.success(data.message);
+                  data.data.index = 1;
+                  this.RuleData.unshift(data.data);
+                  this.$refs[formName].resetFields();
+                } else {
+                  this.$message.error(data.message);
+                }
+              })
+              .catch((error) => {
+                this.$message.error(error.message);
+              })
+              .finally(() => {
+                this.addLoading = false;
+              });
+        }
       }
     },
     // 获取数据
