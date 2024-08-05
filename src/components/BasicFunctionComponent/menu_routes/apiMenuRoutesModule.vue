@@ -41,7 +41,7 @@
               <span>{{ row.method_data_string }}</span>
             </div>
             <div v-else>
-              <el-select v-model="method_data_id_list" placeholder="请选择" multiple collapse-tags>
+              <el-select v-model="row.method_data_id_list" placeholder="请选择" multiple collapse-tags>
                 <el-option v-for="item in method_data_list" :key="item.value" :label="item.label" :value="item.value">
                   <span style="float: left">{{ item.label }}</span>
                   <span style="float: right; color: #8492a6; font-size: 13px">{{ item.lable2 }}</span>
@@ -259,7 +259,6 @@ export default {
     saveRow(row) {
       // 保存的数据 row
       this.loading = true;
-      row.method_data_id_list = this.method_data_id_list
       if (Array.isArray(row.pom_front_menu_routes_id)) { // 如果是列表类型取最后一位id
         row.pom_front_menu_routes_id = row.pom_front_menu_routes_id.pop(); // 由于联机选择器是一个列表的值进行获取的，只需要获取最后一个元素即可(数据库也是根据前端菜单的id进行绑定的)
       }
