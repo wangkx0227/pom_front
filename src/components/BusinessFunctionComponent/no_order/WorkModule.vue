@@ -125,9 +125,9 @@
         </el-table-column>
         <el-table-column label="绑定用户" align="center" width="180">
           <template v-slot="{ row }">
-            <el-tooltip v-if="!row.editable" class="item" effect="dark" :content="row.users" placement="bottom">
-              <span>{{ row.users.substring(0, 10) }}
-              <span v-if="row.users && row.users.length >= 10">...</span></span>
+            <el-tooltip v-if="!row.editable" class="item" effect="dark" :content="row.user_name" placement="bottom">
+              <span>{{ row.user_name.substring(0, 10) }}
+              <span v-if="row.user_name && row.user_name.length >= 10">...</span></span>
             </el-tooltip>
             <el-cascader
                 clearable v-else
@@ -245,7 +245,7 @@ export default {
       // 绑定规则列表
       rule_data_list: [],
       // 用户信息列表
-      user_data_list: [],
+      user_data_list: [], // 循环的全部用户列表
       user_id_list: [], // 存储用户的id列表
 
       // 是否上传附件
@@ -260,6 +260,7 @@ export default {
     this.getUsers();
     this.getRules();
     this.getWorkData();
+
   },
   methods: {
     // 获取用户信息
