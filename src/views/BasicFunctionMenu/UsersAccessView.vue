@@ -64,7 +64,7 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getroleDate();
+    this.getUsersAccessData();
     this.getUsers();
   },
   methods: {
@@ -88,7 +88,7 @@ export default {
           });
     },
     // 获取数据
-    getroleDate() {
+    getUsersAccessData() {
       console.log(this.user_id);
       let get_url;
       if (this.search_user_id && !this.search_start_time) {
@@ -125,21 +125,21 @@ export default {
       this.page_status = page;
       this.page = page;
       // 下一页按钮
-      this.getroleDate();
+      this.getUsersAccessData();
     },
     prevPage(page) {
       this.loading = true;
       this.page_status = page;
       this.page = page;
       // 上一页按钮
-      this.getroleDate();
+      this.getUsersAccessData();
     },
     currentPage(page) {
       this.loading = true;
       this.page = page;
       // 点击按钮触发
       if (this.page_status === 0) {
-        this.getroleDate();
+        this.getUsersAccessData();
       }
     },
     // 搜索功能
@@ -151,9 +151,9 @@ export default {
       }
       if (this.search) {
         this.page = 1;
-        this.getroleDate();
+        this.getUsersAccessData();
       } else {
-        this.getroleDate();
+        this.getUsersAccessData();
       }
     },
     // 重置
@@ -163,7 +163,7 @@ export default {
       this.time_frame_list = [];
       this.search_start_time = '';
       this.search_end_time = '';
-      this.getroleDate();
+      this.getUsersAccessData();
     },
     // 建议搜索，获取结果函数
     querySearch(queryString, cb) {
