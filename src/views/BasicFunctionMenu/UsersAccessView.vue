@@ -89,7 +89,6 @@ export default {
     },
     // 获取数据
     getUsersAccessData() {
-      console.log(this.user_id);
       let get_url;
       if (this.search_user_id && !this.search_start_time) {
         get_url = `users/users_access_log/?page=${this.page}&search=${this.search_user_id}`;
