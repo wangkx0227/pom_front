@@ -325,6 +325,9 @@ export default {
           .catch((error) => {
             this.$message.error(error.message);
           })
+          .finally(() => {
+            this.loading = false;
+          });
     },
     // 编辑按钮，修改row.editable值 让这条可以进行修改
     editRow(row) {
@@ -356,9 +359,11 @@ export default {
           })
           .catch((error) => {
             this.$message.error(error.message);
-          }).finally(() => {
-        this.user_id_list = [];
-      })
+          })
+          .finally(() => {
+            this.user_id_list = [];
+            this.loading = false;
+          })
 
     },
     // 显示弹框
