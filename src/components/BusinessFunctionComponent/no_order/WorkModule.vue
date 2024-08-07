@@ -52,7 +52,7 @@
                     collapse-tags
                     :props="{ multiple: true }"
                     :options="user_data_list"
-                    v-model="user_id_list"
+                    v-model="addWorkForm.user_id_list"
                     :show-all-levels="false">
                   <template slot-scope="{ node, data }">
                     <span>{{ data.label }}</span>
@@ -134,7 +134,7 @@
                 collapse-tags
                 :props="{ multiple: true }"
                 :options="user_data_list"
-                v-model="user_id_list"
+                v-model="row.user_id_list"
                 :show-all-levels="false">
               <template slot-scope="{ node, data }">
                 <span>{{ data.label }}</span>
@@ -246,8 +246,6 @@ export default {
       rule_data_list: [],
       // 用户信息列表
       user_data_list: [], // 循环的全部用户列表
-      user_id_list: [], // 存储用户的id列表
-
       // 是否上传附件
       is_file_list: [
         {label: '否', value: 0},
@@ -336,14 +334,14 @@ export default {
     },
     // 修改保存按钮
     saveRow(row) {
-      row.user_id_list = [];
-      if (this.user_id_list.length >= 1) {
-        for (let i = 0; i < this.user_id_list.length; i++) {
-          let user_id = this.user_id_list[i].pop();
-          row.user_id_list.push(user_id);
-        }
-      }
       this.loading = true;
+      let user_id_list = [];
+      for (let i = 0; i < row.user_id_list.length; i++) {
+        let user_id = row.user_id_list[i].pop();
+        user_id_list.push(user_id);
+      }
+      // 重新设置用户id列表
+      row.user_id_list = user_id_list;
       this.$http
           .put("business_function/no_order_matter/", {
             data: row,
@@ -365,7 +363,6 @@ export default {
             this.user_id_list = [];
             this.loading = false;
           })
-
     },
     // 显示弹框
     dialogDisplay() {
@@ -385,12 +382,12 @@ export default {
     // 弹窗内创建按钮
     addWorkData(formName) {
       this.addLoading = true;
-      if (this.user_id_list.length >= 1) {
-        for (let i = 0; i < this.user_id_list.length; i++) {
-          let user_id = this.user_id_list[i].pop();
-          this.addWorkForm.user_id_list.push(user_id);
-        }
+      let user_id_list = [];
+      for (let i = 0; i < this.addWorkForm.user_id_list.length; i++) {
+        let user_id = this.addWorkForm.user_id_list[i].pop();
+        user_id_list.push(user_id);
       }
+      this.addWorkForm.user_id_list = user_id_list;
       if (!this.addWorkForm.matter_name) {
         this.$message.error("事务名称是必填项！");
         this.addLoading = false;

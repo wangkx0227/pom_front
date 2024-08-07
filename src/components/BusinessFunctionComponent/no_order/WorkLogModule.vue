@@ -15,6 +15,27 @@
         <el-button type="warning" icon="el-icon-refresh-right" plain @click="reloadDate">重置
         </el-button>
       </div>
+      <div class="dialog">
+        <el-dialog title="事务生成记录" :visible.sync="dialogTableVisible">
+          <el-table :data="matter_exceptional_data" height="300" border>
+            <el-table-column property="index" label="#" align="center"></el-table-column>
+            <el-table-column property="matter_name" label="事务名称" width="450"  align="center"></el-table-column>
+            <el-table-column property="user_name" label="跟进人" width="180"  align="center"></el-table-column>
+            <el-table-column property="create_date" label="创建时间" width="180"  align="center"></el-table-column>
+            <el-table-column property="is_exceptional" label="状态" width="180"  align="center">
+              <template v-slot="{ row }">
+                <el-tag v-if="row.is_exceptional === 0">正常</el-tag>
+                <el-tag v-else type="danger">异常</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="180"  align="center">
+              <template v-slot="scope">
+                <el-button  size="mini" type="text" v-show="scope.row.is_exceptional === 1">恢复异常</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-dialog>
+      </div>
       <div class="table_content">
         <el-table :data="NoOrderWorkLogData" style="width: 100%">
           <el-table-column prop="index" label="#" align="center"></el-table-column>
@@ -22,7 +43,7 @@
           </el-table-column>
           <el-table-column label="生成状态" align="center">
             <template v-slot="{ row }">
-              <el-tag v-if="row.exceptional === 0">正常</el-tag>
+              <el-tag v-if="row.is_exceptional === 0">正常</el-tag>
               <el-tag v-else type="danger">异常</el-tag>
             </template>
           </el-table-column>
@@ -33,13 +54,18 @@
           </el-table-column>
           <el-table-column label="正常数量" align="center">
             <template v-slot="{ row }">
-              <el-tag>{{ row.right_number }}条</el-tag>
+              <el-tag>{{ row.correct_number }}条</el-tag>
             </template>
           </el-table-column>
           <el-table-column label="异常数量" align="center">
             <template v-slot="{ row }">
-              <el-tag v-if="row.abnormal_number === 0">{{ row.abnormal_number }}条</el-tag>
-              <el-tag v-else type="danger">{{ row.abnormal_number }}条</el-tag>
+              <el-tag v-if="row.error_number === 0">{{ row.error_number }}条</el-tag>
+              <el-tag v-else type="danger">{{ row.error_number }}条</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" align="center">
+            <template v-slot="scope">
+              <el-button @click="getMatterExceptionalData(scope.row)" size="mini" type="text">查看详情</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -69,7 +95,11 @@ export default {
       data_total: 0, // 数据总数
       page_status: 0, // 分页状态变量，当上下一页时进行改变，只有是0时点击数字页码会改变
       page: 1,
-      // 获取访问权限,不需要获取，当前接口只具有查询方法，其他没有
+      // 获取访问权限,需要详情的弹窗需要查看对应的异常事务，并且进行恢复操作
+
+      // 查看详情的弹窗控制变量
+      dialogTableVisible: false,
+      matter_exceptional_data: [], // 数据变量
     };
   },
   created() {
@@ -94,7 +124,7 @@ export default {
               this.NoOrderWorkLogData = data.data.data;
               this.data_total = data.data.data_total;
             } else {
-              this.firmData = [];
+              this.NoOrderWorkLogData = [];
             }
           })
           .catch((error) => {
@@ -145,6 +175,28 @@ export default {
       this.search_end_time = '';
       this.getNoOrderWorkLogData();
     },
+    // 查看非订单的当天生成记录详情
+    getMatterExceptionalData(row) {
+      this.dialogTableVisible = true;
+      const get_url = `business_function/no_order_matter_exceptional_restore/?data_time=${row.create_date}`;
+      this.$http
+          .get(get_url)
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.matter_exceptional_data = data.data.data;
+            } else {
+              this.matter_exceptional_data = [];
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+
+            console.log(this.matter_exceptional_data)
+          });
+    }
   },
 }
 </script>
