@@ -16,21 +16,23 @@
         </el-button>
       </div>
       <div class="dialog">
-        <el-dialog title="事务生成记录" :visible.sync="dialogTableVisible">
-          <el-table :data="matter_exceptional_data" height="300" border>
+        <el-dialog title="事务生成记录" :visible.sync="dialogTableVisible" :before-close="dialogTableClose">
+          <el-table :data="matter_exceptional_data" height="300" border v-loading="dialogTableLoading"  >
             <el-table-column property="index" label="#" align="center"></el-table-column>
-            <el-table-column property="matter_name" label="事务名称" width="450"  align="center"></el-table-column>
-            <el-table-column property="user_name" label="跟进人" width="180"  align="center"></el-table-column>
-            <el-table-column property="create_date" label="创建时间" width="180"  align="center"></el-table-column>
-            <el-table-column property="is_exceptional" label="状态" width="180"  align="center">
+            <el-table-column property="matter_name" label="事务名称" width="450" align="center"></el-table-column>
+            <el-table-column property="user_name" label="跟进人" width="180" align="center"></el-table-column>
+            <el-table-column property="create_date" label="创建时间" width="180" align="center"></el-table-column>
+            <el-table-column property="is_exceptional" label="状态" width="180" align="center">
               <template v-slot="{ row }">
                 <el-tag v-if="row.is_exceptional === 0">正常</el-tag>
                 <el-tag v-else type="danger">异常</el-tag>
               </template>
             </el-table-column>
-            <el-table-column label="操作" width="180"  align="center">
+            <el-table-column label="操作" width="180" align="center">
               <template v-slot="scope">
-                <el-button  size="mini" type="text" v-show="scope.row.is_exceptional === 1">恢复异常</el-button>
+                <el-button size="mini" type="text" v-show="scope.row.is_exceptional === 1"
+                           @click="MatterAbnormalRecovery(scope.row)">恢复异常
+                </el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -98,8 +100,10 @@ export default {
       // 获取访问权限,需要详情的弹窗需要查看对应的异常事务，并且进行恢复操作
 
       // 查看详情的弹窗控制变量
+      dialogTableLoading: false,
       dialogTableVisible: false,
       matter_exceptional_data: [], // 数据变量
+
     };
   },
   created() {
@@ -107,7 +111,6 @@ export default {
     this.getNoOrderWorkLogData();
   },
   methods: {
-    // 获取用户的信息
     // 获取数据
     getNoOrderWorkLogData() {
       let get_url;
@@ -178,6 +181,7 @@ export default {
     // 查看非订单的当天生成记录详情
     getMatterExceptionalData(row) {
       this.dialogTableVisible = true;
+      this.dialogTableLoading = true;
       const get_url = `business_function/no_order_matter_exceptional_restore/?data_time=${row.create_date}`;
       this.$http
           .get(get_url)
@@ -193,9 +197,37 @@ export default {
             this.$message.error(error.message);
           })
           .finally(() => {
-
-            console.log(this.matter_exceptional_data)
+            this.dialogTableLoading = false;
           });
+    },
+    // 事务异常恢复
+    MatterAbnormalRecovery(row) {
+      this.dialogTableLoading = true;
+      this.$http
+          .put("business_function/no_order_matter_exceptional_restore/", {
+            data: row,
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              row.editable = false;
+              this.$message.success(data.message);
+              this.getMatterExceptionalData(row) // 重新调用，进行刷新表格数据
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.dialogTableLoading = false;
+          });
+    },
+    // 关闭弹窗时，进行回调
+    dialogTableClose(done){
+      done(); // 关闭窗口
+      this.getNoOrderWorkLogData(); // 重新加载一下数据
     }
   },
 }
