@@ -434,10 +434,6 @@ export default {
               this.WorkData = data.data.data;
               this.data_total = data.data.data_total;
               this.method_list = data.data.method_list;
-              // 如果项目刚刚安装好后，需要有这些权限支撑
-              if (this.method_list.length === 0) {
-                this.method_list = ["GET", "PUT", "DELETE", "POST"]
-              }
             } else {
               this.WorkData = [];
             }

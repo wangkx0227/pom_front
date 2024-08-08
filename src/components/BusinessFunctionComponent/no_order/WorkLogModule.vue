@@ -17,7 +17,7 @@
       </div>
       <div class="dialog">
         <el-dialog title="事务生成记录" :visible.sync="dialogTableVisible" :before-close="dialogTableClose">
-          <el-table :data="matter_exceptional_data" height="300" border v-loading="dialogTableLoading"  >
+          <el-table :data="matter_exceptional_data" height="300" border v-loading="dialogTableLoading">
             <el-table-column property="index" label="#" align="center"></el-table-column>
             <el-table-column property="matter_name" label="事务名称" width="450" align="center"></el-table-column>
             <el-table-column property="user_name" label="跟进人" width="180" align="center"></el-table-column>
@@ -30,7 +30,9 @@
             </el-table-column>
             <el-table-column label="操作" width="180" align="center">
               <template v-slot="scope">
-                <el-button size="mini" type="text" v-show="scope.row.is_exceptional === 1"
+                <el-button size="mini"
+                           type="text"
+                           v-show="scope.row.is_exceptional === 1 && exceptional_restore_method_list.includes('PUT')"
                            @click="MatterAbnormalRecovery(scope.row)">恢复异常
                 </el-button>
               </template>
@@ -67,7 +69,7 @@
           </el-table-column>
           <el-table-column label="操作" align="center">
             <template v-slot="scope">
-              <el-button @click="getMatterExceptionalData(scope.row)" size="mini" type="text">查看详情</el-button>
+              <el-button @click="getMatterExceptionalData(scope.row)" size="mini" type="text" v-if="exceptional_restore_method_list.includes('GET')">查看详情</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -98,7 +100,7 @@ export default {
       page_status: 0, // 分页状态变量，当上下一页时进行改变，只有是0时点击数字页码会改变
       page: 1,
       // 获取访问权限,需要详情的弹窗需要查看对应的异常事务，并且进行恢复操作
-
+      exceptional_restore_method_list: [],
       // 查看详情的弹窗控制变量
       dialogTableLoading: false,
       dialogTableVisible: false,
@@ -126,6 +128,7 @@ export default {
             if (data.code === 200) {
               this.NoOrderWorkLogData = data.data.data;
               this.data_total = data.data.data_total;
+              this.exceptional_restore_method_list = data.data.exceptional_restore_method_list;
             } else {
               this.NoOrderWorkLogData = [];
             }
@@ -225,7 +228,7 @@ export default {
           });
     },
     // 关闭弹窗时，进行回调
-    dialogTableClose(done){
+    dialogTableClose(done) {
       done(); // 关闭窗口
       this.getNoOrderWorkLogData(); // 重新加载一下数据
     }
