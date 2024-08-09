@@ -19,8 +19,10 @@ axios.interceptors.request.use(
   function (config) {
     // 每次发起请求获取token，并且携带，没有就不携带后端报错
     const authorization = localStorage.getItem("authorization");
-    if (authorization) {
+    const user_id = localStorage.getItem("user_id");
+    if (authorization && user_id) {
       config.headers["Authorization"] = authorization;
+      config.headers["X-User_Id"] = user_id;
     }
     return config;
   },
