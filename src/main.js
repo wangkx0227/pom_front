@@ -22,7 +22,7 @@ axios.interceptors.request.use(
     const user_id = localStorage.getItem("user_id");
     if (authorization && user_id) {
       config.headers["Authorization"] = authorization;
-      config.headers["X-User_Id"] = user_id;
+      config.headers["X-User-Id"] = user_id;
     }
     return config;
   },
