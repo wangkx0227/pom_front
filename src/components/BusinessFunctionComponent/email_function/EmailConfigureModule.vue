@@ -11,7 +11,7 @@
           <el-button type="primary" size="small" plain @click="emailEditVisible=true" :disabled="!email_data_status">
             编辑
           </el-button>
-          <el-button type="info" size="small" plain :disabled="!email_data_status">
+          <el-button type="info" size="small" plain :disabled="!email_data_status" @click="showDialog">
             测试发送
           </el-button>
         </div>
@@ -124,6 +124,20 @@
         </el-input>
       </el-descriptions-item>
     </el-descriptions>
+    <div class="dialog">
+      <el-dialog title="输入测试邮箱" :visible.sync="dialogVisible" width="25%" >
+        <el-form :rules="rules" v-loading="sendLoading">
+          <el-form-item label="接受测试邮箱地址" prop="test_email">
+            <el-input v-model="test_email"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="sendEmail" style="float: right" size="small">发送
+            </el-button>
+          </el-form-item>
+        </el-form>
+      </el-dialog>
+    </div>
+
   </div>
 </template>
 
@@ -133,6 +147,9 @@ export default {
   data() {
     // 验证密码事件
     return {
+      test_email: "",
+      dialogVisible: false,
+      sendLoading: false,
       loading: false,
       email_data: {
         email_name: "",
@@ -147,6 +164,11 @@ export default {
       },
       email_data_status: true,
       emailEditVisible: false, // 修改保存按钮控制变了
+      rules: {
+        test_email: [
+          {required: true, message: '请输入邮箱地址', trigger: 'blur'},
+        ]
+      },
     };
   },
   created() {
@@ -250,8 +272,43 @@ export default {
             })
       }
     },
-  },
-};
+    // 测试发送邮箱
+    sendEmail() {
+      this.sendLoading = true;
+      const verify_email = this.validateEmail(this.test_email);
+      if (!this.test_email) {
+        this.$message.error("请输入接受测试邮件的邮箱！");
+        this.sendLoading = false;
+      } else if (!verify_email) {
+        this.$message.error("邮箱格式不正确！");
+        this.sendLoading = false;
+      } else {
+        this.$http
+            .post("business_function/email_config/")
+            .then((res) => {
+              let data = res.data;
+              if (data.code === 200) {
+                this.$message.success(data.message);
+              } else {
+                this.$message.error(data.message);
+              }
+            })
+            .catch((error) => {
+              this.$message.error(error.message);
+            })
+            .finally(() => {
+              this.sendLoading = false;
+            });
+      }
+    },
+    // 打开弹窗
+    showDialog() {
+      this.dialogVisible = !this.dialogVisible;
+    },
+  }
+  ,
+}
+;
 </script>
 <style>
 .email_config {
