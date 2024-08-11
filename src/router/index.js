@@ -154,6 +154,13 @@ const routes = [
             import("@/views/BusinessFunctionMenu/OrderMatterView"),
         meta: { title: "订单类型" },
       },
+      {
+        path: "email", //
+        name: "email",
+        component: () =>
+            import("@/views/BusinessFunctionMenu/EmailView"),
+        meta: { title: "邮箱功能" },
+      },
     ],
   },
 ];
