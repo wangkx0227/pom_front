@@ -5,11 +5,8 @@
         <el-tab-pane label="邮箱配置" name="email_configure">
           <component :is="emailConfigureComponent" v-if="activeName === 'email_configure'"/>
         </el-tab-pane>
-        <el-tab-pane label="日报" name="day_mailing_list">
-          <component :is="dayMailingListComponent" v-if="activeName === 'day_mailing_list'"/>
-        </el-tab-pane>
-        <el-tab-pane label="月报" name="month_mailing_list">
-          <component :is="MonthMailingListComponent" v-if="activeName === 'month_mailing_list'"/>
+        <el-tab-pane label="报表展示" name="report_mailing_list">
+          <component :is="reportMailingListComponent" v-if="activeName === 'report_mailing_list'"/>
         </el-tab-pane>
       </el-tabs>
     </el-card>
@@ -24,8 +21,7 @@ export default {
       activeName: "email_configure",
       // 使用懒加载形式加载组件
       emailConfigureComponent: () => import("@/components/BusinessFunctionComponent/email_function/EmailConfigureModule"),
-      dayMailingListComponent: () => import("@/components/BusinessFunctionComponent/email_function/DayMailingListModule"),
-      MonthMailingListComponent: () => import("@/components/BusinessFunctionComponent/email_function/MonthMailingListModule"),
+      reportMailingListComponent: () => import("@/components/BusinessFunctionComponent/email_function/ReportMailingListModule"),
     };
   },
   methods: {
