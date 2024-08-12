@@ -1,6 +1,6 @@
 <template>
   <div class="no_order_work_log" v-loading="loading">
-    <el-card class="box-card">
+
       <div class="head_search_add">
         <el-date-picker
             v-model="time_frame_list"
@@ -81,7 +81,7 @@
                        v-model:current-page="page">
         </el-pagination>
       </div>
-    </el-card>
+
   </div>
 </template>
 

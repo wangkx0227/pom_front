@@ -202,7 +202,7 @@ export default {
     // 获取email信息
     getEmail() {
       this.$http
-          .get("business_function/email_config/")
+          .get("business_function/report_email_config/")
           .then((res) => {
             let data = res.data;
             if (data.code === 200) {
@@ -245,7 +245,7 @@ export default {
         this.loading = false;
       } else {
         this.$http
-            .put("business_function/email_config/", {
+            .put("business_function/report_email_config/", {
               data: this.email_data,
             })
             .then((res) => {
@@ -278,7 +278,7 @@ export default {
         this.sendLoading = false;
       } else {
         this.$http
-            .post("business_function/email_config/", {
+            .post("business_function/report_email_config/", {
               data: this.test_email,
             })
             .then((res) => {
