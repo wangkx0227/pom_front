@@ -126,7 +126,7 @@
     <div class="dialog">
       <el-dialog title="输入测试邮箱" :visible.sync="dialogVisible" width="25%">
         <el-form v-loading="sendLoading">
-          <el-form-item label="接受测试邮箱地址">
+          <el-form-item label="收件箱地址">
             <el-input v-model="test_email"></el-input>
           </el-form-item>
           <el-form-item>
