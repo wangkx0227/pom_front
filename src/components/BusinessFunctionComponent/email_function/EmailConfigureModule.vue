@@ -9,10 +9,10 @@
       <template slot="extra">
         <div v-if="!emailEditVisible">
           <el-button type="primary" size="small" plain @click="emailEditVisible=true" :disabled="!email_data_status">
-            编辑
+            编辑配置
           </el-button>
           <el-button type="info" size="small" plain :disabled="!email_data_status" @click="showDialog">
-            测试发送
+            测试配置
           </el-button>
         </div>
         <div v-else>
@@ -86,7 +86,6 @@
             :rows="1"
             placeholder="请输入内容"
             v-model="email_data.email_send_content"
-
         >
         </el-input>
       </el-descriptions-item>
@@ -125,9 +124,9 @@
       </el-descriptions-item>
     </el-descriptions>
     <div class="dialog">
-      <el-dialog title="输入测试邮箱" :visible.sync="dialogVisible" width="25%" >
-        <el-form :rules="rules" v-loading="sendLoading">
-          <el-form-item label="接受测试邮箱地址" prop="test_email">
+      <el-dialog title="输入测试邮箱" :visible.sync="dialogVisible" width="25%">
+        <el-form v-loading="sendLoading">
+          <el-form-item label="接受测试邮箱地址">
             <el-input v-model="test_email"></el-input>
           </el-form-item>
           <el-form-item>
@@ -164,11 +163,6 @@ export default {
       },
       email_data_status: true,
       emailEditVisible: false, // 修改保存按钮控制变了
-      rules: {
-        test_email: [
-          {required: true, message: '请输入邮箱地址', trigger: 'blur'},
-        ]
-      },
     };
   },
   created() {
@@ -284,7 +278,9 @@ export default {
         this.sendLoading = false;
       } else {
         this.$http
-            .post("business_function/email_config/")
+            .post("business_function/email_config/", {
+              data: this.test_email,
+            })
             .then((res) => {
               let data = res.data;
               if (data.code === 200) {
