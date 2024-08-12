@@ -125,6 +125,10 @@
     </el-descriptions>
     <div class="dialog">
       <el-dialog title="输入测试邮箱" :visible.sync="dialogVisible" width="25%">
+        <el-alert
+            title="请使用公司内的邮箱进行测试，外部邮箱经过测试无法接受！"
+            type="warning">
+        </el-alert>
         <el-form v-loading="sendLoading">
           <el-form-item label="收件箱地址">
             <el-input v-model="test_email"></el-input>
