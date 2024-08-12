@@ -33,12 +33,13 @@
         </el-table-column>
         <el-table-column label="下载操作" align="center">
           <template v-slot="scope">
-            <el-button size="mini" type="text">下载</el-button>
+            <el-button size="mini" type="text" @click="DownloadReport(scope.row)">下载</el-button>
           </template>
         </el-table-column>
         <el-table-column label="异常操作" align="center">
           <template v-slot="scope">
-            <el-button size="mini" type="text" v-if="ButtonDisplay(scope.row)" @click="saveRow(scope.row)">修复</el-button>
+            <el-button size="mini" type="text" v-if="ButtonDisplay(scope.row)" @click="saveRow(scope.row)">修复
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -170,6 +171,51 @@ export default {
             this.loading = false;
           })
     },
+    // 报表下载功能
+    DownloadReport(row) {
+      this.loading = true;
+      this.$http
+          .post("business_function/report_email_log/", {
+            data: row,
+          })
+          .then((res) => {
+            let data = res.data;
+            if (res.status === 200) {
+              if (data.code === 500) {
+                this.$message.error(data.message);
+              } else {
+                const contentDisposition = res.headers['content-disposition'];
+                let fileName = 'file.xlsx'; // 默认文件名
+                if (contentDisposition) {
+                  const fileNameSplit = contentDisposition.split("=");
+                  if (fileNameSplit && fileNameSplit.length > 1) {
+                    fileName = fileNameSplit[1]
+                  }
+                }
+                const blob = new Blob([data], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+                this.triggerDownload(blob, fileName)
+              }
+            }
+
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+    },
+    triggerDownload(blob, filename) {
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    }
+
   },
 }
 </script>
