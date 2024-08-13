@@ -237,6 +237,4 @@ export default {
 .head_search_add .el-date-editor .el-range-separator {
   padding: 0 !important;
 }
-
-
 </style>

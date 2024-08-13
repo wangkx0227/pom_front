@@ -1,5 +1,12 @@
 <template>
   <div class="work" v-loading="loading">
+    <div class="dialog">
+      <el-dialog title="事项完成窗口" :visible.sync="NoOrderWorkDialogVisible" :before-close="NoOrderWorkDialogClose">
+        <el-table height="300" border v-loading="NoOrderWorkDialogLoading">
+
+        </el-table>
+      </el-dialog>
+    </div>
     <div class="head_search_add">
       <el-date-picker
           v-model="time_frame_list"
@@ -23,109 +30,57 @@
             <el-input v-model="row.matter_name" v-else></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="跟进人用户" align="center" width="180">
-          <template v-slot="{ row }">
-            <el-switch
-                v-if="!row.editable"
-                v-model="row.switch_value"
-                active-color="#13ce66"
-                inactive-color="#ff4949"
-                disabled
-                active-text="开"
-                inactive-text="关"
-            >
-            </el-switch>
-            <el-switch
-                v-else
-                v-model="row.switch_value"
-                @change="changeSwitch($event,row)"
-                active-color="#13ce66"
-                inactive-color="#ff4949"
-                active-text="开"
-                inactive-text="关"
-            >
-            </el-switch>
-          </template>
+        <el-table-column label="跟进人用户" align="center" width="180" prop="user_name">
         </el-table-column>
-        <el-table-column label="应完成时间" align="center" width="180">
-          <template v-slot="{ row }">
-            <span v-if="!row.editable">{{ row.is_file ? "是" : "否" }} </span>
-            <el-select v-else v-model="row.is_file" collapse-tags clearable placeholder="请输选择">
-              <el-option v-for="item in is_file_list" :key="item.value" :label="item.label" :value="item.value">
-              </el-option>
-            </el-select>
-          </template>
+        <el-table-column label="应完成时间" align="center" width="180" prop="expected_completion_time">
         </el-table-column>
         <el-table-column label="完成状态" align="center" width="180">
           <template v-slot="{ row }">
-            <el-tooltip v-if="!row.editable" class="item" effect="dark" :content="row.user_name" placement="bottom">
-              <span>{{ row.user_name.substring(0, 10) }}
-              <span v-if="row.user_name && row.user_name.length >= 10">...</span></span>
-            </el-tooltip>
-            <el-cascader
-                clearable v-else
-                collapse-tags
-                :props="{ multiple: true }"
-                :options="user_data_list"
-                v-model="row.user_id_list"
-                :show-all-levels="false">
-              <template slot-scope="{ node, data }">
-                <span>{{ data.label }}</span>
-                <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
-              </template>
-            </el-cascader>
+            <el-tag type="success" v-if="row.complete_status === 1">已完成</el-tag>
+            <el-tag type="danger" v-else>未完成</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="是否需要延期" align="center" width="180" prop="create_date">
+        <el-table-column label="是否需要上传附件" align="center" width="180">
+          <template v-slot="{ row }">
+            <el-tag v-if="row.is_file === 1">是</el-tag>
+            <el-tag type="info" v-else>否</el-tag>
+          </template>
         </el-table-column>
-        <el-table-column label="是否需要上传附件" align="center" width="180" prop="create_date">
+        <el-table-column label="延期列表" align="center" width="180">
+          <template v-slot="{ row }">
+            <el-button v-if="row.extension_status" size="mini" type="text">延期列表查看</el-button>
+          </template>
+        </el-table-column>
+        <el-table-column label="附件" align="center" width="180">
+          <template v-slot="{ row }">
+            <el-button v-if="row.annex_status" size="mini" type="text">附件下载</el-button>
+          </template>
         </el-table-column>
         <el-table-column label="实际完成时间" align="center" width="180">
           <template v-slot="{ row }">
-            <span v-if="!row.editable">{{ row.rule_name }}</span>
-            <el-select v-else v-model="row.no_order_matter_rule_id" collapse-tags clearable placeholder="请输选择">
-              <el-option v-for="item in rule_data_list" :key="item.value" :label="item.label" :value="item.value">
-              </el-option>
-            </el-select>
+            <span v-if="row.complete_status === 1">{{ row.complete_time }}</span>
           </template>
-        </el-table-column>
-        <el-table-column label="修改日期" align="center" width="180" prop="update_date">
         </el-table-column>
         <el-table-column label="操作" align="center" width="280">
           <template v-slot="scope">
             <div v-if="method_list.includes('PUT')" style="display: inline-block;">
-              <el-button v-if="!scope.row.editable" @click="editRow(scope.row)" size="mini" type="text">完成事务
-              </el-button>
-              <el-button v-if="!scope.row.editable" @click="editRow(scope.row)" size="mini" type="text">申请延期
-              </el-button>
-              <el-button v-if="!scope.row.editable" @click="editRow(scope.row)" size="mini" type="text">附件下载(上传附件后才能下载)
-              </el-button>
-              <el-button v-else @click="saveRow(scope.row)" size="mini" type="text">保存
-              </el-button>
-            </div>
-            <div v-if="method_list.includes('PUT') || method_list.includes('DELETE')" style="display: inline;">
-              <el-divider direction="vertical"></el-divider>
-            </div>
-            <div v-if="method_list.includes('DELETE')" style="display: inline-block;">
-              <el-popover v-if="!scope.row.editable" placement="top" width="160" v-model="scope.row.visible"
-                          trigger="manual">
-                <p>删除后无恢复，请问确定删除吗？</p>
+              <el-button v-if="scope.row.is_file" size="mini" type="text" @click="completeNoOrderWork(scope.row)">完成事务</el-button>
+              <el-popover v-else placement="top" width="160"   v-model="scope.row.visible">
+                <p>完成事项后，按照当前的时间记录，请问是要完成码？</p>
                 <div style="text-align: right; margin: 0">
-                  <el-button size="mini" type="text" @click="scope.row.visible = false">取消
-                  </el-button>
-                  <el-button type="primary" size="mini" @click="deleteRow(scope.$index, WorkData, scope.row)">确定
-                  </el-button>
+                  <el-button size="mini" type="text" @click="scope.row.visible = false">否</el-button>
+                  <el-button type="primary" size="mini" @click="scope.row.visible = false">是</el-button>
                 </div>
                 <template v-slot:reference>
-                  <el-button size="mini" type="text" @click="deleteDisplay(scope.row)">删除
-                  </el-button>
+                  <el-button size="mini" type="text">完成事务</el-button>
                 </template>
               </el-popover>
             </div>
-            <div v-if="method_list.includes('PUT')" style="display: inline-block;">
-              <el-button style="margin-left: 0" v-if="scope.row.editable" @click="scope.row.editable = false"
-                         size="mini" type="text">取消
-              </el-button>
+            <div v-if="method_list.includes('PUT') && method_list.includes('POST') " style="display: inline;">
+              <el-divider direction="vertical"></el-divider>
+            </div>
+            <div v-if="method_list.includes('POST')" style="display: inline-block;">
+              <el-button size="mini" type="text">申请延期</el-button>
             </div>
           </template>
         </el-table-column>
@@ -142,7 +97,7 @@
 
 <script>
 export default {
-  name: "WorkModule",
+  name: "NoOrderWorkModule",
   data() {
     return {
       no_order_matter_list: [], // 查询数据列表
@@ -163,6 +118,9 @@ export default {
       time_frame_list: [],
       search_start_time: "",
       search_end_time: "",
+      // 完成事项的弹窗控制变量
+      NoOrderWorkDialogVisible: false, // 控制弹窗
+      NoOrderWorkDialogLoading: false, // 控制提交按钮
     };
   },
   created() {
@@ -238,8 +196,21 @@ export default {
       this.search_end_time = '';
       this.getNoOrderWorkListData();
     },
+    // 完成事务按钮
+    completeNoOrderWork(row) {
+      this.NoOrderWorkDialogVisible = true;
+    },
+    // 完成事务关闭弹窗时，进行回调
+    NoOrderWorkDialogClose(done) {
+      done(); // 关闭窗口
+      this.getNoOrderWorkListData(); // 重新加载一下数据
+    }
   },
 };
 </script>
 
-<style></style>
+<style>
+.head_search_add .el-date-editor .el-range-separator {
+  padding: 0 !important;
+}
+</style>
