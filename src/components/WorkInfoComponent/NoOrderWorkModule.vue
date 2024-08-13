@@ -1,10 +1,28 @@
 <template>
   <div class="work" v-loading="loading">
     <div class="dialog">
-      <el-dialog title="事项完成窗口" :visible.sync="NoOrderWorkDialogVisible" :before-close="NoOrderWorkDialogClose">
-        <el-table height="300" border v-loading="NoOrderWorkDialogLoading">
-
-        </el-table>
+      <el-dialog title="事务附件上传"
+                 width="25%"
+                 :visible.sync="NoOrderWorkDialogVisible"
+                 :before-close="NoOrderWorkDialogClose"
+      >
+        <el-upload
+            class="upload-demo"
+            action=""
+            multiple
+            :limit="10"
+            :on-change="handleChangeFile"
+            :before-upload="beforeUploadFile"
+            :on-exceed="handleExceedFile"
+            :auto-upload="false"
+            :file-list="fileList">
+          <el-button type="success" size="mini">点击上传</el-button>
+          <div slot="tip" class="el-upload__tip">支持png,pdf,doc,docx,xlsx,xls,jpg,gif格式文件，且不能超过5M</div>
+        </el-upload>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="NoOrderWorkDialogButtonClose" size="mini">取消上传</el-button>
+          <el-button type="primary" size="mini" @click="completeNoOrderWorkFile">确定上传</el-button>
+        </span>
       </el-dialog>
     </div>
     <div class="head_search_add">
@@ -63,23 +81,27 @@
         </el-table-column>
         <el-table-column label="操作" align="center" width="280">
           <template v-slot="scope">
-            <div v-if="method_list.includes('PUT')" style="display: inline-block;">
-              <el-button v-if="scope.row.is_file" size="mini" type="text" @click="completeNoOrderWork(scope.row)">完成事务</el-button>
-              <el-popover v-else placement="top" width="160"   v-model="scope.row.visible">
+            <!-- 完成后，隐藏申请延期按钮 -->
+            <div v-if="method_list.includes('PUT') && !scope.row.complete_status" style="display: inline-block;">
+              <el-button v-if="scope.row.is_file" size="mini" type="text" @click="completeNoOrderWorkDialog(scope.row)">
+                完成事务
+              </el-button>
+              <el-popover v-else placement="top" width="160" v-model="scope.row.visible">
                 <p>完成事项后，按照当前的时间记录，请问是要完成码？</p>
                 <div style="text-align: right; margin: 0">
                   <el-button size="mini" type="text" @click="scope.row.visible = false">否</el-button>
-                  <el-button type="primary" size="mini" @click="scope.row.visible = false">是</el-button>
+                  <el-button type="primary" size="mini" @click="completeNoOrderWork(scope.row)">是</el-button>
                 </div>
                 <template v-slot:reference>
                   <el-button size="mini" type="text">完成事务</el-button>
                 </template>
               </el-popover>
             </div>
-            <div v-if="method_list.includes('PUT') && method_list.includes('POST') " style="display: inline;">
+            <div v-if="method_list.includes('PUT') && method_list.includes('POST') && !scope.row.complete_status "
+                 style="display: inline;">
               <el-divider direction="vertical"></el-divider>
             </div>
-            <div v-if="method_list.includes('POST')" style="display: inline-block;">
+            <div v-if="method_list.includes('POST') && !scope.row.complete_status" style="display: inline-block;">
               <el-button size="mini" type="text">申请延期</el-button>
             </div>
           </template>
@@ -104,8 +126,6 @@ export default {
       loading: false, // 数据加载样式
       // 控制弹窗创建按钮
       addLoading: false,
-      // 弹出框内输入框大小
-      formLabelWidth: "120px",
       // 弹出框控制变量
       dialogDisplayVar: false,
       // 分页
@@ -120,7 +140,10 @@ export default {
       search_end_time: "",
       // 完成事项的弹窗控制变量
       NoOrderWorkDialogVisible: false, // 控制弹窗
-      NoOrderWorkDialogLoading: false, // 控制提交按钮
+      // 弹窗传入的row变量
+      row_list: null,
+      // 弹窗内上传变量
+      fileList: [],
     };
   },
   created() {
@@ -132,9 +155,9 @@ export default {
       this.loading = true;
       let get_url;
       if (!this.search_start_time) {
-        get_url = `business_function/no_order_matter_list/?page=${this.page}`;
+        get_url = `work/no_order_matter_list/?page=${this.page}`;
       } else {
-        get_url = `business_function/no_order_matter_list/?page=${this.page}&end_time=${this.search_end_time}&start_time=${this.search_start_time}`;
+        get_url = `work/no_order_matter_list/?page=${this.page}&end_time=${this.search_end_time}&start_time=${this.search_start_time}`;
       }
       this.$http
           .get(get_url)
@@ -196,15 +219,105 @@ export default {
       this.search_end_time = '';
       this.getNoOrderWorkListData();
     },
-    // 完成事务按钮
+    // 完成事务按钮 - 不需要上传附件
     completeNoOrderWork(row) {
-      this.NoOrderWorkDialogVisible = true;
+      this.loading = true;
+      this.$http
+          .put("work/no_order_matter_list/", {
+            data: row,
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.$message.success(data.message);
+              this.getNoOrderWorkListData();
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.loading = false;
+            row.visible = false;
+          })
     },
-    // 完成事务关闭弹窗时，进行回调
+    // 打开上传附件弹窗
+    completeNoOrderWorkDialog(row) {
+      this.NoOrderWorkDialogVisible = true;
+      this.row_list = row;
+    },
+    // 完成事务关闭弹窗时，进行回调 自带函数
     NoOrderWorkDialogClose(done) {
       done(); // 关闭窗口
       this.getNoOrderWorkListData(); // 重新加载一下数据
-    }
+    },
+    // 完成事项关闭弹出，进行回调，按钮
+    NoOrderWorkDialogButtonClose() {
+      this.NoOrderWorkDialogVisible = false;
+      this.getNoOrderWorkListData();
+    },
+    // 文件上传功能
+    // 文件上传,显示一共可以上传几个文件
+    handleExceedFile(files, fileList) {
+      this.$message.warning(`当前限制选择 10 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+    },
+    handleChangeFile(file, fileList) {
+      // 移除不通过校验的文件
+      this.fileList = fileList.filter((item) => {
+        return this.beforeUploadFile(item);
+      });
+    },
+    // 更新文件列表，并且检测文件格式
+    beforeUploadFile(file, fileList) {
+      const isLt5M = file.size / 1024 / 1024 < 5; //这里做文件大小限制
+      const FileExt = file.name.replace(/.+\./, "");
+      const file_format = ['png', 'pdf', 'doc', 'docx', 'xls', 'jpg', 'gif', 'xlsx']
+      if (!isLt5M) {
+        this.$message.error('上传文件大小不能超过 5MB!');
+        return false;
+      } else if (!file_format.includes(FileExt)) {
+        this.$message.error("上传文件格式不正确!");
+        return false;
+      } else {
+        return true;
+      }
+
+    },
+    // 文件上传到后端接口,自定义上传
+    // 完成事务按钮 - 需要上传附件
+    completeNoOrderWorkFile() {
+      let formData = new FormData();
+      this.fileList.forEach((fileItem, index) => {
+        formData.append(`file-${index}`, fileItem.raw);
+      });
+      let jsonData = JSON.stringify(this.row_list);
+      formData.append('data', jsonData);
+      this.$http
+          .put("work/no_order_matter_list/", formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data', // 必须设置请求头
+            }
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.$message.success(data.message);
+              this.fileList = [];
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.fileList = [];
+            this.NoOrderWorkDialogVisible = false
+            this.row_list = null;
+          });
+    },
   },
 };
 </script>
@@ -212,5 +325,12 @@ export default {
 <style>
 .head_search_add .el-date-editor .el-range-separator {
   padding: 0 !important;
+}
+
+.el-upload-list {
+  flex-direction: column;
+  max-height: 80px;
+  min-height: 80px;
+  overflow: scroll;
 }
 </style>
