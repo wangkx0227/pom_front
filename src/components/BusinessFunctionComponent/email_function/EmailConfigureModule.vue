@@ -8,10 +8,10 @@
                      style="margin:5px 10px;">
       <template slot="extra">
         <div v-if="!emailEditVisible">
-          <el-button type="primary" size="small" plain @click="emailEditVisible=true" :disabled="!email_data_status">
+          <el-button v-if="method_list.includes('PUT')" type="primary" size="small" plain @click="emailEditVisible=true" :disabled="!email_data_status">
             编辑配置
           </el-button>
-          <el-button type="info" size="small" plain :disabled="!email_data_status" @click="showDialog">
+          <el-button v-if="method_list.includes('POST')" type="info" size="small" plain :disabled="!email_data_status" @click="showDialog">
             测试配置
           </el-button>
         </div>
@@ -167,6 +167,8 @@ export default {
       },
       email_data_status: true,
       emailEditVisible: false, // 修改保存按钮控制变了
+      // 权限
+      method_list: [], // 修改保存按钮控制变了
     };
   },
   created() {
@@ -210,6 +212,7 @@ export default {
             let data = res.data;
             if (data.code === 200) {
               this.email_data = data.data;
+              this.method_list = data.method_list;
             } else {
               this.$message.error(data.message);
               this.email_data_status = false;

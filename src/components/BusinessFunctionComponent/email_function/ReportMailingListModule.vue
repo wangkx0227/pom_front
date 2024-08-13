@@ -33,12 +33,12 @@
         </el-table-column>
         <el-table-column label="下载操作" align="center">
           <template v-slot="scope">
-            <el-button size="mini" type="text" @click="DownloadReport(scope.row)">下载</el-button>
+            <el-button size="mini" type="text" @click="DownloadReport(scope.row)" v-if="method_list.includes('POST')">下载</el-button>
           </template>
         </el-table-column>
         <el-table-column label="异常操作" align="center">
           <template v-slot="scope">
-            <el-button size="mini" type="text" v-if="ButtonDisplay(scope.row)" @click="saveRow(scope.row)">修复
+            <el-button size="mini" type="text" v-if="ButtonDisplay(scope.row) && method_list.includes('PUT')" @click="saveRow(scope.row)">修复
             </el-button>
           </template>
         </el-table-column>
@@ -68,7 +68,8 @@ export default {
       data_total: 0, // 数据总数
       page_status: 0, // 分页状态变量，当上下一页时进行改变，只有是0时点击数字页码会改变
       page: 1,
-
+      // 权限
+      method_list: [], // 修改保存按钮控制变了
     };
   },
   created() {
@@ -91,6 +92,7 @@ export default {
             if (data.code === 200) {
               this.ReportEmailLogData = data.data.data;
               this.data_total = data.data.data_total;
+              this.method_list = data.data.method_list;
             } else {
               this.ReportEmailLogData = [];
             }
@@ -224,6 +226,4 @@ export default {
 .head_search_add .el-date-editor .el-range-separator {
   padding: 0 !important;
 }
-
-
 </style>
