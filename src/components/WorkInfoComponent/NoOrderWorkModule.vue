@@ -1,5 +1,6 @@
 <template>
   <div class="work" v-loading="loading">
+    <!--  上传附件窗口  -->
     <div class="dialog">
       <el-dialog title="事务附件上传"
                  width="25%"
@@ -69,9 +70,9 @@
             <el-button v-if="row.extension_status" size="mini" type="text">延期列表查看</el-button>
           </template>
         </el-table-column>
-        <el-table-column label="附件" align="center" width="180">
+        <el-table-column label="附件列表" align="center" width="180">
           <template v-slot="{ row }">
-            <el-button v-if="row.annex_status" size="mini" type="text">附件下载</el-button>
+            <el-button v-if="row.annex_status" size="mini" type="text" @click="getAnnexFileData(row)">附件列表查看</el-button>
           </template>
         </el-table-column>
         <el-table-column label="实际完成时间" align="center" width="180">
@@ -114,6 +115,24 @@
                      v-model:current-page="page">
       </el-pagination>
     </div>
+    <!--  附件列表  -->
+    <div class="dialog">
+      <el-dialog title="附件列表" :visible.sync="AnnexFileVisible" :before-close="AnnexFileClose">
+        <el-table :data="annex_file_data" height="300" border v-loading="AnnexFileTableLoading">
+          <el-table-column property="index" label="#" align="center"></el-table-column>
+          <el-table-column property="file_name" label="文件名称" width="350" align="center"></el-table-column>
+          <el-table-column property="create_date" label="上传时间" width="180" align="center"></el-table-column>
+          <el-table-column label="操作" width="180" align="center">
+            <template v-slot="scope">
+              <el-button size="mini"
+                         type="text"
+              >下载
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-dialog>
+    </div>
   </div>
 </template>
 
@@ -142,8 +161,12 @@ export default {
       NoOrderWorkDialogVisible: false, // 控制弹窗
       // 弹窗传入的row变量
       row_list: null,
-      // 弹窗内上传变量
+      // 弹窗内上传变量，文件对象列表
       fileList: [],
+      // 附件窗口使用的变量
+      AnnexFileVisible: false,
+      annex_file_data: [],
+      AnnexFileTableLoading: false,
     };
   },
   created() {
@@ -304,7 +327,6 @@ export default {
             let data = res.data;
             if (data.code === 200) {
               this.$message.success(data.message);
-              this.fileList = [];
             } else {
               this.$message.error(data.message);
             }
@@ -316,7 +338,32 @@ export default {
             this.fileList = [];
             this.NoOrderWorkDialogVisible = false
             this.row_list = null;
+            this.getNoOrderWorkListData();
           });
+    },
+    // 附件列表函数
+    getAnnexFileData(row) {
+      this.AnnexFileVisible = true;
+      // this.AnnexFileTableLoading = true;
+      //   const get_url = `business_function/no_order_matter_exceptional_restore/?data_time=${row.create_date}`;
+      //   this.$http
+      //       .get(get_url)
+      //       .then((res) => {
+      //         let data = res.data;
+      //         if (data.code === 200) {
+      //           this.matter_exceptional_data = data.data.data;
+      //         } else {
+      //           this.matter_exceptional_data = [];
+      //         }
+      //       })
+      //       .catch((error) => {
+      //         this.$message.error(error.message);
+      //       })
+      //       .finally(() => {
+      //         this.dialogTableLoading = false;
+      //       });
+    },
+    AnnexFileClose() {
     },
   },
 };
