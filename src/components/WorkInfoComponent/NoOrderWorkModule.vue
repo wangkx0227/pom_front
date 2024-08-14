@@ -128,6 +128,12 @@
                          type="text"
               >下载
               </el-button>
+              <el-divider direction="vertical"></el-divider>
+              <el-button size="mini"
+                         type="text"
+                         @click="delAnnexFileData(scope.$index, annex_file_data, scope.row)"
+              >删除
+              </el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -143,10 +149,8 @@ export default {
     return {
       no_order_matter_list: [], // 查询数据列表
       loading: false, // 数据加载样式
-      // 控制弹窗创建按钮
-      addLoading: false,
-      // 弹出框控制变量
-      dialogDisplayVar: false,
+      addLoading: false, // 控制弹窗创建按钮
+      dialogDisplayVar: false,// 弹出框控制变量
       // 分页
       data_total: 0, // 数据总数
       page_status: 0, // 分页状态变量，当上下一页时进行改变，只有是0时点击数字页码会改变
@@ -160,13 +164,14 @@ export default {
       // 完成事项的弹窗控制变量
       NoOrderWorkDialogVisible: false, // 控制弹窗
       // 弹窗传入的row变量
-      row_list: null,
+      row_data: null, // 事项需要上传附件，弹窗保存当前非订单事项列的数据
       // 弹窗内上传变量，文件对象列表
       fileList: [],
       // 附件窗口使用的变量
       AnnexFileVisible: false,
       annex_file_data: [],
       AnnexFileTableLoading: false,
+      no_order_work_annex_file_row: null, // 当前附件列表归属到哪个非订单事务的id
     };
   },
   created() {
@@ -269,7 +274,7 @@ export default {
     // 打开上传附件弹窗
     completeNoOrderWorkDialog(row) {
       this.NoOrderWorkDialogVisible = true;
-      this.row_list = row;
+      this.row_data = row;
     },
     // 完成事务关闭弹窗时，进行回调 自带函数
     NoOrderWorkDialogClose(done) {
@@ -315,7 +320,7 @@ export default {
       this.fileList.forEach((fileItem, index) => {
         formData.append(`file-${index}`, fileItem.raw);
       });
-      let jsonData = JSON.stringify(this.row_list);
+      let jsonData = JSON.stringify(this.row_data);
       formData.append('data', jsonData);
       this.$http
           .put("work/no_order_matter_list/", formData, {
@@ -337,33 +342,61 @@ export default {
           .finally(() => {
             this.fileList = [];
             this.NoOrderWorkDialogVisible = false
-            this.row_list = null;
+            this.row_data = null;
             this.getNoOrderWorkListData();
           });
     },
-    // 附件列表函数
+    // 获取当前事项附件列表函数
     getAnnexFileData(row) {
       this.AnnexFileVisible = true;
-      // this.AnnexFileTableLoading = true;
-      //   const get_url = `business_function/no_order_matter_exceptional_restore/?data_time=${row.create_date}`;
-      //   this.$http
-      //       .get(get_url)
-      //       .then((res) => {
-      //         let data = res.data;
-      //         if (data.code === 200) {
-      //           this.matter_exceptional_data = data.data.data;
-      //         } else {
-      //           this.matter_exceptional_data = [];
-      //         }
-      //       })
-      //       .catch((error) => {
-      //         this.$message.error(error.message);
-      //       })
-      //       .finally(() => {
-      //         this.dialogTableLoading = false;
-      //       });
+      this.AnnexFileTableLoading = true;
+      this.no_order_work_annex_file_row = row;
+      const get_url = `work/no_order_matter_file_list/?pk=${row.id}`;
+      this.$http
+          .get(get_url)
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.annex_file_data = data.data.data;
+            } else {
+              this.annex_file_data = [];
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.AnnexFileTableLoading = false;
+          });
     },
-    AnnexFileClose() {
+    // 附件弹窗关闭窗口
+    AnnexFileClose(done) {
+      done(); // 关闭窗口
+      this.no_order_work_annex_file_row = null;
+      this.getNoOrderWorkListData(); // 重新加载一下数据
+    },
+    // 附件删除
+    delAnnexFileData(index, rows, row) {
+      const pk = row.id
+      this.$http
+          .delete("work/no_order_matter_file_list/", {
+            data: {pk: pk},
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.$message.success(data.message);
+              rows.splice(index, 1);
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.loading = false;
+          });
     },
   },
 };
