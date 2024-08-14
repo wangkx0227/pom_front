@@ -72,7 +72,8 @@
         </el-table-column>
         <el-table-column label="附件列表" align="center" width="180">
           <template v-slot="{ row }">
-            <el-button v-if="row.annex_status" size="mini" type="text" @click="getAnnexFileData(row)">附件列表查看</el-button>
+            <el-button v-if="row.annex_status" size="mini" type="text" @click="OpenAnnexFileDialog(row)">附件列表查看
+            </el-button>
           </template>
         </el-table-column>
         <el-table-column label="实际完成时间" align="center" width="180">
@@ -117,7 +118,26 @@
     </div>
     <!--  附件列表  -->
     <div class="dialog">
-      <el-dialog title="附件列表" :visible.sync="AnnexFileVisible" :before-close="AnnexFileClose">
+      <el-dialog :visible.sync="AnnexFileVisible" :before-close="AnnexFileDialogClose">
+        <template slot="title">
+          <h4>附件列表</h4>
+          <el-upload
+              class="upload-demo"
+              :action="uploadUrl"
+              :limit="1"
+              :before-upload="beforeUploadFile"
+              :on-exceed="uploadAnnexExceedFile"
+              :file-list="annexFileList"
+              :show-file-list="false"
+              :data="no_order_work_annex_file_row"
+              :on-success="UploadAnnexFileSuccess"
+              :on-error="UploadAnnexFileError"
+              :headers="authHeaders"
+          >
+            <el-button type="success" size="mini">补充上传</el-button>
+            <div slot="tip" class="el-upload__tip">支持png,pdf,doc,docx,xlsx,xls,jpg,gif格式文件，且不能超过5M，且一次只能上传一个文件。</div>
+          </el-upload>
+        </template>
         <el-table :data="annex_file_data" height="300" border v-loading="AnnexFileTableLoading">
           <el-table-column property="index" label="#" align="center"></el-table-column>
           <el-table-column property="file_name" label="文件名称" width="350" align="center"></el-table-column>
@@ -126,6 +146,7 @@
             <template v-slot="scope">
               <el-button size="mini"
                          type="text"
+                         @click="DownloadAnnexFile(scope.row)"
               >下载
               </el-button>
               <el-divider direction="vertical"></el-divider>
@@ -172,6 +193,12 @@ export default {
       annex_file_data: [],
       AnnexFileTableLoading: false,
       no_order_work_annex_file_row: null, // 当前附件列表归属到哪个非订单事务的id
+      annexFileList: [], // 上传附件列表
+      uploadUrl: `${this.$http.defaults.baseURL}work/no_order_matter_file_list/`, // 需要部署到实际环境下接口需要修改
+      authHeaders: { // 附件补充上传 携带的请求头
+        'Authorization': localStorage.getItem("authorization"),
+        'X-User-Id': localStorage.getItem("user_id"),
+      },
     };
   },
   created() {
@@ -346,9 +373,13 @@ export default {
             this.getNoOrderWorkListData();
           });
     },
-    // 获取当前事项附件列表函数
-    getAnnexFileData(row) {
+    // 打开附件弹窗
+    OpenAnnexFileDialog(row) {
       this.AnnexFileVisible = true;
+      this.getAnnexFileData(row); // 获取数据
+    },
+    // 获取当前事项 附件列表
+    getAnnexFileData(row) {
       this.AnnexFileTableLoading = true;
       this.no_order_work_annex_file_row = row;
       const get_url = `work/no_order_matter_file_list/?pk=${row.id}`;
@@ -370,7 +401,7 @@ export default {
           });
     },
     // 附件弹窗关闭窗口
-    AnnexFileClose(done) {
+    AnnexFileDialogClose(done) {
       done(); // 关闭窗口
       this.no_order_work_annex_file_row = null;
       this.getNoOrderWorkListData(); // 重新加载一下数据
@@ -398,6 +429,66 @@ export default {
             this.loading = false;
           });
     },
+    // 附件补充上传-文件数量验证
+    uploadAnnexExceedFile(files, fileList) {
+      this.$message.warning('当前限制只能上传一个文件');
+    },
+    // 附件补充上传成功后回调函数
+    UploadAnnexFileSuccess(response, file, fileList) {
+      this.$message.success(response.message);
+      this.annexFileList = [];
+      this.getAnnexFileData(this.no_order_work_annex_file_row); // 刷新附件列表
+    },
+    // 附件补充上传失败回调函数
+    UploadAnnexFileError(err, file, fileList) {
+      // 尝试解析服务器返回的错误信息
+      let errorMessage = '文件上传失败，请稍后重试或联系管理员。';
+      if (err && err.response) {
+        try {
+          const errorData = JSON.parse(err.response.responseText);
+          if (errorData.error) {
+            errorMessage = errorData.error;
+          }
+        } catch (e) {
+          // 如果解析出错，使用默认错误信息
+          console.error('解析错误信息失败', e);
+        }
+      }
+      this.$message.error(errorMessage);
+    },
+    // 附件文件下载
+    DownloadAnnexFile(row) {
+      this.AnnexFileTableLoading = true;
+      this.$http.get(`work/download_file/?pk=${row.id}&download_type=no_order`, {responseType: 'blob'})
+          .then((res) => {
+            const contentDisposition = res.headers['content-disposition'];
+            let filename = 'file.pdf'; // 默认文件名
+            if (contentDisposition) {
+              const match = contentDisposition.split("=");
+              if (match && match.length > 1) {
+                if (/^".*"$/.test(match[1])) {
+                  filename = decodeURIComponent(match[1].slice(1, -1));
+                } else {
+                  filename = decodeURIComponent(match[1]);
+                }
+              }
+            }
+            const url = window.URL.createObjectURL(new Blob([res.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', filename); // 替换为你的文件名
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => { // 无论是对还是错都会执行
+            this.AnnexFileTableLoading = false;
+          });
+    }
   },
 };
 </script>

@@ -1,7 +1,5 @@
 <template>
     <el-dialog title="当前角色权限菜单展示" :visible.sync="P_dialogShow" width="30%" :before-close="P_dialogClose">
-        <el-skeleton animated :throttle="500" :loading="skeletonLoading" style="width: 90% ;">
-        </el-skeleton>
         <el-tree :data="p_tree_data" show-checkbox node-key="type" accordion :default-checked-keys="default_node"
             :props="KeyDefaultProps" @check-change="handleCheckChange" ref="treeRef">
         </el-tree>
@@ -21,7 +19,6 @@ export default {
         return {
             P_loading: false,
             S_loading: false,
-            skeletonLoading: false,
             role_pk: "", // 角色的id
             P_dialogShow: false, // 控制弹窗的展开或者关闭
             default_node: [], // 设置默认选中的树形属性
@@ -56,14 +53,12 @@ export default {
                 })
                 .finally(() => {
                     this.P_loading = false;
-                    this.skeletonLoading = false;
                 });
         },
         // 打开当前窗口
         openDialog(role_pk,menu_permission_method_list) {
             this.role_pk = role_pk
             this.P_dialogShow = true;
-            this.skeletonLoading = true;
             this.P_loading = true;
             this.method_list = menu_permission_method_list;
             this.loadPermission();
@@ -131,7 +126,7 @@ export default {
                     this.S_loading = false;
                 });
         }
-        
+
     },
 }
 </script>
