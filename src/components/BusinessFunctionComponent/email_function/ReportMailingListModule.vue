@@ -33,12 +33,15 @@
         </el-table-column>
         <el-table-column label="下载操作" align="center">
           <template v-slot="scope">
-            <el-button size="mini" type="text" @click="DownloadReport(scope.row)" v-if="method_list.includes('POST')">下载</el-button>
+            <el-button size="mini" type="text" @click="DownloadReport(scope.row)" v-if="method_list.includes('POST')">
+              下载
+            </el-button>
           </template>
         </el-table-column>
         <el-table-column label="异常操作" align="center">
           <template v-slot="scope">
-            <el-button size="mini" type="text" v-if="ButtonDisplay(scope.row) && method_list.includes('PUT')" @click="saveRow(scope.row)">修复
+            <el-button size="mini" type="text" v-if="ButtonDisplay(scope.row) && method_list.includes('PUT')"
+                       @click="saveRow(scope.row)">修复
             </el-button>
           </template>
         </el-table-column>
@@ -183,22 +186,17 @@ export default {
           .then((res) => {
             let data = res.data;
             if (res.status === 200) {
-              if (data.code === 500) {
-                this.$message.error(data.message);
-              } else {
-                const contentDisposition = res.headers['content-disposition'];
-                let fileName = 'file.xlsx'; // 默认文件名
-                if (contentDisposition) {
-                  const fileNameSplit = contentDisposition.split("=");
-                  if (fileNameSplit && fileNameSplit.length > 1) {
-                    fileName = fileNameSplit[1]
-                  }
+              const contentDisposition = res.headers['content-disposition'];
+              let fileName = 'file.xlsx'; // 默认文件名
+              if (contentDisposition) {
+                const fileNameSplit = contentDisposition.split("=");
+                if (fileNameSplit && fileNameSplit.length > 1) {
+                  fileName = fileNameSplit[1]
                 }
-                const blob = new Blob([data], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
-                this.triggerDownload(blob, fileName)
               }
+              const blob = new Blob([data], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+              this.triggerDownload(blob, fileName)
             }
-
           })
           .catch((error) => {
             this.$message.error(error.message);

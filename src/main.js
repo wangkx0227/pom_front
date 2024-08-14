@@ -78,7 +78,7 @@ axios.interceptors.response.use(
                     break;
                 case 500:
                     error.message = "服务器端出错";
-                    // window.location.href = "/500";
+                    window.location.href = "/500";
                     break;
                 case 501:
                     error.message = "网络未实现";
