@@ -1,11 +1,11 @@
 <template>
   <div class="work" v-loading="loading">
-    <!--  上传附件窗口  -->
+    <!--  事项完成上传附件窗口  -->
     <div class="dialog">
       <el-dialog title="事务附件上传"
                  width="25%"
                  :visible.sync="NoOrderWorkDialogVisible"
-                 :before-close="NoOrderWorkDialogClose"
+                 :before-close="DialogClose"
       >
         <el-upload
             class="upload-demo"
@@ -23,6 +23,55 @@
         <span slot="footer" class="dialog-footer">
           <el-button @click="NoOrderWorkDialogButtonClose" size="mini">取消上传</el-button>
           <el-button type="primary" size="mini" @click="completeNoOrderWorkFile">确定上传</el-button>
+        </span>
+      </el-dialog>
+    </div>
+    <!-- 延期申请提交窗口   -->
+    <div class="dialog">
+      <el-dialog title="事务延期申请"
+                 width="35%"
+                 :visible.sync="DelayApplyForDialogVisible"
+                 :before-close="DialogClose">
+        <el-alert
+            title="注意："
+            type="warning"
+            description="请根据实际情况申请延期时间！">
+        </el-alert>
+        <el-form :model="addDelayApplyForData" label-position="top">
+          <el-row :gutter="24">
+            <el-col :span="12">
+              <el-form-item label="原完成事务时间">
+                <el-date-picker
+                    :disabled="true"
+                    v-model="addDelayApplyForData.old_time"
+                    type="date"
+                    placeholder="选择日期">
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="新完成事务时间">
+                <el-date-picker
+                    :disabled="true"
+                    v-model="addDelayApplyForData.new_time"
+                    type="date"
+                    placeholder="选择日期">
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="申请延期天数(1-100)">
+                <el-input-number v-model="addDelayApplyForData.delay_day" controls-position="right" :min="1"
+                                 @change="DelayDayNumberChange"
+                                 :max="100"></el-input-number>
+              </el-form-item>
+            </el-col>
+
+          </el-row>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="DelayApplyForDialogVisible=false">取消</el-button>
+          <el-button type="primary" @click="DelayApplySaveData">提交</el-button>
         </span>
       </el-dialog>
     </div>
@@ -67,7 +116,7 @@
         </el-table-column>
         <el-table-column label="延期列表" align="center" width="180">
           <template v-slot="{ row }">
-            <el-button v-if="row.extension_status" size="mini" type="text">延期列表查看</el-button>
+            <el-button v-if="row.delay_status" size="mini" type="text" @click="OpenDelayDialog(row)">延期列表查看</el-button>
           </template>
         </el-table-column>
         <el-table-column label="附件列表" align="center" width="180">
@@ -85,7 +134,7 @@
           <template v-slot="scope">
             <!-- 完成后，隐藏申请延期按钮 -->
             <div v-if="method_list.includes('PUT') && !scope.row.complete_status" style="display: inline-block;">
-              <el-button v-if="scope.row.is_file" size="mini" type="text" @click="completeNoOrderWorkDialog(scope.row)">
+              <el-button v-if="scope.row.is_file" size="mini" type="text" @click="OpenNoOrderWorkDialog(scope.row)">
                 完成事务
               </el-button>
               <el-popover v-else placement="top" width="160" v-model="scope.row.visible">
@@ -104,7 +153,7 @@
               <el-divider direction="vertical"></el-divider>
             </div>
             <div v-if="method_list.includes('POST') && !scope.row.complete_status" style="display: inline-block;">
-              <el-button size="mini" type="text">申请延期</el-button>
+              <el-button size="mini" type="text" @click="OpenDelayApplyForDialog(scope.row)">申请延期</el-button>
             </div>
           </template>
         </el-table-column>
@@ -160,6 +209,28 @@
         </el-table>
       </el-dialog>
     </div>
+    <!--  延期列表，会在主管的延期审核中展示，让主管进行审核即可 -->
+    <div class="dialog">
+      <el-dialog :visible.sync="DelayVisible" :before-close="DelayDialogClose">
+        <template slot="title">
+          <h4>延期列表</h4>
+        </template>
+        <el-table :data="delay_data" height="300" border v-loading="DelayTableLoading">
+          <el-table-column property="index" label="#" align="center"></el-table-column>
+          <el-table-column property="old_time" label="原事项完成时间" width="350" align="center"></el-table-column>
+          <el-table-column property="delay_day" label="延期天数" width="180" align="center"></el-table-column>
+          <el-table-column property="new_time" label="新事项完成时间" width="180" align="center"></el-table-column>
+          <el-table-column property="delay_number" label="申请延期次数" width="180" align="center"></el-table-column>
+          <el-table-column label="审核状态" width="180" align="center">
+            <template v-slot="{ row }">
+              <el-tag v-if="row.delay_examine_status === 1">已审核</el-tag>
+              <el-tag type="info" v-else>未审核</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column property="delay_examine_time" label="审核完成时间" width="180" align="center"></el-table-column>
+        </el-table>
+      </el-dialog>
+    </div>
   </div>
 </template>
 
@@ -185,7 +256,7 @@ export default {
       // 完成事项的弹窗控制变量
       NoOrderWorkDialogVisible: false, // 控制弹窗
       // 弹窗传入的row变量
-      row_data: null, // 事项需要上传附件，弹窗保存当前非订单事项列的基础数据
+      open_work_annex_row_data: null, // 事项需要上传附件，弹窗保存当前非订单事项列的基础数据
       // 弹窗内上传变量，文件对象列表
       fileList: [],
       // 附件窗口使用的变量
@@ -199,6 +270,19 @@ export default {
         'Authorization': localStorage.getItem("authorization"),
         'X-User-Id': localStorage.getItem("user_id"),
       },
+      // 延期列表
+      DelayVisible: false,
+      DelayTableLoading: false,
+      no_order_work_delay_row: false,
+      delay_data: [], // 存储数据
+      // 延期审核提交
+      DelayApplyForDialogVisible: false,
+      addDelayApplyForData: {
+        old_time: "",
+        delay_day: 1,
+        new_time: "",
+      },
+      DelayApplyForRules: {},
     };
   },
   created() {
@@ -298,23 +382,18 @@ export default {
             row.visible = false;
           })
     },
-    // 打开上传附件弹窗
-    completeNoOrderWorkDialog(row) {
+    // 事项完成 - 打开上传附件弹窗
+    OpenNoOrderWorkDialog(row) {
       this.NoOrderWorkDialogVisible = true;
-      this.row_data = row;
+      this.open_work_annex_row_data = row;
     },
-    // 完成事务关闭弹窗时，进行回调 自带函数
-    NoOrderWorkDialogClose(done) {
-      done(); // 关闭窗口
-      this.getNoOrderWorkListData(); // 重新加载一下数据
-    },
-    // 完成事项关闭弹出，进行回调，按钮
+    // 完成事项 - 关闭弹出进行回调，按钮
     NoOrderWorkDialogButtonClose() {
       this.NoOrderWorkDialogVisible = false;
       this.getNoOrderWorkListData();
     },
-    // 文件上传功能
-    // 文件上传,显示一共可以上传几个文件
+    // 事务完成- 文件上传功能
+    // 事务完成- 文件上传,显示一共可以上传几个文件
     handleExceedFile(files, fileList) {
       this.$message.warning(`当前限制选择 10 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
     },
@@ -324,7 +403,7 @@ export default {
         return this.beforeUploadFile(item);
       });
     },
-    // 更新文件列表，并且检测文件格式
+    // 事务完成 - 更新文件列表，并且检测文件格式
     beforeUploadFile(file, fileList) {
       const isLt5M = file.size / 1024 / 1024 < 5; //这里做文件大小限制
       const FileExt = file.name.replace(/.+\./, "");
@@ -340,17 +419,17 @@ export default {
       }
 
     },
-    // 文件上传到后端接口,自定义上传 完成事务按钮 - 需要上传附件
+    // 事务完成- 文件上传到后端接口,自定义上传 完成事务按钮 - 需要上传附件
     completeNoOrderWorkFile() {
       if (this.fileList.length === 0) {
         this.$message.error("请上传文件后再进行提交！")
 
-      }else {
+      } else {
         let formData = new FormData();
         this.fileList.forEach((fileItem, index) => {
           formData.append(`file-${index}`, fileItem.raw);
         });
-        let jsonData = JSON.stringify(this.row_data);
+        let jsonData = JSON.stringify(this.open_work_annex_row_data);
         formData.append('data', jsonData);
         this.$http
             .put("work/no_order_matter_list/", formData, {
@@ -372,18 +451,42 @@ export default {
             .finally(() => {
               this.fileList = [];
               this.NoOrderWorkDialogVisible = false
-              this.row_data = null;
+              this.open_work_annex_row_data = null;
               this.getNoOrderWorkListData();
             });
       }
 
     },
-    // 打开附件弹窗
+    // 延期申请 - 打开弹窗
+    OpenDelayApplyForDialog(row) {
+      this.DelayApplyForDialogVisible = true;
+      this.addDelayApplyForData.old_time = row.expected_completion_time;
+    },
+    // 延期申请 - 提交数据
+    DelayApplySaveData() {
+
+    },
+    // 延期申请 - 新时间计算
+    DelayDayNumberChange(value) {
+      const old_time = this.addDelayApplyForData.old_time;
+      const newDate = new Date(old_time);
+      newDate.setDate(newDate.getDate() + value); // 给当前日期加一天
+      let year = newDate.getFullYear();
+      let month = newDate.getMonth() + 1; // 月份从 1 开始
+      let day = newDate.getDate();
+      this.addDelayApplyForData.new_time = `${year}-${month}-${day}`;
+    },
+    // 事务完成/延期提交关闭弹窗 - 进行回调
+    DialogClose(done) {
+      done(); // 关闭窗口
+      this.getNoOrderWorkListData(); // 重新加载一下数据
+    },
+    // 附件列表 - 打开附件弹窗
     OpenAnnexFileDialog(row) {
       this.AnnexFileVisible = true;
       this.getAnnexFileData(row); // 获取数据
     },
-    // 获取当前事项 附件列表
+    // 附件列表 - 获取当前事项接口
     getAnnexFileData(row) {
       this.AnnexFileTableLoading = true;
       this.no_order_work_annex_file_row = row;
@@ -405,13 +508,13 @@ export default {
             this.AnnexFileTableLoading = false;
           });
     },
-    // 附件弹窗关闭窗口
+    // 附件列表 - 附件弹窗关闭窗口回调
     AnnexFileDialogClose(done) {
       done(); // 关闭窗口
       this.no_order_work_annex_file_row = null;
       this.getNoOrderWorkListData(); // 重新加载一下数据
     },
-    // 附件删除
+    // 附件列表 - 附件删除
     delAnnexFileData(index, rows, row) {
       const pk = row.id
       this.$http
@@ -434,17 +537,17 @@ export default {
             this.loading = false;
           });
     },
-    // 附件补充上传-文件数量验证
+    // 附件列表 - 附件补充上传，文件数量验证
     uploadAnnexExceedFile(files, fileList) {
       this.$message.warning('当前限制只能上传一个文件');
     },
-    // 附件补充上传成功后回调函数
+    // 附件列表 - 附件补充上传成功后回调函数
     UploadAnnexFileSuccess(response, file, fileList) {
       this.$message.success(response.message);
       this.annexFileList = [];
       this.getAnnexFileData(this.no_order_work_annex_file_row); // 刷新附件列表
     },
-    // 附件补充上传失败回调函数
+    // 附件列表 - 附件补充上传失败回调函数
     UploadAnnexFileError(err, file, fileList) {
       // 尝试解析服务器返回的错误信息
       let errorMessage = '文件上传失败，请稍后重试或联系管理员。';
@@ -461,7 +564,7 @@ export default {
       }
       this.$message.error(errorMessage);
     },
-    // 附件文件下载
+    // 附件列表- 附件文件下载
     DownloadAnnexFile(row) {
       this.AnnexFileTableLoading = true;
       this.$http.get(`work/download_file/?pk=${row.id}&download_type=no_order`, {responseType: 'blob'})
@@ -493,12 +596,49 @@ export default {
           .finally(() => { // 无论是对还是错都会执行
             this.AnnexFileTableLoading = false;
           });
+    },
+    // 延期列表 -  打开延期列表弹窗
+    OpenDelayDialog(row) {
+      this.DelayVisible = true;
+      this.getDelayData(row); // 获取数据
+    },
+    // 延期列表 -  延期列表数据获取
+    getDelayData(row) {
+      this.DelayTableLoading = true;
+      this.no_order_work_delay_row = row;
+      const get_url = `work/no_order_matter_delay_list/?pk=${row.id}`;
+      this.$http
+          .get(get_url)
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.delay_data = data.data.data;
+            } else {
+              this.delay_data = [];
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.DelayTableLoading = false;
+          });
+    },
+    // 延期列表 - 延期弹窗关闭窗口回调
+    DelayDialogClose(done) {
+      done(); // 关闭窗口
+      this.no_order_work_delay_row = null;
+      this.getNoOrderWorkListData(); // 重新加载一下数据
     }
   },
 };
 </script>
 
 <style>
+.el-input.is-disabled .el-input__inner {
+  color: black !important;
+}
+
 .head_search_add .el-date-editor .el-range-separator {
   padding: 0 !important;
 }
