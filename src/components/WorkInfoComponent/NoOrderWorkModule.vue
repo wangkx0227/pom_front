@@ -185,7 +185,7 @@ export default {
       // 完成事项的弹窗控制变量
       NoOrderWorkDialogVisible: false, // 控制弹窗
       // 弹窗传入的row变量
-      row_data: null, // 事项需要上传附件，弹窗保存当前非订单事项列的数据
+      row_data: null, // 事项需要上传附件，弹窗保存当前非订单事项列的基础数据
       // 弹窗内上传变量，文件对象列表
       fileList: [],
       // 附件窗口使用的变量
@@ -340,38 +340,43 @@ export default {
       }
 
     },
-    // 文件上传到后端接口,自定义上传
-    // 完成事务按钮 - 需要上传附件
+    // 文件上传到后端接口,自定义上传 完成事务按钮 - 需要上传附件
     completeNoOrderWorkFile() {
-      let formData = new FormData();
-      this.fileList.forEach((fileItem, index) => {
-        formData.append(`file-${index}`, fileItem.raw);
-      });
-      let jsonData = JSON.stringify(this.row_data);
-      formData.append('data', jsonData);
-      this.$http
-          .put("work/no_order_matter_list/", formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data', // 必须设置请求头
-            }
-          })
-          .then((res) => {
-            let data = res.data;
-            if (data.code === 200) {
-              this.$message.success(data.message);
-            } else {
-              this.$message.error(data.message);
-            }
-          })
-          .catch((error) => {
-            this.$message.error(error.message);
-          })
-          .finally(() => {
-            this.fileList = [];
-            this.NoOrderWorkDialogVisible = false
-            this.row_data = null;
-            this.getNoOrderWorkListData();
-          });
+      if (this.fileList.length === 0) {
+        this.$message.error("请上传文件后再进行提交！")
+
+      }else {
+        let formData = new FormData();
+        this.fileList.forEach((fileItem, index) => {
+          formData.append(`file-${index}`, fileItem.raw);
+        });
+        let jsonData = JSON.stringify(this.row_data);
+        formData.append('data', jsonData);
+        this.$http
+            .put("work/no_order_matter_list/", formData, {
+              headers: {
+                'Content-Type': 'multipart/form-data', // 必须设置请求头
+              }
+            })
+            .then((res) => {
+              let data = res.data;
+              if (data.code === 200) {
+                this.$message.success(data.message);
+              } else {
+                this.$message.error(data.message);
+              }
+            })
+            .catch((error) => {
+              this.$message.error(error.message);
+            })
+            .finally(() => {
+              this.fileList = [];
+              this.NoOrderWorkDialogVisible = false
+              this.row_data = null;
+              this.getNoOrderWorkListData();
+            });
+      }
+
     },
     // 打开附件弹窗
     OpenAnnexFileDialog(row) {
