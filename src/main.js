@@ -8,6 +8,8 @@ import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
 import "bootstrap/dist/css/bootstrap.css";
 import "@/static/pombase.css"; //自适应静态文件
+import {Message} from 'element-ui';
+
 Vue.config.productionTip = false;
 
 // 全局默认值，url设置
@@ -41,7 +43,10 @@ axios.interceptors.response.use(
             // 获取新的token 进行存储
             localStorage.setItem("authorization", "Bearer " + newAuthorization);
             // 刷新用户访问页面，当获取新token 是无法直接到达接口，获取的数据就是空的，对用户不友好，重新刷新页面
-            window.location.reload();
+            Message.error("访问令牌已过期，页面即将刷新！")
+            setTimeout(() => {
+                window.location.reload();
+            })
         }
         return response;
     },
