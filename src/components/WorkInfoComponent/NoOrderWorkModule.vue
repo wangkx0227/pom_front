@@ -21,8 +21,8 @@
           <div slot="tip" class="el-upload__tip">支持png,pdf,doc,docx,xlsx,xls,jpg,gif格式文件，且不能超过5M</div>
         </el-upload>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="NoOrderWorkDialogButtonClose" size="mini">取消上传</el-button>
-          <el-button type="primary" size="mini" @click="completeNoOrderWorkFile">确定上传</el-button>
+          <el-button @click="NoOrderWorkDialogButtonClose" >取消上传</el-button>
+          <el-button type="primary"  @click="completeNoOrderWorkFile">确定上传</el-button>
         </span>
       </el-dialog>
     </div>

@@ -38,7 +38,10 @@ axios.interceptors.response.use(
         // 出现这种响应头部信息，那么就说明访问令牌过期，后端会返回一个新的相应令牌，设置即可
         const newAuthorization = response.headers['new-authorization'];
         if (newAuthorization) {
+            // 获取新的token 进行存储
             localStorage.setItem("authorization", "Bearer " + newAuthorization);
+            // 刷新用户访问页面，当获取新token 是无法直接到达接口，获取的数据就是空的，对用户不友好，重新刷新页面
+            window.location.reload();
         }
         return response;
     },
