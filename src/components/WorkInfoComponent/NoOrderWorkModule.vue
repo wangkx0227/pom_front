@@ -31,6 +31,7 @@
       <el-dialog title="事务延期申请"
                  width="35%"
                  :visible.sync="DelayApplyForDialogVisible"
+                 v-loading="DelayApplyForTableLoading"
                  :before-close="DialogClose">
         <el-alert
             title="注意："
@@ -61,12 +62,12 @@
             </el-col>
             <el-col :span="8">
               <el-form-item label="申请延期天数(1-100)">
-                <el-input-number v-model="addDelayApplyForData.delay_day" controls-position="right" :min="1"
+                <el-input-number v-model="addDelayApplyForData.delay_day"
                                  @change="DelayDayNumberChange"
+                                 :min="0"
                                  :max="100"></el-input-number>
               </el-form-item>
             </el-col>
-
           </el-row>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -228,6 +229,15 @@
             </template>
           </el-table-column>
           <el-table-column property="delay_examine_time" label="审核完成时间" width="180" align="center"></el-table-column>
+          <el-table-column label="操作" width="180" align="center">
+            <template v-slot="scope">
+              <el-button size="mini"
+                         type="text"
+                         @click="delDelayData(scope.$index, delay_data, scope.row)"
+              >删除
+              </el-button>
+            </template>
+          </el-table-column>
         </el-table>
       </el-dialog>
     </div>
@@ -276,14 +286,16 @@ export default {
       DelayTableLoading: false,
       no_order_work_delay_row: false,
       delay_data: [], // 存储数据
+
       // 延期审核提交
       DelayApplyForDialogVisible: false,
       addDelayApplyForData: {
         old_time: "",
-        delay_day: 1,
+        delay_day: 0,
         new_time: "",
       },
-      DelayApplyForRules: {},
+      open_delay_row_data: null,
+      DelayApplyForTableLoading: false,
     };
   },
   created() {
@@ -461,11 +473,41 @@ export default {
     // 延期申请 - 打开弹窗
     OpenDelayApplyForDialog(row) {
       this.DelayApplyForDialogVisible = true;
+      this.open_delay_row_data = row;
+      // 当点开一个新窗口时，需要对addDelayApplyForData其他变量进行清除
       this.addDelayApplyForData.old_time = row.expected_completion_time;
+      this.addDelayApplyForData.new_time = '';
+      this.addDelayApplyForData.delay_day = 0;
     },
     // 延期申请 - 提交数据
     DelayApplySaveData() {
-
+      this.DelayApplyForTableLoading = true;
+      if (this.addDelayApplyForData.delay_day === 0) {
+        this.$message.error("申请天数不能为0！")
+        this.DelayApplyForTableLoading = false;
+      } else {
+        this.addDelayApplyForData.id = this.open_delay_row_data.id
+        this.$http
+            .post("work/no_order_matter_list/", {
+              data: this.addDelayApplyForData,
+            })
+            .then((res) => {
+              let data = res.data;
+              if (data.code === 200) {
+                this.$message.success(data.message);
+              } else {
+                this.$message.error(data.message);
+              }
+            })
+            .catch((error) => {
+              this.$message.error(error.message);
+            })
+            .finally(() => {
+              this.addDelayApplyForData.new_time = '';
+              this.addDelayApplyForData.delay_day = 0;
+              this.DelayApplyForTableLoading = false;
+            });
+      }
     },
     // 延期申请 - 新时间计算
     DelayDayNumberChange(value) {
@@ -517,6 +559,7 @@ export default {
     },
     // 附件列表 - 附件删除
     delAnnexFileData(index, rows, row) {
+      this.AnnexFileTableLoading = true;
       const pk = row.id
       this.$http
           .delete("work/no_order_matter_file_list/", {
@@ -535,7 +578,7 @@ export default {
             this.$message.error(error.message);
           })
           .finally(() => {
-            this.loading = false;
+            this.AnnexFileTableLoading = false;
           });
     },
     // 附件列表 - 附件补充上传，文件数量验证
@@ -630,7 +673,31 @@ export default {
       done(); // 关闭窗口
       this.no_order_work_delay_row = null;
       this.getNoOrderWorkListData(); // 重新加载一下数据
-    }
+    },
+    // 延期列表 - 删除延期申请
+    delDelayData(index, rows, row) {
+      this.DelayTableLoading = true;
+      const pk = row.id
+      this.$http
+          .delete("work/no_order_matter_delay_list/", {
+            data: {pk: pk},
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.$message.success(data.message);
+              rows.splice(index, 1);
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.DelayTableLoading = false;
+          });
+    },
   },
 };
 </script>
