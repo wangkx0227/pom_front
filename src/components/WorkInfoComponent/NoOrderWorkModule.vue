@@ -21,8 +21,8 @@
           <div slot="tip" class="el-upload__tip">支持png,pdf,doc,docx,xlsx,xls,jpg,gif格式文件，且不能超过5M</div>
         </el-upload>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="NoOrderWorkDialogButtonClose" >取消上传</el-button>
-          <el-button type="primary"  @click="completeNoOrderWorkFile">确定上传</el-button>
+          <el-button @click="NoOrderWorkDialogButtonClose">取消上传</el-button>
+          <el-button type="primary" @click="completeNoOrderWorkFile">确定上传</el-button>
         </span>
       </el-dialog>
     </div>
@@ -117,12 +117,12 @@
         </el-table-column>
         <el-table-column label="延期列表" align="center" width="180">
           <template v-slot="{ row }">
-            <el-button v-if="row.delay_status" size="mini" type="text" @click="OpenDelayDialog(row)">延期列表查看</el-button>
+            <el-button v-if="row.delay_status && delay_method_list.includes('GET')" size="mini" type="text" @click="OpenDelayDialog(row)">延期列表查看</el-button>
           </template>
         </el-table-column>
         <el-table-column label="附件列表" align="center" width="180">
           <template v-slot="{ row }">
-            <el-button v-if="row.annex_status" size="mini" type="text" @click="OpenAnnexFileDialog(row)">附件列表查看
+            <el-button v-if="row.annex_status && annex_method_list.includes('GET')" size="mini" type="text" @click="OpenAnnexFileDialog(row)">附件列表查看
             </el-button>
           </template>
         </el-table-column>
@@ -136,7 +136,7 @@
             <!-- 完成后，隐藏申请延期按钮 -->
             <div v-if="method_list.includes('PUT') && !scope.row.complete_status" style="display: inline-block;">
               <el-button v-if="scope.row.is_file" size="mini" type="text" @click="OpenNoOrderWorkDialog(scope.row)">
-                完成事务
+                事务完成
               </el-button>
               <el-popover v-else placement="top" width="160" v-model="scope.row.visible">
                 <p>完成事项后，按照当前的时间记录，请问是要完成码？</p>
@@ -172,6 +172,7 @@
         <template slot="title">
           <h4>附件列表</h4>
           <el-upload
+              v-if="annex_method_list.includes('POST')"
               class="upload-demo"
               :action="uploadUrl"
               :limit="1"
@@ -194,15 +195,23 @@
           <el-table-column property="create_date" label="上传时间" width="180" align="center"></el-table-column>
           <el-table-column label="操作" width="180" align="center">
             <template v-slot="scope">
-              <el-button size="mini"
-                         type="text"
-                         @click="DownloadAnnexFile(scope.row)"
+              <el-button
+                  size="mini"
+                  type="text"
+                  v-if="download_method_list.includes('GET')"
+                  @click="DownloadAnnexFile(scope.row)"
               >下载
               </el-button>
-              <el-divider direction="vertical"></el-divider>
-              <el-button size="mini"
-                         type="text"
-                         @click="delAnnexFileData(scope.$index, annex_file_data, scope.row)"
+              <div
+                  style="display: inline;"
+                  v-if="download_method_list.includes('GET') && annex_method_list.includes('DELETE')">
+                <el-divider direction="vertical"></el-divider>
+              </div>
+              <el-button
+                  size="mini"
+                  type="text"
+                  v-if="annex_method_list.includes('DELETE')"
+                  @click="delAnnexFileData(scope.$index, annex_file_data, scope.row)"
               >删除
               </el-button>
             </template>
@@ -233,8 +242,8 @@
             <template v-slot="scope">
               <el-button size="mini"
                          type="text"
-                         @click="delDelayData(scope.$index, delay_data, scope.row)"
-              >删除
+                         v-if="delay_method_list.includes('DELETE1')"
+                         @click="delDelayData(scope.$index, delay_data, scope.row)">删除
               </el-button>
             </template>
           </el-table-column>
@@ -281,12 +290,14 @@ export default {
         'Authorization': localStorage.getItem("authorization"),
         'X-User-Id': localStorage.getItem("user_id"),
       },
+      annex_method_list: [], // 附件可使用功能权限
+      download_method_list: [], // 附件可下载权限
       // 延期列表
       DelayVisible: false,
       DelayTableLoading: false,
       no_order_work_delay_row: false,
       delay_data: [], // 存储数据
-
+      delay_method_list: [], // 延期可使用功能权限
       // 延期审核提交
       DelayApplyForDialogVisible: false,
       addDelayApplyForData: {
@@ -319,6 +330,9 @@ export default {
               this.no_order_matter_list = data.data.data;
               this.data_total = data.data.data_total;
               this.method_list = data.data.method_list;
+              this.delay_method_list = data.data.delay_method_list;
+              this.annex_method_list = data.data.annex_method_list;
+              this.download_method_list = data.data.download_method_list;
             } else {
               this.no_order_matter_list = [];
             }

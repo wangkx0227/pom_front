@@ -31,7 +31,7 @@
               <template v-slot="scope">
                 <el-button size="mini"
                            type="text"
-                           v-show="scope.row.is_exceptional === 1 && exceptional_restore_method_list.includes('PUT')"
+                           v-if="scope.row.is_exceptional === 1 && exceptional_restore_method_list.includes('PUT')"
                            @click="MatterAbnormalRecovery(scope.row)">恢复异常
                 </el-button>
               </template>
