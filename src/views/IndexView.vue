@@ -1,5 +1,5 @@
 <template>
-  <div class="index" v-loading="loading">
+  <div class="index">
     <div class="header">
       <h5 class="title-h5">POM管理系统</h5>
       <div style="margin-right: 15px">
@@ -13,7 +13,8 @@
             <el-dropdown-menu>
               <el-dropdown-item command="access">访问记录</el-dropdown-item>
               <el-dropdown-item command="userinfo" divided>
-                用户信息</el-dropdown-item>
+                用户信息
+              </el-dropdown-item>
               <el-dropdown-item command="logout" divided>
                 退出登录
               </el-dropdown-item>
@@ -47,7 +48,6 @@ export default {
   data() {
     return {
       user_name: "",
-      loading: false,
     };
   },
   created() {
@@ -58,10 +58,16 @@ export default {
     if (user_name) {
       this.user_name = user_name;
     } else {
-      this.user_name = "test";
+      this.user_name = "无名称";
     }
   },
   methods: {
+    // 加载函数
+    openLoading() {
+      return this.$loading({
+        lock: true,
+      });
+    },
     // 下拉选择，根据属性进行选择展示信息
     changeDropdown(command) {
       if (command === "logout") {
@@ -81,32 +87,32 @@ export default {
       // 访问的是当前组件的网址，什么都不做
       const url = window.location.pathname;
       if (url !== "/index/user_info") {
-        this.$router.push({ name: "user_info" });
+        this.$router.push({name: "user_info"});
       }
     },
     // 退出登录按钮
     userLogOut() {
-      this.loading = true;
+      const loading = this.openLoading()
       this.$http
-        .delete("users/login/")
-        .then((res) => {
-          const data = res.data;
-          if (data.code === 200) {
-            localStorage.clear();
-            this.$message.success(data.message);
-          } else {
-            this.$message.success(data.message);
-          }
-        })
-        .catch((error) => {
-          this.$message.error(error.message);
-        })
-        .finally(() => {
-          this.loading = false;
-          setTimeout(() => {
-              this.$router.push({ name: "login" });
-            }, 1000);
-        });
+          .delete("users/login/")
+          .then((res) => {
+            const data = res.data;
+            if (data.code === 200) {
+              localStorage.clear();
+              this.$message.success(data.message);
+            } else {
+              this.$message.success(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            setTimeout(() => {
+              this.$router.push({name: "login"});
+              loading.close();
+            }, 2000);
+          });
     },
     // 用户访问记录
     userAccess() {
@@ -121,9 +127,9 @@ export default {
     // 判断当前是pc端还是手机端，手机端进行提示信息
     decisionPCPhone() {
       const val =
-        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-          navigator.userAgent,
-        );
+          /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+              navigator.userAgent,
+          );
       let tip = localStorage.getItem("tip");
       if (!tip && val) {
         this.$message("正在使用手机端，部分功能无法显示，建议使用pc访问");
