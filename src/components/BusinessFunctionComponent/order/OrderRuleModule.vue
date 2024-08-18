@@ -16,13 +16,13 @@
         <el-alert
             title="注意："
             type="warning"
-            description="匹配规则需要根据订单的简写来，比如TGD240，可以写为TD240 D240。">
+            description="匹配规则需要根据订单的简写来，比如TGD240，可以写为TD240或者D240。如果是多个匹配规则请使用 / 进行区分。">
         </el-alert>
         <el-form :model="addRuleForm" label-position="top" :rules="RuleRules" ref="addRuleRef">
           <el-form-item label="规则名称" prop="rule_name">
             <el-input v-model="addRuleForm.rule_name"></el-input>
           </el-form-item>
-          <el-form-item label="规则匹配项" prop="rule_name">
+          <el-form-item label="规则匹配项(请使用 / 进行区分多个)" prop="rule_mate">
             <el-input v-model="addRuleForm.rule_mate"></el-input>
           </el-form-item>
           <el-form-item label="描述信息">
@@ -69,8 +69,8 @@
             <el-input type="textarea" v-model="row.rule_description" v-else></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="创建日期" align="center" prop="create_date" width="180"></el-table-column>
-        <el-table-column label="修改日期" align="center" prop="update_date" width="180"></el-table-column>
+        <el-table-column label="创建日期" align="center" prop="create_date" ></el-table-column>
+        <el-table-column label="修改日期" align="center" prop="update_date"></el-table-column>
         <el-table-column label="操作" align="center" width="180">
           <template v-slot="scope">
             <div v-if="method_list.includes('PUT')" style="display: inline-block;">
