@@ -19,22 +19,55 @@
             description="匹配规则需要根据订单的简写来，比如TGD240，可以写为TD240或者D240。如果是多个匹配规则请使用 / 进行区分。">
         </el-alert>
         <el-form :model="addRuleForm" label-position="top" :rules="RuleRules" ref="addRuleRef">
-          <el-form-item label="规则名称" prop="rule_name">
-            <el-input v-model="addRuleForm.rule_name"></el-input>
-          </el-form-item>
-          <el-form-item label="规则匹配项(请使用 / 进行区分多个)" prop="rule_mate">
-            <el-input v-model="addRuleForm.rule_mate"></el-input>
-          </el-form-item>
-          <el-form-item label="描述信息">
-            <el-input
-                type="textarea"
-                placeholder="请输入内容"
-                v-model="addRuleForm.rule_description"
-                maxlength="200"
-                show-word-limit
-            >
-            </el-input>
-          </el-form-item>
+          <el-row :gutter="24">
+            <el-col :span="12">
+              <el-form-item label="规则名称" prop="rule_name">
+                <el-input v-model="addRuleForm.rule_name"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="规则匹配项(请使用 / 进行区分多个)" prop="rule_mate">
+                <el-input v-model="addRuleForm.rule_mate"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="绑定用户">
+                <el-cascader
+                    clearable
+                    collapse-tags
+                    :options="user_data_list"
+                    v-model="addRuleForm.user_id_list"
+                    :show-all-levels="false">
+                  <template slot-scope="{ node, data }">
+                    <span>{{ data.label }}</span>
+                    <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
+                  </template>
+                </el-cascader>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="是否固定归属用户" prop="is_file">
+                <el-select v-model="addRuleForm.is_bind_user" collapse-tags clearable placeholder="请输选择">
+                  <el-option v-for="item in is_bind_user_list" :key="item.value" :label="item.label"
+                             :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12"></el-col>
+            <el-col :span="24">
+              <el-form-item label="描述信息">
+                <el-input
+                    type="textarea"
+                    placeholder="请输入内容"
+                    v-model="addRuleForm.rule_description"
+                    maxlength="200"
+                    show-word-limit
+                >
+                </el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
         </el-form>
         <template v-slot:footer>
           <div class="dialog-footer">
@@ -69,7 +102,35 @@
             <el-input type="textarea" v-model="row.rule_description" v-else></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="创建日期" align="center" prop="create_date" ></el-table-column>
+        <el-table-column label="绑定用户" align="center">
+          <template v-slot="{ row }">
+            <span v-if="!row.editable">{{ row.user_name }}</span>
+            <el-cascader
+                clearable v-else
+                collapse-tags
+                :options="user_data_list"
+                v-model="row.user_id"
+                :show-all-levels="false">
+              <template slot-scope="{ node, data }">
+                <span>{{ data.label }}</span>
+                <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
+              </template>
+            </el-cascader>
+          </template>
+        </el-table-column>
+        <el-table-column label="是否固定归属用户" align="center">
+          <template v-slot="{ row }">
+            <span v-if="!row.editable">
+              <el-tag v-if="row.is_bind_user" type="success">是</el-tag>
+              <el-tag v-else>否</el-tag>
+            </span>
+            <el-select v-else v-model="row.is_bind_user" collapse-tags clearable placeholder="请输选择">
+              <el-option v-for="item in is_bind_user_list" :key="item.value" :label="item.label" :value="item.value">
+              </el-option>
+            </el-select>
+          </template>
+        </el-table-column>
+        <el-table-column label="创建日期" align="center" prop="create_date"></el-table-column>
         <el-table-column label="修改日期" align="center" prop="update_date"></el-table-column>
         <el-table-column label="操作" align="center" width="180">
           <template v-slot="scope">
@@ -132,6 +193,9 @@ export default {
         rule_name: "",
         rule_mate: "",
         rule_description: "",
+        is_bind_user: 0,
+        user_id_list: [],
+        user_id: "",
       },
       // 弹窗内的表单验证
       RuleRules: {
@@ -139,7 +203,7 @@ export default {
           {required: true, message: "请输入规则名称", trigger: "blur"},
           {
             min: 1,
-            max: 15,
+            max: 128,
             message: "长度在 1 到 128 个字符之间",
             trigger: "blur",
           },
@@ -148,8 +212,8 @@ export default {
           {required: true, message: "请输入规则匹配项", trigger: "blur"},
           {
             min: 1,
-            max: 15,
-            message: "长度在 1 到 30 个字符之间",
+            max: 128,
+            message: "长度在 1 到 128 个字符之间",
             trigger: "blur",
           },
         ],
@@ -164,13 +228,40 @@ export default {
       page_status: 0, // 分页状态变量，当上下一页时进行改变，只有是0时点击数字页码会改变
       // 权限
       method_list: [],
+      // 用户列表
+      user_data_list: [],
+      // 是否将当前的匹配规则固定到这个用户身上
+      is_bind_user_list: [
+        {label: '否', value: 0},
+        {label: '是', value: 1},
+      ],
     };
   },
   created() {
     this.loading = true;
+    this.getUsers();
     this.getRuleData();
   },
   methods: {
+    // 获取用户信息
+    getUsers() {
+      this.$http
+          .get("users/info/?status=classification")
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.user_data_list = data.data;
+            } else {
+              this.user_data_list = [];
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+    },
     //删除按钮显示小弹框
     deleteDisplay(row) {
       row.visible = true;
@@ -208,6 +299,9 @@ export default {
     saveRow(row) {
       // 保存的数据 row
       this.loading = true;
+      if (Array.isArray(row.user_id)) { // 如果是列表类型取最后一位id
+        row.user_id = row.user_id.pop(); // 由于联机选择器是一个列表的值进行获取的，只需要获取最后一个元素即可(数据库也是根据前端菜单的id进行绑定的)
+      }
       this.$http
           .put("business_function/order_matter_rule/", {
             data: row,
@@ -254,6 +348,9 @@ export default {
         this.$message.error("事项匹配规则属于必填项！");
         this.addLoading = false;
       } else {
+        for (let i = 0; i < this.addRuleForm.user_id_list.length; i++) {
+          this.addRuleForm.user_id = this.addRuleForm.user_id_list[i].pop();
+        }
         this.$http
             .post("business_function/order_matter_rule/", {
               data: this.addRuleForm,
