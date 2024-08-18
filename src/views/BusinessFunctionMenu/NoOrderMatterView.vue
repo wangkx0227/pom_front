@@ -5,10 +5,10 @@
         <el-tab-pane label="事项规则" name="rule">
           <component :is="ruleComponent" v-if="activeName === 'rule'"/>
         </el-tab-pane>
-        <el-tab-pane label="事务管理" name="work">
+        <el-tab-pane label="事项管理" name="work">
           <component :is="workComponent" v-if="activeName === 'work'"/>
         </el-tab-pane>
-        <el-tab-pane label="事务生成记录" name="work_log">
+        <el-tab-pane label="事项生成记录" name="work_log">
           <component :is="workLogComponent" v-if="activeName === 'work_log'"/>
         </el-tab-pane>
       </el-tabs>
