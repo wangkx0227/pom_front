@@ -31,8 +31,18 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
+              <el-form-item label="是否固定归属用户" prop="is_file">
+                <el-select v-model="addRuleForm.is_bind_user" collapse-tags clearable placeholder="请输选择">
+                  <el-option v-for="item in is_bind_user_list" :key="item.value" :label="item.label"
+                             :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
               <el-form-item label="绑定用户">
                 <el-cascader
+                    :disabled="!addRuleForm.is_bind_user"
                     clearable
                     collapse-tags
                     :options="user_data_list"
@@ -45,16 +55,6 @@
                 </el-cascader>
               </el-form-item>
             </el-col>
-            <el-col :span="12">
-              <el-form-item label="是否固定归属用户" prop="is_file">
-                <el-select v-model="addRuleForm.is_bind_user" collapse-tags clearable placeholder="请输选择">
-                  <el-option v-for="item in is_bind_user_list" :key="item.value" :label="item.label"
-                             :value="item.value">
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12"></el-col>
             <el-col :span="24">
               <el-form-item label="描述信息">
                 <el-input
@@ -102,22 +102,6 @@
             <el-input type="textarea" v-model="row.rule_description" v-else></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="绑定用户" align="center">
-          <template v-slot="{ row }">
-            <span v-if="!row.editable">{{ row.user_name }}</span>
-            <el-cascader
-                clearable v-else
-                collapse-tags
-                :options="user_data_list"
-                v-model="row.user_id"
-                :show-all-levels="false">
-              <template slot-scope="{ node, data }">
-                <span>{{ data.label }}</span>
-                <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
-              </template>
-            </el-cascader>
-          </template>
-        </el-table-column>
         <el-table-column label="是否固定归属用户" align="center">
           <template v-slot="{ row }">
             <span v-if="!row.editable">
@@ -128,6 +112,25 @@
               <el-option v-for="item in is_bind_user_list" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
             </el-select>
+          </template>
+        </el-table-column>
+        <el-table-column label="绑定用户" align="center">
+          <template v-slot="{ row }">
+            <span v-if="!row.editable">{{ row.user_name }}</span>
+            <div v-else>
+              <el-cascader
+                  v-if='row.is_bind_user'
+                  clearable
+                  collapse-tags
+                  :options="user_data_list"
+                  v-model="row.user_id"
+                  :show-all-levels="false">
+                <template slot-scope="{ node, data }">
+                  <span>{{ data.label }}</span>
+                  <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
+                </template>
+              </el-cascader>
+            </div>
           </template>
         </el-table-column>
         <el-table-column label="创建日期" align="center" prop="create_date"></el-table-column>
@@ -302,6 +305,9 @@ export default {
       if (Array.isArray(row.user_id)) { // 如果是列表类型取最后一位id
         row.user_id = row.user_id.pop(); // 由于联机选择器是一个列表的值进行获取的，只需要获取最后一个元素即可(数据库也是根据前端菜单的id进行绑定的)
       }
+      if (!row.is_bind_user) {
+        row.user_id = '';
+      }
       this.$http
           .put("business_function/order_matter_rule/", {
             data: row,
@@ -350,6 +356,9 @@ export default {
       } else {
         for (let i = 0; i < this.addRuleForm.user_id_list.length; i++) {
           this.addRuleForm.user_id = this.addRuleForm.user_id_list[i].pop();
+        }
+        if (!this.addRuleForm.is_bind_user) {
+          this.addRuleForm.user_id = '';
         }
         this.$http
             .post("business_function/order_matter_rule/", {
