@@ -1,5 +1,5 @@
 <template>
-  <div class="no_order_matter">
+  <div class="order_matter">
     <el-card class="box-card">
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="事项匹配规则" name="order_rule">
