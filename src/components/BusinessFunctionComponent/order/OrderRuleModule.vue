@@ -16,7 +16,7 @@
         <el-alert
             title="注意："
             type="warning"
-            description="匹配规则需要根据订单的简写来，比如TGD240，可以写为TD240或者D240。如果是多个匹配规则请使用 / 进行区分。">
+            description="匹配规则需要根据订单的简写来，比如TGD240，可以写为TD240或者D240。如果是多个匹配规则请使用 / 进行区分。如果固定规定用户，那么匹配的全部订单生成的事项都归属的当前固定用户。">
         </el-alert>
         <el-form :model="addRuleForm" label-position="top" :rules="RuleRules" ref="addRuleRef">
           <el-row :gutter="24">

@@ -25,7 +25,7 @@ export default {
       // 使用懒加载形式加载组件
       OrderRuleComponent: () => import("@/components/BusinessFunctionComponent/order/OrderRuleModule"),
       OrderWorkComponent: () => import("@/components/BusinessFunctionComponent/order/OrderWorkModule"),
-      OrderRecordComponent: () => import("@/components/BusinessFunctionComponent/order/OrderRecordModule"),
+      OrderRecordComponent: () => import("@/components/BusinessFunctionComponent/order/OrderRecordInfoModule"),
     };
   },
   methods: {
