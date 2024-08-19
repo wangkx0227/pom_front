@@ -104,7 +104,7 @@
     <div class="table_content">
       <el-table :data="RuleData" style="width: 100%">
         <el-table-column prop="index" label="#" align="center"></el-table-column>
-        <el-table-column label="规则名称" align="center" width="200">
+        <el-table-column label="规则名称" align="center" width="300">
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.rule_name }}</span>
             <el-input v-model="row.rule_name" v-else></el-input>
@@ -362,8 +362,8 @@ export default {
           {required: true, message: "请输入规则名称", trigger: "blur"},
           {
             min: 1,
-            max: 15,
-            message: "长度在 1 到 30 个字符之间",
+            max: 128,
+            message: "长度在 1 到 128 个字符之间",
             trigger: "blur",
           },
         ],

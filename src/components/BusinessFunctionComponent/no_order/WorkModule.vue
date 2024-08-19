@@ -126,7 +126,7 @@
         <el-table-column label="绑定用户" align="center" width="180">
           <template v-slot="{ row }">
             <el-tooltip v-if="!row.editable" class="item" effect="dark" :content="row.user_name" placement="bottom">
-              <span>{{ row.user_name.substring(0, 10) }}
+              <span v-if="row.user_name">{{ row.user_name.substring(0, 10) }}
               <span v-if="row.user_name && row.user_name.length >= 10">...</span></span>
             </el-tooltip>
             <el-cascader
@@ -402,6 +402,7 @@ export default {
               if (data.code === 200) {
                 this.$message.success(data.message);
                 data.data.index = 1;
+                console.log(data.data)
                 this.WorkData.unshift(data.data);
                 this.$refs[formName].resetFields();
               } else {
