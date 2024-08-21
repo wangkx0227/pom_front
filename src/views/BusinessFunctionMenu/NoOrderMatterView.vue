@@ -24,8 +24,8 @@ export default {
       activeName: "rule",
       // 使用懒加载形式加载组件
       ruleComponent: () => import("@/components/BusinessFunctionComponent/no_order/RuleModule"),
-      workComponent: () => import("@/components/BusinessFunctionComponent/no_order/WorkModule"),
-      workLogComponent: () => import("@/components/BusinessFunctionComponent/no_order/WorkLogModule"),
+      workComponent: () => import("@/components/BusinessFunctionComponent/no_order/NoOrderMatterModule"),
+      workLogComponent: () => import("@/components/BusinessFunctionComponent/no_order/NoOrderMatterLogModule"),
     };
   },
   methods: {

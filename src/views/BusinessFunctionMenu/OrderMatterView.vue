@@ -24,7 +24,7 @@ export default {
       activeName: "order_rule",
       // 使用懒加载形式加载组件
       OrderRuleComponent: () => import("@/components/BusinessFunctionComponent/order/OrderRuleModule"),
-      OrderWorkComponent: () => import("@/components/BusinessFunctionComponent/order/OrderWorkModule"),
+      OrderWorkComponent: () => import("@/components/BusinessFunctionComponent/order/OrderMatterModule"),
       OrderRecordComponent: () => import("@/components/BusinessFunctionComponent/order/OrderRecordInfoModule"),
     };
   },
