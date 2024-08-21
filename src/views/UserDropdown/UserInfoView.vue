@@ -104,14 +104,14 @@
             <i class="el-icon-reading"></i>
             基础功能
           </template>
-          {{ user_info_form.foundation_api }}
+          {{ user_info_form.foundation_api_string }}
         </el-descriptions-item>
         <el-descriptions-item :span="4">
           <template slot="label">
             <i class="el-icon-reading"></i>
-            功能功能
+            高级功能
           </template>
-          {{ user_info_form.function_api }}
+          {{ user_info_form.function_api_string }}
         </el-descriptions-item>
       </el-descriptions>
       <div class="dialog">
@@ -301,9 +301,25 @@ export default {
     },
     // 开关方法变动回调函数,修改是否开启中文名称登录功能
     changeSwitch(newValue, row) {
+      this.loading = true;
       const pk = row.id;
       let is_user_name_login = newValue ? 1 : 0;
-      console.log(is_user_name_login)
+      this.$http
+          .put("users/update_user_name_login/", {pk: pk, is_user_name_login: is_user_name_login})
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.$message.success(data.message);
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.loading = false;
+          });
     }
   },
 };
