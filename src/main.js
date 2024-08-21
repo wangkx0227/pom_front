@@ -43,10 +43,10 @@ axios.interceptors.response.use(
             // 获取新的token 进行存储
             localStorage.setItem("authorization", "Bearer " + newAuthorization);
             // 刷新用户访问页面，当获取新token 是无法直接到达接口，获取的数据就是空的，对用户不友好，重新刷新页面
-            Message.error("访问令牌已过期，页面即将刷新！")
+            Message.error("访问令牌已过期，2秒后页面刷新！")
             setTimeout(() => {
                 window.location.reload();
-            })
+            },2000)
         }
         return response;
     },

@@ -1,7 +1,7 @@
 <template>
   <div class="login">
     <h3 class="login_title">POM系统登录</h3>
-    <el-tabs v-model="activeName" v-loading="loading" element-loading-text="正在登录">
+    <el-tabs v-model="activeName" v-loading="loading" element-loading-text="正在登录" @tab-click="loginTabsClick">
       <el-tab-pane label="中文名登录" name="first">
         <el-form :model="login" status-icon class="demo-ruleForm">
           <el-form-item prop="pass">
@@ -50,7 +50,8 @@ export default {
       },
     };
   },
-  created() { },
+  created() {
+  },
   methods: {
     // 密码加盐
     encodePasswordWithSalt() {
@@ -77,33 +78,39 @@ export default {
           salt: this.salt
         };
         this.$http
-          .post("users/login/", data)
-          .then((res) => {
-            let data = res.data;
-            if (data.code === 200) {
-              this.$message.success(data.message);
-              localStorage.setItem("authorization", "Bearer " + data.access_token); // 写入到浏览器缓存中
-              localStorage.setItem("user_name", data.data.user_name); // 用户名字写入缓存中
-              localStorage.setItem("user_id", data.data.user_id); // 用户名字写入缓存中
-              let url_name = this.$route.query.url_name;
-              if (url_name) {
-                this.$router.push({ name: url_name.toString() }); // 跳转到原来的网页
+            .post("users/login/", data)
+            .then((res) => {
+              let data = res.data;
+              if (data.code === 200) {
+                this.$message.success(data.message);
+                localStorage.setItem("authorization", "Bearer " + data.access_token); // 写入到浏览器缓存中
+                localStorage.setItem("user_name", data.data.user_name); // 用户名字写入缓存中
+                localStorage.setItem("user_id", data.data.user_id); // 用户名字写入缓存中
+                let url_name = this.$route.query.url_name;
+                if (url_name) {
+                  this.$router.push({name: url_name.toString()}); // 跳转到原来的网页
+                } else {
+                  this.$router.push({name: "index"}); // 跳转首页
+                }
               } else {
-                this.$router.push({ name: "index" }); // 跳转首页
+                this.$message.error(data.message);
               }
-            } else {
-              this.$message.error(data.message);
-            }
-          })
-          .catch((error) => {
-            this.$message.error(error.message);
-          })
-          .finally(() => {
-            this.loading = false;
-          });
+            })
+            .catch((error) => {
+              this.$message.error(error.message);
+            })
+            .finally(() => {
+              this.loading = false;
+            });
       }
 
     },
+    // tab 切换 清除输入内容
+    loginTabsClick() {
+      this.login.checked = false;
+      this.login.password = '';
+      this.login.username = '';
+    }
   },
 };
 </script>
