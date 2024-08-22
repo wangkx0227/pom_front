@@ -84,7 +84,7 @@
 </template>
 <script>
 export default {
-  name: "WorkLogModule",
+  name: "NoOrderMatterLogModule",
   data() {
     return {
       time_frame_list: [],

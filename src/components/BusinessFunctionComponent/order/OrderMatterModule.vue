@@ -1,5 +1,5 @@
 <template>
-  <div class="work" v-loading="loading">
+  <div class="order_matter" v-loading="loading">
     <div class="head_search_add">
       <el-button v-if="method_list.includes('POST')" type="info" icon="el-icon-circle-plus-outline" plain
                  @click="dialogDisplay">添加
@@ -82,15 +82,26 @@
       </el-dialog>
     </div>
     <div class="table_content">
-      <el-table :data="WorkData" style="width: 100%">
+      <el-table :data="OrderMatterData" style="width: 100%">
         <el-table-column prop="index" label="#" align="center"></el-table-column>
-        <el-table-column label="事项名称" align="center" width="500">
+        <el-table-column label="事项名称" align="center" width="350">
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.matter_name }}</span>
             <el-input v-model="row.matter_name" v-else></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="状态" align="center" width="180">
+        <el-table-column label="事务归属类型" align="center" width="180">
+          <template v-slot="{ row }">
+            <span v-if="!row.editable">
+                <el-tag >{{ row.matter_type ? "工厂负责人" : "承办员事务" }} </el-tag>
+            </span>
+            <el-select v-else v-model="row.matter_type" collapse-tags clearable placeholder="请输选择">
+              <el-option v-for="item in is_matter_type_list" :key="item.value" :label="item.label" :value="item.value">
+              </el-option>
+            </el-select>
+          </template>
+        </el-table-column>
+        <el-table-column label="是否开启" align="center" width="180">
           <template v-slot="{ row }">
             <el-switch
                 v-if="!row.editable"
@@ -116,40 +127,52 @@
         </el-table-column>
         <el-table-column label="是否上传附件" align="center" width="180">
           <template v-slot="{ row }">
-            <span v-if="!row.editable">{{ row.is_file ? "是" : "否" }} </span>
+            <span v-if="!row.editable">
+              <el-tag v-if="row.is_file === 0">否</el-tag>
+              <el-tag v-else type="info">是</el-tag>
+            </span>
             <el-select v-else v-model="row.is_file" collapse-tags clearable placeholder="请输选择">
               <el-option v-for="item in is_file_list" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column label="绑定用户" align="center" width="180">
+        <el-table-column label="事务时间(天)" align="center" width="200">
           <template v-slot="{ row }">
-            <el-tooltip v-if="!row.editable" class="item" effect="dark" :content="row.user_name" placement="bottom">
-              <span>{{ row.user_name.substring(0, 10) }}
-              <span v-if="row.user_name && row.user_name.length >= 10">...</span></span>
-            </el-tooltip>
-            <el-cascader
-                clearable v-else
-                collapse-tags
-                :props="{ multiple: true }"
-                :options="user_data_list"
-                v-model="row.user_id_list"
-                :show-all-levels="false">
-              <template slot-scope="{ node, data }">
-                <span>{{ data.label }}</span>
-                <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
-              </template>
-            </el-cascader>
+            <span v-if="!row.editable">{{ row.matter_cycle_time }}</span>
+            <el-input-number v-model="row.matter_cycle_time" :min="1" :max="100" v-else
+                             controls-position="right"></el-input-number>
           </template>
         </el-table-column>
-        <el-table-column label="绑定规则" align="center" width="180">
+        <el-table-column label="事务时间类型" align="center" width="180">
           <template v-slot="{ row }">
-            <span v-if="!row.editable">{{ row.rule_name }}</span>
-            <el-select v-else v-model="row.no_order_matter_rule_id" collapse-tags clearable placeholder="请输选择">
-              <el-option v-for="item in rule_data_list" :key="item.value" :label="item.label" :value="item.value">
+            <span v-if="!row.editable">
+              <el-tag v-if="row.matter_cycle_time_type === 0">订单完成前</el-tag>
+              <el-tag v-else type="info">订单生成后</el-tag>
+            </span>
+            <el-select v-else v-model="row.matter_cycle_time_type" collapse-tags clearable placeholder="请输选择">
+              <el-option v-for="item in is_matter_cycle_time_type_list" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
             </el-select>
+          </template>
+        </el-table-column>
+        <el-table-column label="是否有监督人" align="center" width="180">
+          <template v-slot="{ row }">
+            <span v-if="!row.editable">
+              <el-tag v-if="row.is_supervisor === 0">无</el-tag>
+              <el-tag v-else type="info">有</el-tag>
+            </span>
+            <el-select v-else v-model="row.is_supervisor" collapse-tags clearable placeholder="请输选择">
+              <el-option v-for="item in is_is_supervisor_list" :key="item.value" :label="item.label" :value="item.value">
+              </el-option>
+            </el-select>
+          </template>
+        </el-table-column>
+        <el-table-column label="监督人缓冲时间(天)" align="center" width="200">
+          <template v-slot="{ row }">
+            <span v-if="!row.editable">{{ row.is_supervisor_cycle_time }}</span>
+            <el-input-number v-model="row.is_supervisor_cycle_time" :min="0" :max="100" v-else
+                             controls-position="right"></el-input-number>
           </template>
         </el-table-column>
         <el-table-column label="创建日期" align="center" width="180" prop="create_date">
@@ -174,7 +197,7 @@
                 <div style="text-align: right; margin: 0">
                   <el-button size="mini" type="text" @click="scope.row.visible = false">取消
                   </el-button>
-                  <el-button type="primary" size="mini" @click="deleteRow(scope.$index, WorkData, scope.row)">确定
+                  <el-button type="primary" size="mini" @click="deleteRow(scope.$index, OrderMatterData, scope.row)">确定
                   </el-button>
                 </div>
                 <template v-slot:reference>
@@ -203,12 +226,12 @@
 
 <script>
 export default {
-  name: "WorkModule",
+  name: "OrderMatterModule",
   data() {
     return {
       search: "", // 搜索
-      WorkData: [], // 查询
       loading: false, // 数据加载样式
+      OrderMatterData: [], // 查询
       //  添加弹出框数据 添加使用变量
       addWorkForm: {
         matter_name: "",
@@ -235,15 +258,12 @@ export default {
       formLabelWidth: "120px",
       // 弹出框控制变量
       dialogDisplayVar: false,
-
       // 分页
       data_total: 0, // 数据总数
       page_status: 0, // 分页状态变量，当上下一页时进行改变，只有是0时点击数字页码会改变
       page: 1,
       // 可访问权限列表
       method_list: [],
-      // 绑定规则列表
-      rule_data_list: [],
       // 用户信息列表
       user_data_list: [], // 循环的全部用户列表
       // 是否上传附件
@@ -251,52 +271,54 @@ export default {
         {label: '否', value: 0},
         {label: '是', value: 1},
       ],
+      // 事务归属类型
+      is_matter_type_list:[
+        {label: '承办员事务', value: 0},
+        {label: '工厂负责人事务', value: 1},
+      ],
+      // 事务生成的时间类型
+      is_matter_cycle_time_type_list:[
+        {label: '订单完成前', value: 0},
+        {label: '订单生成后', value: 1},
+      ],
+      // 事务是否监督人
+      is_is_supervisor_list:[
+        {label: '无', value: 0},
+        {label: '有', value: 1},
+      ],
     };
   },
   created() {
     this.loading = true;
-    this.getUsers();
-    this.getRules();
-    this.getWorkData();
-
+    this.getOrderMatterData();
   },
   methods: {
-    // 获取用户信息
-    getUsers() {
+    // 获取数据
+    getOrderMatterData() {
+      let get_url;
+      if (this.search) {
+        get_url = `business_function/order_matter/?page=${this.page}&search=${this.search}`;
+      } else {
+        get_url = `business_function/order_matter/?page=${this.page}`;
+      }
       this.$http
-          .get("users/info/?status=classification")
+          .get(get_url)
           .then((res) => {
             let data = res.data;
             if (data.code === 200) {
-              this.user_data_list = data.data;
+              this.OrderMatterData = data.data.data;
+              this.data_total = data.data.data_total;
+              this.method_list = data.data.method_list;
             } else {
-              this.user_data_list = [];
+              this.OrderMatterData = [];
             }
           })
           .catch((error) => {
             this.$message.error(error.message);
           })
           .finally(() => {
-            // this.loading = false;
-          });
-    },
-    // 获取规则
-    getRules() {
-      this.$http
-          .get("business_function/no_order_matter_rule/?status=all")
-          .then((res) => {
-            let data = res.data;
-            if (data.code === 200) {
-              this.rule_data_list = data.data;
-            } else {
-              this.rule_data_list = [];
-            }
-          })
-          .catch((error) => {
-            this.$message.error(error.message);
-          })
-          .finally(() => {
-            // this.loading = false;
+            this.page_status = 0;
+            this.loading = false;
           });
     },
     //删除按钮显示小弹框
@@ -305,17 +327,17 @@ export default {
     },
     // 删除按钮确认删除
     deleteRow(index, rows, row) {
-      let pk = row.id;
       this.loading = true;
+      let pk = row.id;
       this.$http
-          .delete("business_function/no_order_matter/", {
+          .delete("business_function/order_matter/", {
             data: {pk: pk},
           })
           .then((res) => {
             let data = res.data;
             if (data.code === 200) {
               this.$message.success(data.message);
-              this.getWorkData();
+              this.getOrderMatterData();
               rows.splice(index, 1);
             } else {
               this.$message.error(data.message);
@@ -335,15 +357,8 @@ export default {
     // 修改保存按钮
     saveRow(row) {
       this.loading = true;
-      let user_id_list = [];
-      for (let i = 0; i < row.user_id_list.length; i++) {
-        let user_id = row.user_id_list[i].pop();
-        user_id_list.push(user_id);
-      }
-      // 重新设置用户id列表
-      row.user_id_list = user_id_list;
       this.$http
-          .put("business_function/no_order_matter/", {
+          .put("business_function/order_matter/", {
             data: row,
           })
           .then((res) => {
@@ -351,7 +366,7 @@ export default {
             if (data.code === 200) {
               row.editable = false;
               this.$message.success(data.message);
-              this.getWorkData();
+              this.getOrderMatterData();
             } else {
               this.$message.error(data.message);
             }
@@ -360,7 +375,6 @@ export default {
             this.$message.error(error.message);
           })
           .finally(() => {
-            this.user_id_list = [];
             this.loading = false;
           })
     },
@@ -418,55 +432,27 @@ export default {
             });
       }
     },
-    // 获取数据
-    getWorkData() {
-      let get_url;
-      if (this.search) {
-        get_url = `business_function/no_order_matter/?page=${this.page}&search=${this.search}`;
-      } else {
-        get_url = `business_function/no_order_matter/?page=${this.page}`;
-      }
-      this.$http
-          .get(get_url)
-          .then((res) => {
-            let data = res.data;
-            if (data.code === 200) {
-              this.WorkData = data.data.data;
-              this.data_total = data.data.data_total;
-              this.method_list = data.data.method_list;
-            } else {
-              this.WorkData = [];
-            }
-          })
-          .catch((error) => {
-            this.$message.error(error.message);
-          })
-          .finally(() => {
-            this.page_status = 0;
-            this.loading = false;
-          });
-    },
     // 页码功能
     nextPage(page) {
       this.loading = true;
       this.page_status = page;
       this.page = page;
       // 下一页按钮
-      this.getWorkData();
+      this.getOrderMatterData();
     },
     prevPage(page) {
       this.loading = true;
       this.page_status = page;
       this.page = page;
       // 上一页按钮
-      this.getWorkData();
+      this.getOrderMatterData();
     },
     currentPage(page) {
       this.loading = true;
       this.page = page;
       // 点击按钮触发
       if (this.page_status === 0) {
-        this.getWorkData();
+        this.getOrderMatterData();
       }
     },
     // 搜索功能
@@ -474,15 +460,15 @@ export default {
       this.loading = true;
       if (this.search) {
         this.page = 1;
-        this.getWorkData();
+        this.getOrderMatterData();
       } else {
-        this.getWorkData();
+        this.getOrderMatterData();
       }
     },
     // 重置
     reloadData() {
       this.search = "";
-      this.getWorkData();
+      this.getOrderMatterData();
     },
     // 开关方法变动回调函数。
     changeSwitch(newValue, row) {

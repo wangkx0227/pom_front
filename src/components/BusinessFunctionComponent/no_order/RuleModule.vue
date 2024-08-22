@@ -266,7 +266,7 @@
 
 <script>
 export default {
-  name: "RoleModule",
+  name: "RuleModule",
   data() {
     return {
       // 规则列表

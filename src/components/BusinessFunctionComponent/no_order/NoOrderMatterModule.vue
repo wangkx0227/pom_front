@@ -116,7 +116,10 @@
         </el-table-column>
         <el-table-column label="是否上传附件" align="center" width="180">
           <template v-slot="{ row }">
-            <span v-if="!row.editable">{{ row.is_file ? "是" : "否" }} </span>
+            <span  v-if="!row.editable">
+              <el-tag v-if="row.is_file === 0">否</el-tag>
+              <el-tag v-else type="info">是</el-tag>
+            </span>
             <el-select v-else v-model="row.is_file" collapse-tags clearable placeholder="请输选择">
               <el-option v-for="item in is_file_list" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
@@ -203,7 +206,7 @@
 
 <script>
 export default {
-  name: "WorkModule",
+  name: "NoOrderMatterModule",
   data() {
     return {
       search: "", // 搜索
