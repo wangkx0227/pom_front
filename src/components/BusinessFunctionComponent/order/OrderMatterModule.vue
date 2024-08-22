@@ -432,18 +432,6 @@ export default {
     },
     // 弹窗内创建按钮
     addOrderMatterData(formName) {
-      /*
-      * addOrderMatterForm: {
-        is_file: 1,
-        is_show: true,
-        matter_type: 0,
-        matter_name: "",
-        is_supervisor: 0,
-        matter_cycle_time: 0,
-        matter_cycle_time_type: 0,
-        is_supervisor_cycle_time: 0,
-      },
-      * */
       this.addLoading = true;
       if (!this.addOrderMatterForm.matter_name) {
         this.$message.error("事务名称是必填项！");
@@ -451,7 +439,7 @@ export default {
       } else {
         this.addOrderMatterForm.is_show = this.addOrderMatterForm.is_show ? 1 : 0;
         this.$http
-            .post("business_function/no_order_matter/", {
+            .post("business_function/order_matter/", {
               data: this.addOrderMatterForm,
             })
             .then((res) => {
@@ -459,7 +447,7 @@ export default {
               if (data.code === 200) {
                 this.$message.success(data.message);
                 data.data.index = 1;
-                this.WorkData.unshift(data.data);
+                this.OrderMatterData.unshift(data.data);
                 this.$refs[formName].resetFields();
               } else {
                 this.$message.error(data.message);
