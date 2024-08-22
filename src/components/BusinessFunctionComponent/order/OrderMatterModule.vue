@@ -93,7 +93,7 @@
         <el-table-column label="事务归属类型" align="center" width="180">
           <template v-slot="{ row }">
             <span v-if="!row.editable">
-                <el-tag >{{ row.matter_type ? "工厂负责人" : "承办员事务" }} </el-tag>
+                <el-tag>{{ row.matter_type ? "工厂负责人" : "承办员事务" }} </el-tag>
             </span>
             <el-select v-else v-model="row.matter_type" collapse-tags clearable placeholder="请输选择">
               <el-option v-for="item in is_matter_type_list" :key="item.value" :label="item.label" :value="item.value">
@@ -151,7 +151,8 @@
               <el-tag v-else type="info">订单生成后</el-tag>
             </span>
             <el-select v-else v-model="row.matter_cycle_time_type" collapse-tags clearable placeholder="请输选择">
-              <el-option v-for="item in is_matter_cycle_time_type_list" :key="item.value" :label="item.label" :value="item.value">
+              <el-option v-for="item in is_matter_cycle_time_type_list" :key="item.value" :label="item.label"
+                         :value="item.value">
               </el-option>
             </el-select>
           </template>
@@ -162,17 +163,25 @@
               <el-tag v-if="row.is_supervisor === 0">无</el-tag>
               <el-tag v-else type="info">有</el-tag>
             </span>
-            <el-select v-else v-model="row.is_supervisor" collapse-tags clearable placeholder="请输选择">
-              <el-option v-for="item in is_is_supervisor_list" :key="item.value" :label="item.label" :value="item.value">
-              </el-option>
-            </el-select>
+            <div v-else>
+              <el-select v-model="row.is_supervisor" collapse-tags clearable placeholder="请输选择">
+                <el-option v-for="item in is_is_supervisor_list" :key="item.value" :label="item.label"
+                           :value="item.value">
+                </el-option>
+              </el-select>
+            </div>
           </template>
         </el-table-column>
         <el-table-column label="监督人缓冲时间(天)" align="center" width="200">
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.is_supervisor_cycle_time }}</span>
-            <el-input-number v-model="row.is_supervisor_cycle_time" :min="0" :max="100" v-else
-                             controls-position="right"></el-input-number>
+            <div v-else>
+              <el-input-number v-show="row.is_supervisor === 1"
+                               controls-position="right"
+                               v-model="row.is_supervisor_cycle_time" :min="0"
+                               :max="100"></el-input-number>
+            </div>
+
           </template>
         </el-table-column>
         <el-table-column label="创建日期" align="center" width="180" prop="create_date">
@@ -272,17 +281,17 @@ export default {
         {label: '是', value: 1},
       ],
       // 事务归属类型
-      is_matter_type_list:[
+      is_matter_type_list: [
         {label: '承办员事务', value: 0},
         {label: '工厂负责人事务', value: 1},
       ],
       // 事务生成的时间类型
-      is_matter_cycle_time_type_list:[
+      is_matter_cycle_time_type_list: [
         {label: '订单完成前', value: 0},
         {label: '订单生成后', value: 1},
       ],
       // 事务是否监督人
-      is_is_supervisor_list:[
+      is_is_supervisor_list: [
         {label: '无', value: 0},
         {label: '有', value: 1},
       ],
