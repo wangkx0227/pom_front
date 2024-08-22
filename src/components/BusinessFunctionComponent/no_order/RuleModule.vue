@@ -13,10 +13,13 @@
     </div>
     <div class="dialog">
       <el-dialog title="添加规则" :visible.sync="dialogDisplayVar" width="35%" :before-close="handleClose">
-        <el-alert
-            title="注意："
-            type="warning"
-            description="默认状态是开启的，默认模式长期，默认提前生成天数1天，提前生成天数如果大于整个事项的周期天数，就会造成异常，添加时根据需求进行修改。">
+        <el-alert title="注意：" type="warning">
+          <template slot='title'>
+            <div>需要注意的事项:</div>
+            <div>1、默认状态是开启的，默认模式长期，默认提前生成天数1天。</div>
+            <div>2、提前生成天数如果大于整个事项的周期天数，就会造成异常，添加时根据需求进行修改。</div>
+          </template>
+
         </el-alert>
         <el-form :model="addRuleForm" label-position="top" :rules="RuleRules" ref="addRuleRef">
           <el-row :gutter="24">

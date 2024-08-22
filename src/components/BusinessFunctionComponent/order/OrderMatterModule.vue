@@ -12,23 +12,43 @@
       </el-button>
     </div>
     <div class="dialog">
-      <el-dialog title="非订单事项添加" :visible.sync="dialogDisplayVar" width="35%" :before-close="handleClose">
-        <el-alert
-            title="注意："
-            type="warning"
-            description="默认状态是开启的，附件是默认需要上传的，添加时根据需求进行修改。请添加事项时绑定用户与规则，才会正常执行，不然不会执行。">
+      <el-dialog title="订单事项添加" :visible.sync="dialogDisplayVar" width="35%" :before-close="handleClose">
+        <el-alert title="注意：" type="warning">
+          <template slot='title'>
+            <div>需要注意的事项:</div>
+            <div>1、事务类型是默认是承办员，默认需要上传文件，状态开启。</div>
+            <div>2、需要根据添加的事务，选择是时间类型：订单完成前还是订单生成后，并且填写天数。</div>
+            <div>3、如果存在监督人，需要填写监督人的事项时间，默认为0(事务的结束时间与跟进人相同)，根据实际情况向后延长。</div>
+          </template>
         </el-alert>
-        <el-form :model="addWorkForm" label-position="top" :rules="rules" ref="addWorkRef">
+        <el-form :model="addOrderMatterForm" label-position="top" :rules="rules" ref="addOrderMatterRef">
           <el-row :gutter="24">
             <el-col :span="24">
               <el-form-item label="事项名称" prop="matter_name">
-                <el-input v-model="addWorkForm.matter_name"></el-input>
+                <el-input v-model="addOrderMatterForm.matter_name"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="12">
+            <el-col :span="8">
+              <el-form-item label="事务类型" prop="is_show">
+                <el-select v-model="addOrderMatterForm.matter_type" collapse-tags clearable placeholder="请输选择">
+                  <el-option v-for="item in is_matter_type_list" :key="item.value" :label="item.label"
+                             :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="是否上传附件" prop="is_file">
+                <el-select v-model="addOrderMatterForm.is_file" collapse-tags clearable placeholder="请输选择">
+                  <el-option v-for="item in is_file_list" :key="item.value" :label="item.label" :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
               <el-form-item label="状态" prop="is_show">
                 <el-switch
-                    v-model="addWorkForm.is_show"
+                    v-model="addOrderMatterForm.is_show"
                     active-color="#13ce66"
                     inactive-color="#ff4949"
                     active-text="开"
@@ -38,44 +58,49 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="是否上传附件" prop="is_file">
-                <el-select v-model="addWorkForm.is_file" collapse-tags clearable placeholder="请输选择">
-                  <el-option v-for="item in is_file_list" :key="item.value" :label="item.label" :value="item.value">
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="绑定用户">
-                <el-cascader
-                    clearable
-                    collapse-tags
-                    :props="{ multiple: true }"
-                    :options="user_data_list"
-                    v-model="addWorkForm.user_id_list"
-                    :show-all-levels="false">
-                  <template slot-scope="{ node, data }">
-                    <span>{{ data.label }}</span>
-                    <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
-                  </template>
-                </el-cascader>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="绑定规则">
-                <el-select v-model="addWorkForm.no_order_matter_rule_id" collapse-tags clearable
+              <el-form-item label="事务的时间类型" prop="is_show">
+                <el-select v-model="addOrderMatterForm.matter_cycle_time_type" collapse-tags clearable
                            placeholder="请输选择">
-                  <el-option v-for="item in rule_data_list" :key="item.value" :label="item.label" :value="item.value">
+                  <el-option v-for="item in is_matter_cycle_time_type_list" :key="item.value" :label="item.label"
+                             :value="item.value">
                   </el-option>
                 </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="事务的时间" prop="is_show">
+                <el-input-number :min="0"
+                                 :max="100"
+                                 controls-position="right"
+                                 v-model="addOrderMatterForm.matter_cycle_time"
+                ></el-input-number>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="是否有监督人" prop="is_show">
+                <el-select v-model="addOrderMatterForm.is_supervisor" collapse-tags clearable
+                           placeholder="请输选择">
+                  <el-option v-for="item in is_is_supervisor_list" :key="item.value" :label="item.label"
+                             :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item v-show="addOrderMatterForm.is_supervisor === 1" label="监督人缓冲时间(天)" prop="is_show">
+                <el-input-number :min="0"
+                                 :max="100"
+                                 controls-position="right"
+                                 v-model="addOrderMatterForm.is_supervisor_cycle_time"
+                ></el-input-number>
               </el-form-item>
             </el-col>
           </el-row>
         </el-form>
         <template v-slot:footer>
           <div class="dialog-footer">
-            <el-button @click="dialogClose('addWorkRef')">取 消</el-button>
-            <el-button type="primary" @click="addWorkData('addWorkRef')" :loading="addLoading">立即创建
+            <el-button @click="dialogClose('addOrderMatterRef')">取 消</el-button>
+            <el-button type="primary" @click="addOrderMatterData('addOrderMatterRef')" :loading="addLoading">立即创建
             </el-button>
           </div>
         </template>
@@ -242,12 +267,15 @@ export default {
       loading: false, // 数据加载样式
       OrderMatterData: [], // 查询
       //  添加弹出框数据 添加使用变量
-      addWorkForm: {
-        matter_name: "",
-        is_show: true,
+      addOrderMatterForm: {
         is_file: 1,
-        user_id_list: [],
-        no_order_matter_rule_id: "",
+        is_show: true,
+        matter_type: 0,
+        matter_name: "",
+        is_supervisor: 0,
+        matter_cycle_time: 0,
+        matter_cycle_time_type: 0,
+        is_supervisor_cycle_time: 0,
       },
       // 控制弹窗创建按钮
       addLoading: false,
@@ -395,30 +423,36 @@ export default {
     dialogClose(formName) {
       this.dialogDisplayVar = false;
       this.$refs[formName].resetFields();
-      this.getWorkData(); // 进行回调，重新载入一下数据
+      this.getOrderMatterData(); // 进行回调，重新载入一下数据
     },
     // ×关闭
     handleClose() {
       this.dialogDisplayVar = false;
-      this.getWorkData(); // 进行回调，重新载入一下数据
+      this.getOrderMatterData(); // 进行回调，重新载入一下数据
     },
     // 弹窗内创建按钮
-    addWorkData(formName) {
+    addOrderMatterData(formName) {
+      /*
+      * addOrderMatterForm: {
+        is_file: 1,
+        is_show: true,
+        matter_type: 0,
+        matter_name: "",
+        is_supervisor: 0,
+        matter_cycle_time: 0,
+        matter_cycle_time_type: 0,
+        is_supervisor_cycle_time: 0,
+      },
+      * */
       this.addLoading = true;
-      let user_id_list = [];
-      for (let i = 0; i < this.addWorkForm.user_id_list.length; i++) {
-        let user_id = this.addWorkForm.user_id_list[i].pop();
-        user_id_list.push(user_id);
-      }
-      this.addWorkForm.user_id_list = user_id_list;
-      if (!this.addWorkForm.matter_name) {
+      if (!this.addOrderMatterForm.matter_name) {
         this.$message.error("事务名称是必填项！");
         this.addLoading = false;
       } else {
-        this.addWorkForm.is_show = this.addWorkForm.is_show ? 1 : 0;
+        this.addOrderMatterForm.is_show = this.addOrderMatterForm.is_show ? 1 : 0;
         this.$http
             .post("business_function/no_order_matter/", {
-              data: this.addWorkForm,
+              data: this.addOrderMatterForm,
             })
             .then((res) => {
               let data = res.data;
@@ -436,7 +470,7 @@ export default {
             })
             .finally(() => {
               this.user_id_list = [];
-              this.addWorkForm.is_show = true;
+              this.addOrderMatterForm.is_show = true;
               this.addLoading = false;
             });
       }

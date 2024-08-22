@@ -15,6 +15,11 @@
       </el-button>
     </div>
     <div class="table_content">
+      <div style="margin: 5px 0">
+        <el-alert title="注意：" type="warning"
+                  description="如果存在异常，说明邮件未发送，那么可以点击修复按钮，将会重新将邮件进行发送！"
+        ></el-alert>
+      </div>
       <el-table :data="ReportEmailLogData" style="width: 100%">
         <el-table-column prop="index" label="#" align="center"></el-table-column>
         <el-table-column label="生成时间" align="center" prop="create_date">

@@ -21,6 +21,11 @@
         </el-button>
       </div>
       <div class="table_content">
+        <div style="margin: 5px 0">
+          <el-alert title="注意：" type="warning"
+                    description="工厂的信息来自于订单系统，如果订单系统有添加，请点击加载菜单按钮，需要根据工厂绑定用户，不然事务无法生成！"
+          ></el-alert>
+        </div>
         <el-table :data="factoryData" style="width: 100%">
           <el-table-column prop="index" label="#" align="center"></el-table-column>
           <el-table-column label="工厂名称" align="center" prop="factory_name">

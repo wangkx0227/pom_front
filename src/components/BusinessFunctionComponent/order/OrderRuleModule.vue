@@ -13,10 +13,13 @@
     </div>
     <div class="dialog">
       <el-dialog title="添加规则" :visible.sync="dialogDisplayVar" width="35%" :before-close="handleClose">
-        <el-alert
-            title="注意："
-            type="warning"
-            description="匹配规则需要根据订单的简写来，比如TGD240，可以写为TD240或者D240。如果是多个匹配规则请使用 / 进行区分。如果固定规定用户，那么匹配的全部订单生成的事项都归属的当前固定用户。">
+        <el-alert title="注意：" type="warning">
+          <template slot='title'>
+            <div>需要注意的事项:</div>
+            <div>1、匹配规则需要根据订单的简写来，比如TGD240，可以写为TD240或者D240。</div>
+            <div>2、如果是多个匹配规则请使用 / 进行区分。</div>
+            <div>3、如果固定规定用户，那么匹配的全部订单生成的事项都归属的当前固定用户。</div>
+          </template>
         </el-alert>
         <el-form :model="addRuleForm" label-position="top" :rules="RuleRules" ref="addRuleRef">
           <el-row :gutter="24">

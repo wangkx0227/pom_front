@@ -14,6 +14,11 @@
         </el-button>
       </div>
       <div class="table_content">
+        <div style="margin: 5px 0">
+          <el-alert title="注意：" type="info"
+                    description="根据用查看，当前用户在什么时间段内点击了什么按钮，访问了哪些菜单！读取：访问 修改与添加：提交数据 删除：清除数据"
+          ></el-alert>
+        </div>
         <el-table :data="roleData" style="width: 100%">
           <el-table-column prop="index" label="#" align="center"></el-table-column>
           <el-table-column label="用户名称" align="center" prop="user_name">

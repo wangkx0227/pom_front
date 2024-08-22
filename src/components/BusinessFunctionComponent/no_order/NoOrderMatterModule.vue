@@ -13,10 +13,12 @@
     </div>
     <div class="dialog">
       <el-dialog title="非订单事项添加" :visible.sync="dialogDisplayVar" width="35%" :before-close="handleClose">
-        <el-alert
-            title="注意："
-            type="warning"
-            description="默认状态是开启的，附件是默认需要上传的，添加时根据需求进行修改。请添加事项时绑定用户与规则，才会正常执行，不然不会执行。">
+        <el-alert title="注意：" type="warning">
+          <template slot='title'>
+            <div>需要注意的事项:</div>
+            <div>1、默认状态是开启的，附件是默认需要上传的，添加时根据需求进行修改。</div>
+            <div>2、请添加事项时绑定用户与规则，才会正常执行，不然不会执行。</div>
+          </template>
         </el-alert>
         <el-form :model="addWorkForm" label-position="top" :rules="rules" ref="addWorkRef">
           <el-row :gutter="24">
