@@ -66,6 +66,7 @@ export default {
     openLoading() {
       return this.$loading({
         lock: true,
+        text: '正在退出登录...',
       });
     },
     // 下拉选择，根据属性进行选择展示信息
