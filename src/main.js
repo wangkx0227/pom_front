@@ -2,11 +2,9 @@ import Vue from "vue";
 import App from "./App.vue";
 import "./registerServiceWorker";
 import router from "./router";
-import store from "./store";
 import axios from "axios";
 import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
-import "bootstrap/dist/css/bootstrap.css";
 import "@/static/pombase.css"; //自适应静态文件
 import {Message} from 'element-ui';
 

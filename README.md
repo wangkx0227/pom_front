@@ -1,29 +1,34 @@
-# pom_front
+# POM前端
 
-## Project setup
+## 安装环境
 
 ```
 npm install
+yarn install
 ```
 
-### Compiles and hot-reloads for development
+### 项目启动
 
 ```
 npm run serve
+yarn serve
 ```
 
-### Compiles and minifies for production
+### 项目打包
 
 ```
 npm run build
+yarn build
 ```
 
-### Lints and fixes files
+### 文件修复
 
 ```
 npm run lint
+yarn lint
 ```
 
-### Customize configuration
-
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### 使用
+```
+vue2 + axios + vue-router + element ui
+```
