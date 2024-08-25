@@ -90,7 +90,7 @@
             <el-input v-model="row.rule_name" v-else></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="规则匹配项" align="center">
+        <el-table-column label="规则匹配项"  width="230" align="center">
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.rule_mate }}</span>
             <el-input v-model="row.rule_mate" v-else></el-input>
@@ -105,7 +105,7 @@
             <el-input type="textarea" v-model="row.rule_description" v-else></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="是否固定归属用户" align="center">
+        <el-table-column label="是否固定归属用户"  width="180" align="center">
           <template v-slot="{ row }">
             <span v-if="!row.editable">
               <el-tag v-if="row.is_bind_user" type="success">是</el-tag>
@@ -136,8 +136,8 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="创建日期" align="center" prop="create_date"></el-table-column>
-        <el-table-column label="修改日期" align="center" prop="update_date"></el-table-column>
+        <el-table-column label="创建日期" align="center" prop="create_date" width="180"></el-table-column>
+        <el-table-column label="修改日期" align="center" prop="update_date" width="180"></el-table-column>
         <el-table-column label="操作" align="center" width="180">
           <template v-slot="scope">
             <div v-if="method_list.includes('PUT')" style="display: inline-block;">
