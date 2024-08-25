@@ -95,6 +95,17 @@
                 ></el-input-number>
               </el-form-item>
             </el-col>
+            <el-col :span="12">
+              <el-form-item label="绑定事务规则" prop="is_show">
+                <el-select v-model="addOrderMatterForm.order_matter_rule_list" collapse-tags clearable
+                           placeholder="请输选择" multiple
+                           collapse-tags>
+                  <el-option v-for="item in OrderMatterRuleData" :key="item.value" :label="item.label"
+                             :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
           </el-row>
         </el-form>
         <template v-slot:footer>
@@ -209,6 +220,20 @@
 
           </template>
         </el-table-column>
+        <el-table-column label="绑定事务规则" align="center" width="300">
+          <template v-slot="{ row }">
+            <span v-if="!row.editable">{{ row.rule_name_value }}</span>
+            <div v-else>
+              <el-select v-model="row.order_matter_rule_list" collapse-tags clearable
+                         placeholder="请输选择" multiple
+                         collapse-tags>
+                <el-option v-for="item in OrderMatterRuleData" :key="item.value" :label="item.label"
+                           :value="item.value">
+                </el-option>
+              </el-select>
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column label="创建日期" align="center" width="180" prop="create_date">
         </el-table-column>
         <el-table-column label="修改日期" align="center" width="180" prop="update_date">
@@ -276,6 +301,7 @@ export default {
         matter_cycle_time: 0,
         matter_cycle_time_type: 0,
         is_supervisor_cycle_time: 0,
+        order_matter_rule_list: [],
       },
       // 控制弹窗创建按钮
       addLoading: false,
@@ -323,13 +349,34 @@ export default {
         {label: '无', value: 0},
         {label: '有', value: 1},
       ],
+      // 规则匹配表
+      OrderMatterRuleData: [],
     };
   },
   created() {
     this.loading = true;
+    this.getOrderMatterRuleData();
     this.getOrderMatterData();
   },
   methods: {
+    // 获取规则
+    getOrderMatterRuleData() {
+      this.$http
+          .get('business_function/order_matter_rule/?status=all')
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.OrderMatterRuleData = data.data;
+            } else {
+              this.OrderMatterRuleData = [];
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+          });
+    },
     // 获取数据
     getOrderMatterData() {
       let get_url;
