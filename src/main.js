@@ -120,6 +120,5 @@ Vue.prototype.$http = axios;
 Vue.use(ElementUI);
 new Vue({
     router,
-    store,
     render: (h) => h(App),
 }).$mount("#app");
