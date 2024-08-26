@@ -84,19 +84,19 @@
     <div class="table_content">
       <el-table :data="RuleData" style="width: 100%">
         <el-table-column prop="index" label="#" align="center"></el-table-column>
-        <el-table-column label="规则名称" align="center">
+        <el-table-column label="规则名称" width="180" align="center">
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.rule_name }}</span>
             <el-input v-model="row.rule_name" v-else></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="规则匹配项"  width="230" align="center">
+        <el-table-column label="规则匹配项"  width="300" align="center">
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.rule_mate }}</span>
             <el-input v-model="row.rule_mate" v-else></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="描述信息" align="center" width="350">
+        <el-table-column label="描述信息" align="center" width="300">
           <template v-slot="{ row }">
             <el-tooltip class="item" effect="dark" :content="row.rule_description" placement="bottom"
                         v-if="!row.editable">
