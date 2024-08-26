@@ -389,7 +389,7 @@ export default {
     completeNoOrderWork(row) {
       this.loading = true;
       this.$http
-          .put("work/no_order_matter_list/", {
+          .put("work_info/no_order_matter_list/", {
             data: row,
           })
           .then((res) => {
@@ -459,7 +459,7 @@ export default {
         let jsonData = JSON.stringify(this.open_work_annex_row_data);
         formData.append('data', jsonData);
         this.$http
-            .put("work/no_order_matter_list/", formData, {
+            .put("work_info/no_order_matter_list/", formData, {
               headers: {
                 'Content-Type': 'multipart/form-data', // 必须设置请求头
               }
@@ -502,7 +502,7 @@ export default {
       } else {
         this.addDelayApplyForData.id = this.open_delay_row_data.id
         this.$http
-            .post("work/no_order_matter_list/", {
+            .post("work_info/no_order_matter_list/", {
               data: this.addDelayApplyForData,
             })
             .then((res) => {
@@ -576,7 +576,7 @@ export default {
       this.AnnexFileTableLoading = true;
       const pk = row.id
       this.$http
-          .delete("work/no_order_matter_file_list/", {
+          .delete("work_info/no_order_matter_file_list/", {
             data: {pk: pk},
           })
           .then((res) => {
@@ -693,7 +693,7 @@ export default {
       this.DelayTableLoading = true;
       const pk = row.id
       this.$http
-          .delete("work/no_order_matter_delay_list/", {
+          .delete("work_info/no_order_matter_delay_list/", {
             data: {pk: pk},
           })
           .then((res) => {
