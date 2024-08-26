@@ -11,47 +11,21 @@
       <el-button type="warning" icon="el-icon-refresh-right" plain @click="reloadData">重置
       </el-button>
     </div>
-    <div class="table_content">
-      <el-table :data="order_record_info_list" style="width: 100%">
-        <el-table-column prop="index" label="#" align="center"></el-table-column>
-        <el-table-column label="客户ID" align="center" prop="client_id">
-        </el-table-column>
-        <el-table-column label="PO" align="center" prop="po" width="180">
-        </el-table-column>
-        <el-table-column label="ITEM" align="center" prop="item" width="180">
-        </el-table-column>
-        <el-table-column label="工厂代码" align="center" prop="factory_code" width="180">
-        </el-table-column>
-        <el-table-column label="工厂名称" align="center" width="300" prop="factory_name">
-        </el-table-column>
-        <el-table-column label="跟进人姓名" align="center" prop="follow_user_name" width="180">
-        </el-table-column>
-        <el-table-column label="订单周期（天）" align="center" prop="end_time_day" width="180">
-        </el-table-column>
-        <el-table-column label="订单导入时间" align="center" width="180" prop="create_date">
-        </el-table-column>
-        <el-table-column label="是否异常（生成对应事项）" align="center" width="230" prop="is_exceptional">
-          <template v-slot="{ row }">
-            <el-tag v-if="row.is_exceptional" type="danger">是</el-tag>
-            <el-tag v-else>否</el-tag>
+    <div class="dialog">
+      <el-dialog title="ITEM详情列表" :visible.sync="dialogTableVisible" :before-close="dialogTableClose">
+        <el-alert title="注意：" type="warning">
+          <template slot='title'>
+            <div>需要注意的事项:</div>
+            <div>1、当前ITEM信息是由订单系统提供。</div>
+            <div>2、每一个订单记录都会对应多个ITEM信息。</div>
+            <div>3、当订单信息保存后，传入POM后，记录就会固定不会变动。</div>
           </template>
-        </el-table-column>
-        <el-table-column label="操作" align="center" width="180">
-          <template v-slot="scope">
-            <el-button v-if="scope.row.is_exceptional" size="mini" type="text"
-                       @click="OrderStopOrRepair(scope.row,'repair')">事项修复
-            </el-button>
-            <el-divider v-if="scope.row.is_exceptional" direction="vertical"></el-divider>
-            <el-button size="mini" type="text" @click="OrderStopOrRepair(scope.row,'stop')">事项终止</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
-    <div class="pagination">
-      <el-pagination hide-on-single-page @current-change="currentPage" @prev-click="prevPage" @next-click="nextPage"
-                     background layout="total,prev, pager, next" :page-size="10" :total="data_total"
-                     v-model:current-page="page">
-      </el-pagination>
+        </el-alert>
+        <el-table :data="item_list" height="300" border v-loading="dialogTableLoading">
+          <el-table-column property="index" label="#" align="center"></el-table-column>
+          <el-table-column property="item" label="ITEM" width="450" align="center"></el-table-column>
+        </el-table>
+      </el-dialog>
     </div>
     <div class="dialog">
       <el-dialog title="订单录入添加" :visible.sync="dialogDisplayVar" width="35%" :before-close="handleClose">
@@ -61,6 +35,7 @@
             <div>1、如果订单系统录入，并没产生记录，没有记录就不会存在事项，那么可以通过手动录入的方式实现生成事项！</div>
             <div>2、这些信息需要按照OMR录入的订单信息进行录入。</div>
             <div>3、所有的项都需要填写，不能为空！</div>
+            <div>4、当输入ITEM时，请使用/对ITEM进行区分，比如：S123456/S789456/S888662</div>
           </template>
         </el-alert>
         <el-form :model="addOrderRecordForm" label-position="top" :rules="rules" ref="addOrderRecordRef">
@@ -76,7 +51,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="ITEM" prop="po_item">
+              <el-form-item label="ITEM（多个请使用/区分）" prop="po_item">
                 <el-input v-model="addOrderRecordForm.po_item"></el-input>
               </el-form-item>
             </el-col>
@@ -114,6 +89,52 @@
           </div>
         </template>
       </el-dialog>
+    </div>
+    <div class="table_content">
+      <el-table :data="order_record_info_list" style="width: 100%">
+        <el-table-column prop="index" label="#" align="center"></el-table-column>
+        <el-table-column label="客户ID" align="center" prop="client_id">
+        </el-table-column>
+        <el-table-column label="PO" align="center" prop="po" width="180">
+        </el-table-column>
+        <el-table-column label="ITEM列表" align="center" width="180">
+          <template v-slot="scope">
+            <el-button size="mini" type="text" @click="getOrderRecordItem(scope.row)"> 查看详情
+            </el-button>
+          </template>
+        </el-table-column>
+        <el-table-column label="工厂代码" align="center" prop="factory_code" width="180">
+        </el-table-column>
+        <el-table-column label="工厂名称" align="center" width="300" prop="factory_name">
+        </el-table-column>
+        <el-table-column label="跟进人姓名" align="center" prop="follow_user_name" width="180">
+        </el-table-column>
+        <el-table-column label="订单周期（天）" align="center" prop="end_time_day" width="180">
+        </el-table-column>
+        <el-table-column label="订单导入时间" align="center" width="180" prop="create_date">
+        </el-table-column>
+        <el-table-column label="是否异常（生成对应事项）" align="center" width="230" prop="is_exceptional">
+          <template v-slot="{ row }">
+            <el-tag v-if="row.is_exceptional" type="danger">是</el-tag>
+            <el-tag v-else>否</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" align="center" width="180">
+          <template v-slot="scope">
+            <el-button v-if="scope.row.is_exceptional" size="mini" type="text"
+                       @click="OrderStopOrRepair(scope.row,'repair')">事项修复
+            </el-button>
+            <el-divider v-if="scope.row.is_exceptional" direction="vertical"></el-divider>
+            <el-button size="mini" type="text" @click="OrderStopOrRepair(scope.row,'stop')">事项终止</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+    <div class="pagination">
+      <el-pagination hide-on-single-page @current-change="currentPage" @prev-click="prevPage" @next-click="nextPage"
+                     background layout="total,prev, pager, next" :page-size="10" :total="data_total"
+                     v-model:current-page="page">
+      </el-pagination>
     </div>
   </div>
 </template>
@@ -162,6 +183,10 @@ export default {
           {required: true, message: "跟进人不能为空", trigger: "blur"},
         ],
       },
+      // 查看item列表记录
+      dialogTableVisible: false,
+      dialogTableLoading: false,
+      item_list: [],
     };
   },
   created() {
@@ -288,6 +313,7 @@ export default {
       } else if (this.addOrderRecordForm.end_time_day === 0) {
         this.$message.error("订单周期时间，请正确设置！")
       } else {
+        this.addOrderRecordForm.po_item = this.addOrderRecordForm.po_item.split('/') // 转换为列表
         this.addLoading = true;
         this.$http
             .post("business_function/order_record_info/", this.addOrderRecordForm)
@@ -309,6 +335,31 @@ export default {
       }
 
     },
+    // 查询订单的item列表
+    getOrderRecordItem(row) {
+      this.dialogTableVisible = true;
+      this.dialogTableLoading = true;
+      this.$http
+          .get(`business_function/order_record_info/?query=item&order_record_id=${row.id}`)
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.item_list = data.data;
+            } else {
+              this.item_list = [];
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.dialogTableLoading = false;
+          });
+    },
+    // 作为item 弹窗的关闭窗口调用函数
+    dialogTableClose(done) {
+      done(); // 关闭窗口
+    }
   },
 };
 </script>
