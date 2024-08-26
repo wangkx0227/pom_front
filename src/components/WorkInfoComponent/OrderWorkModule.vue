@@ -4,7 +4,7 @@
     <div class="dialog">
       <el-dialog title="事务附件上传"
                  width="25%"
-                 :visible.sync="NoOrderWorkDialogVisible"
+                 :visible.sync="OrderWorkDialogVisible"
                  :before-close="DialogClose"
       >
         <el-upload
@@ -91,7 +91,7 @@
       </el-button>
     </div>
     <div class="table_content">
-      <el-table :data="no_order_matter_list" style="width: 100%">
+      <el-table :data="order_matter_list" style="width: 100%">
         <el-table-column prop="index" label="#" align="center"></el-table-column>
         <el-table-column label="事项名称" align="center" width="500">
           <template v-slot="{ row }">
@@ -180,7 +180,7 @@
               :on-exceed="uploadAnnexExceedFile"
               :file-list="annexFileList"
               :show-file-list="false"
-              :data="no_order_work_annex_file_row"
+              :data="order_work_annex_file_row"
               :on-success="UploadAnnexFileSuccess"
               :on-error="UploadAnnexFileError"
               :headers="authHeaders"
@@ -256,10 +256,10 @@
 <script>
 // 按钮权限还没有进行设置
 export default {
-  name: "NoOrderWorkModule",
+  name: "OrderWorkModule",
   data() {
     return {
-      no_order_matter_list: [], // 查询数据列表
+      order_matter_list: [], // 查询数据列表
       loading: false, // 数据加载样式
       addLoading: false, // 控制弹窗创建按钮
       dialogDisplayVar: false,// 弹出框控制变量
@@ -274,7 +274,7 @@ export default {
       search_start_time: "",
       search_end_time: "",
       // 完成事项的弹窗控制变量
-      NoOrderWorkDialogVisible: false, // 控制弹窗
+      OrderWorkDialogVisible: false, // 控制弹窗
       // 弹窗传入的row变量
       open_work_annex_row_data: null, // 事项需要上传附件，弹窗保存当前非订单事项列的基础数据
       // 弹窗内上传变量，文件对象列表
@@ -283,7 +283,7 @@ export default {
       AnnexFileVisible: false,
       annex_file_data: [],
       AnnexFileTableLoading: false,
-      no_order_work_annex_file_row: null, // 当前附件列表归属到哪个非订单事务的id
+      order_work_annex_file_row: null, // 当前附件列表归属到哪个非订单事务的id
       annexFileList: [], // 上传附件列表
       uploadUrl: `${this.$http.defaults.baseURL}work/no_order_matter_file_list/`, // 需要部署到实际环境下接口需要修改
       authHeaders: { // 附件补充上传 携带的请求头
@@ -295,7 +295,7 @@ export default {
       // 延期列表
       DelayVisible: false,
       DelayTableLoading: false,
-      no_order_work_delay_row: false,
+      order_work_delay_row: false,
       delay_data: [], // 存储数据
       delay_method_list: [], // 延期可使用功能权限
       // 延期审核提交
@@ -310,24 +310,24 @@ export default {
     };
   },
   created() {
-    this.getNoOrderWorkListData()
+    this.getOrderWorkListData()
   },
   methods: {
     // 获取数据
-    getNoOrderWorkListData() {
+    getOrderWorkListData() {
       this.loading = true;
       let get_url;
       if (!this.search_start_time) {
-        get_url = `work/no_order_matter_list/?page=${this.page}`;
+        get_url = `work/order_matter_list/?page=${this.page}`;
       } else {
-        get_url = `work/no_order_matter_list/?page=${this.page}&end_time=${this.search_end_time}&start_time=${this.search_start_time}`;
+        get_url = `work/order_matter_list/?page=${this.page}&end_time=${this.search_end_time}&start_time=${this.search_start_time}`;
       }
       this.$http
           .get(get_url)
           .then((res) => {
             let data = res.data;
             if (data.code === 200) {
-              this.no_order_matter_list = data.data.data;
+              this.order_matter_list = data.data.data;
               this.data_total = data.data.data_total;
               this.method_list = data.data.method_list;
               this.delay_method_list = data.data.delay_method_list;
@@ -351,21 +351,21 @@ export default {
       this.page_status = page;
       this.page = page;
       // 下一页按钮
-      this.getNoOrderWorkListData();
+      this.getOrderWorkListData();
     },
     prevPage(page) {
       this.loading = true;
       this.page_status = page;
       this.page = page;
       // 上一页按钮
-      this.getNoOrderWorkListData();
+      this.getOrderWorkListData();
     },
     currentPage(page) {
       this.loading = true;
       this.page = page;
       // 点击按钮触发
       if (this.page_status === 0) {
-        this.getNoOrderWorkListData();
+        this.getOrderWorkListData();
       }
     },
     // 搜索功能
@@ -376,15 +376,17 @@ export default {
         this.search_start_time = new Date(this.time_frame_list[0]).toISOString();
         this.search_end_time = new Date(this.time_frame_list[1]).toISOString();
       }
-      this.getNoOrderWorkListData();
+      this.getOrderWorkListData();
     },
     // 重置
     reloadData() {
       this.time_frame_list = [];
       this.search_start_time = '';
       this.search_end_time = '';
-      this.getNoOrderWorkListData();
+      this.getOrderWorkListData();
     },
+
+    // 需要进行修改
     // 完成事务按钮 - 不需要上传附件
     completeNoOrderWork(row) {
       this.loading = true;
@@ -411,12 +413,12 @@ export default {
     },
     // 事项完成 - 打开上传附件弹窗
     OpenNoOrderWorkDialog(row) {
-      this.NoOrderWorkDialogVisible = true;
+      this.OrderWorkDialogVisible = true;
       this.open_work_annex_row_data = row;
     },
     // 完成事项 - 关闭弹出进行回调，按钮
     NoOrderWorkDialogButtonClose() {
-      this.NoOrderWorkDialogVisible = false;
+      this.OrderWorkDialogVisible = false;
       this.getNoOrderWorkListData();
     },
     // 事务完成- 文件上传功能
@@ -477,7 +479,7 @@ export default {
             })
             .finally(() => {
               this.fileList = [];
-              this.NoOrderWorkDialogVisible = false
+              this.OrderWorkDialogVisible = false
               this.open_work_annex_row_data = null;
               this.getNoOrderWorkListData();
             });
@@ -546,7 +548,7 @@ export default {
     // 附件列表 - 获取当前事项接口
     getAnnexFileData(row) {
       this.AnnexFileTableLoading = true;
-      this.no_order_work_annex_file_row = row;
+      this.order_work_annex_file_row = row;
       const get_url = `work/no_order_matter_file_list/?pk=${row.id}`;
       this.$http
           .get(get_url)
@@ -568,7 +570,7 @@ export default {
     // 附件列表 - 附件弹窗关闭窗口回调
     AnnexFileDialogClose(done) {
       done(); // 关闭窗口
-      this.no_order_work_annex_file_row = null;
+      this.order_work_annex_file_row = null;
       this.getNoOrderWorkListData(); // 重新加载一下数据
     },
     // 附件列表 - 附件删除
@@ -603,7 +605,7 @@ export default {
     UploadAnnexFileSuccess(response, file, fileList) {
       this.$message.success(response.message);
       this.annexFileList = [];
-      this.getAnnexFileData(this.no_order_work_annex_file_row); // 刷新附件列表
+      this.getAnnexFileData(this.order_work_annex_file_row); // 刷新附件列表
     },
     // 附件列表 - 附件补充上传失败回调函数
     UploadAnnexFileError(err, file, fileList) {
@@ -663,7 +665,7 @@ export default {
     // 延期列表 -  延期列表数据获取
     getDelayData(row) {
       this.DelayTableLoading = true;
-      this.no_order_work_delay_row = row;
+      this.order_work_delay_row = row;
       const get_url = `work/no_order_matter_delay_list/?pk=${row.id}`;
       this.$http
           .get(get_url)
@@ -685,7 +687,7 @@ export default {
     // 延期列表 - 延期弹窗关闭窗口回调
     DelayDialogClose(done) {
       done(); // 关闭窗口
-      this.no_order_work_delay_row = null;
+      this.order_work_delay_row = null;
       this.getNoOrderWorkListData(); // 重新加载一下数据
     },
     // 延期列表 - 删除延期申请
