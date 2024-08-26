@@ -21,7 +21,7 @@
           <div slot="tip" class="el-upload__tip">支持png,pdf,doc,docx,xlsx,xls,jpg,gif格式文件，且不能超过5M</div>
         </el-upload>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="NoOrderWorkDialogButtonClose">取消上传</el-button>
+          <el-button @click="OrderWorkDialogButtonClose">取消上传</el-button>
           <el-button type="primary" @click="completeNoOrderWorkFile">确定上传</el-button>
         </span>
       </el-dialog>
@@ -285,7 +285,7 @@ export default {
       AnnexFileTableLoading: false,
       order_work_annex_file_row: null, // 当前附件列表归属到哪个非订单事务的id
       annexFileList: [], // 上传附件列表
-      uploadUrl: `${this.$http.defaults.baseURL}work/no_order_matter_file_list/`, // 需要部署到实际环境下接口需要修改
+      uploadUrl: `${this.$http.defaults.baseURL}work/order_matter_file_list/`, // 需要部署到实际环境下接口需要修改
       authHeaders: { // 附件补充上传 携带的请求头
         'Authorization': localStorage.getItem("authorization"),
         'X-User-Id': localStorage.getItem("user_id"),
@@ -391,14 +391,14 @@ export default {
     completeNoOrderWork(row) {
       this.loading = true;
       this.$http
-          .put("work_info/no_order_matter_list/", {
+          .put("work/order_matter_list/", {
             data: row,
           })
           .then((res) => {
             let data = res.data;
             if (data.code === 200) {
               this.$message.success(data.message);
-              this.getNoOrderWorkListData();
+              this.getOrderWorkListData();
             } else {
               this.$message.error(data.message);
             }
@@ -417,9 +417,9 @@ export default {
       this.open_work_annex_row_data = row;
     },
     // 完成事项 - 关闭弹出进行回调，按钮
-    NoOrderWorkDialogButtonClose() {
+    OrderWorkDialogButtonClose() {
       this.OrderWorkDialogVisible = false;
-      this.getNoOrderWorkListData();
+      this.getOrderWorkListData();
     },
     // 事务完成- 文件上传功能
     // 事务完成- 文件上传,显示一共可以上传几个文件
@@ -461,7 +461,7 @@ export default {
         let jsonData = JSON.stringify(this.open_work_annex_row_data);
         formData.append('data', jsonData);
         this.$http
-            .put("work_info/no_order_matter_list/", formData, {
+            .put("work/order_matter_list/", formData, {
               headers: {
                 'Content-Type': 'multipart/form-data', // 必须设置请求头
               }
@@ -481,7 +481,7 @@ export default {
               this.fileList = [];
               this.OrderWorkDialogVisible = false
               this.open_work_annex_row_data = null;
-              this.getNoOrderWorkListData();
+              this.getOrderWorkListData();
             });
       }
 
@@ -504,7 +504,7 @@ export default {
       } else {
         this.addDelayApplyForData.id = this.open_delay_row_data.id
         this.$http
-            .post("work_info/no_order_matter_list/", {
+            .post("work/order_matter_list/", {
               data: this.addDelayApplyForData,
             })
             .then((res) => {
@@ -538,7 +538,7 @@ export default {
     // 事务完成/延期提交关闭弹窗 - 进行回调
     DialogClose(done) {
       done(); // 关闭窗口
-      this.getNoOrderWorkListData(); // 重新加载一下数据
+      this.getOrderWorkListData(); // 重新加载一下数据
     },
     // 附件列表 - 打开附件弹窗
     OpenAnnexFileDialog(row) {
@@ -549,7 +549,7 @@ export default {
     getAnnexFileData(row) {
       this.AnnexFileTableLoading = true;
       this.order_work_annex_file_row = row;
-      const get_url = `work/no_order_matter_file_list/?pk=${row.id}`;
+      const get_url = `work/order_matter_file_list/?pk=${row.id}`;
       this.$http
           .get(get_url)
           .then((res) => {
@@ -571,14 +571,14 @@ export default {
     AnnexFileDialogClose(done) {
       done(); // 关闭窗口
       this.order_work_annex_file_row = null;
-      this.getNoOrderWorkListData(); // 重新加载一下数据
+      this.getOrderWorkListData(); // 重新加载一下数据
     },
     // 附件列表 - 附件删除
     delAnnexFileData(index, rows, row) {
       this.AnnexFileTableLoading = true;
       const pk = row.id
       this.$http
-          .delete("work_info/no_order_matter_file_list/", {
+          .delete("work/order_matter_file_list/", {
             data: {pk: pk},
           })
           .then((res) => {
@@ -627,7 +627,7 @@ export default {
     // 附件列表- 附件文件下载
     DownloadAnnexFile(row) {
       this.AnnexFileTableLoading = true;
-      this.$http.get(`work/download_file/?pk=${row.id}&download_type=no_order`, {responseType: 'blob'})
+      this.$http.get(`work/download_file/?pk=${row.id}&download_type=order`, {responseType: 'blob'})
           .then((res) => {
             const contentDisposition = res.headers['content-disposition'];
             let filename = 'file.pdf'; // 默认文件名
@@ -666,7 +666,7 @@ export default {
     getDelayData(row) {
       this.DelayTableLoading = true;
       this.order_work_delay_row = row;
-      const get_url = `work/no_order_matter_delay_list/?pk=${row.id}`;
+      const get_url = `work/order_matter_delay_list/?pk=${row.id}`;
       this.$http
           .get(get_url)
           .then((res) => {
@@ -688,14 +688,14 @@ export default {
     DelayDialogClose(done) {
       done(); // 关闭窗口
       this.order_work_delay_row = null;
-      this.getNoOrderWorkListData(); // 重新加载一下数据
+      this.getOrderWorkListData(); // 重新加载一下数据
     },
     // 延期列表 - 删除延期申请
     delDelayData(index, rows, row) {
       this.DelayTableLoading = true;
       const pk = row.id
       this.$http
-          .delete("work_info/no_order_matter_delay_list/", {
+          .delete("work/order_matter_delay_list/", {
             data: {pk: pk},
           })
           .then((res) => {
