@@ -1,7 +1,7 @@
 <template>
   <div class="order_record_info" v-loading="loading">
     <div class="head_search_add">
-      <el-button type="info" icon="el-icon-circle-plus-outline" plain @click="dialogDisplay">
+      <el-button type="info"  v-if="method_list.includes('POST')" icon="el-icon-circle-plus-outline" plain @click="dialogDisplay">
         手动添加
       </el-button>
       <el-input placeholder="请输入PO进行查询" v-model="search" clearable class="input_search">
@@ -12,7 +12,7 @@
       </el-button>
     </div>
     <div class="dialog">
-      <el-dialog title="ITEM详情列表" :visible.sync="dialogTableVisible" :before-close="dialogTableClose">
+      <el-dialog title="ITEM详情列表" :visible.sync="dialogTableVisible" :before-close="dialogTableClose" width="30%">
         <el-alert title="注意：" type="warning">
           <template slot='title'>
             <div>需要注意的事项:</div>
@@ -21,7 +21,7 @@
             <div>3、当订单信息保存后，传入POM后，记录就会固定不会变动。</div>
           </template>
         </el-alert>
-        <el-table :data="item_list" height="300" border v-loading="dialogTableLoading">
+        <el-table :data="item_list" height="200" border v-loading="dialogTableLoading">
           <el-table-column property="index" label="#" align="center"></el-table-column>
           <el-table-column property="item" label="ITEM" width="450" align="center"></el-table-column>
         </el-table>
@@ -121,11 +121,27 @@
         </el-table-column>
         <el-table-column label="操作" align="center" width="180">
           <template v-slot="scope">
-            <el-button v-if="scope.row.is_exceptional" size="mini" type="text"
-                       @click="OrderStopOrRepair(scope.row,'repair')">事项修复
+            <el-button v-if="scope.row.is_exceptional" size="mini" type="text" @click="OrderStopOrRepair(scope.row,'repair')">事项修复
             </el-button>
             <el-divider v-if="scope.row.is_exceptional" direction="vertical"></el-divider>
             <el-button size="mini" type="text" @click="OrderStopOrRepair(scope.row,'stop')">事项终止</el-button>
+            <el-divider direction="vertical" v-if="method_list.includes('DELETE') && scope.row.is_exceptional === 1"></el-divider>
+            <div v-if="method_list.includes('DELETE') && scope.row.is_exceptional === 1" style="display: inline-block;">
+              <el-popover v-if="!scope.row.editable" placement="top" width="160" v-model="scope.row.visible"
+                          trigger="manual">
+                <p>删除后无恢复，请问确定删除吗？</p>
+                <div style="text-align: right; margin: 0">
+                  <el-button size="mini" type="text" @click="scope.row.visible = false">取消
+                  </el-button>
+                  <el-button type="primary" size="mini" @click="deleteRow(scope.$index, order_record_info_list, scope.row)">确定
+                  </el-button>
+                </div>
+                <template v-slot:reference>
+                  <el-button size="mini" type="text" @click="deleteDisplay(scope.row)">删除
+                  </el-button>
+                </template>
+              </el-popover>
+            </div>
           </template>
         </el-table-column>
       </el-table>
@@ -187,6 +203,8 @@ export default {
       dialogTableVisible: false,
       dialogTableLoading: false,
       item_list: [],
+      // 权限列表
+      method_list: [],
     };
   },
   created() {
@@ -224,6 +242,7 @@ export default {
             if (data.code === 200) {
               this.order_record_info_list = data.data.data;
               this.data_total = data.data.data_total;
+              this.method_list = data.data.method_list;
             } else {
               this.order_record_info_list = [];
             }
@@ -359,7 +378,36 @@ export default {
     // 作为item 弹窗的关闭窗口调用函数
     dialogTableClose(done) {
       done(); // 关闭窗口
-    }
+    },
+    // 删除记录
+    deleteRow(index, rows, row) {
+      this.loading = true;
+      let pk = row.id;
+      this.$http
+          .delete("business_function/order_record_info/", {
+            data: {pk: pk},
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.$message.success(data.message);
+              this.getOrderRecordData();
+              rows.splice(index, 1);
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+    },
+    //删除按钮显示小弹框
+    deleteDisplay(row) {
+      row.visible = true;
+    },
   },
 };
 </script>
