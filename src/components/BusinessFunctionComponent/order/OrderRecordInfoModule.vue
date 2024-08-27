@@ -119,14 +119,13 @@
             <el-tag v-else>否</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="180">
+        <el-table-column label="操作" align="center" width="200">
           <template v-slot="scope">
-            <el-button v-if="scope.row.is_exceptional" size="mini" type="text" @click="OrderStopOrRepair(scope.row,'repair')">事项修复
-            </el-button>
-            <el-divider v-if="scope.row.is_exceptional" direction="vertical"></el-divider>
-            <el-button size="mini" type="text" @click="OrderStopOrRepair(scope.row,'stop')">事项终止</el-button>
-            <el-divider direction="vertical" v-if="method_list.includes('DELETE') && scope.row.is_exceptional === 1"></el-divider>
-            <div v-if="method_list.includes('DELETE') && scope.row.is_exceptional === 1" style="display: inline-block;">
+            <div v-if="scope.row.is_exceptional && exceptional_method_list.includes('POST')"  style="display: inline-block;">
+              <el-button  size="mini" type="text" @click="OrderRepair(scope.row)">事项修复</el-button>
+            </div>
+            <div v-if="method_list.includes('DELETE') && scope.row.is_exceptional" style="display: inline-block;">
+              <el-divider direction="vertical" v-if="exceptional_method_list.includes('POST')"></el-divider>
               <el-popover v-if="!scope.row.editable" placement="top" width="160" v-model="scope.row.visible"
                           trigger="manual">
                 <p>删除后无恢复，请问确定删除吗？</p>
@@ -141,6 +140,9 @@
                   </el-button>
                 </template>
               </el-popover>
+            </div>
+            <div  style="display: inline-block;" v-if="scope.row.is_exceptional === 0 && exceptional_method_list.includes('PUT')">
+              <el-button size="mini" type="text" @click="OrderStop(scope.row)">事项终止</el-button>
             </div>
           </template>
         </el-table-column>
@@ -205,6 +207,7 @@ export default {
       item_list: [],
       // 权限列表
       method_list: [],
+      exceptional_method_list: [],
     };
   },
   created() {
@@ -243,6 +246,7 @@ export default {
               this.order_record_info_list = data.data.data;
               this.data_total = data.data.data_total;
               this.method_list = data.data.method_list;
+              this.exceptional_method_list = data.data.exceptional_method_list;
             } else {
               this.order_record_info_list = [];
             }
@@ -292,28 +296,6 @@ export default {
     reloadData() {
       this.search = "";
       this.getOrderRecordData();
-    },
-    // 异常修复/事项终止
-    OrderStopOrRepair(row, status) {
-      this.loading = true;
-      row.status = status;
-      this.$http
-          .put("business_function/order_record_info/", {data: row})
-          .then((res) => {
-            let data = res.data;
-            if (data.code === 200) {
-              this.$message.success(data.message);
-              this.getOrderRecordData();
-            } else {
-              this.$message.error(data.message);
-            }
-          })
-          .catch((error) => {
-            this.$message.error(error.message);
-          })
-          .finally(() => {
-            this.loading = false;
-          });
     },
     // 添加
     addOrderRecord() {
@@ -407,6 +389,48 @@ export default {
     //删除按钮显示小弹框
     deleteDisplay(row) {
       row.visible = true;
+    },
+    // 事项终止
+    OrderStop(row) {
+      this.loading = true;
+      this.$http
+          .put("business_function/exceptional_order_matter/", {data: row})
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.$message.success(data.message);
+              this.getOrderRecordData();
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+    },
+    // 事务修复
+    OrderRepair(row){
+      this.loading = true;
+      this.$http
+          .post("business_function/exceptional_order_matter/", {data: row})
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.$message.success(data.message);
+              this.getOrderRecordData();
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.loading = false;
+          });
     },
   },
 };
