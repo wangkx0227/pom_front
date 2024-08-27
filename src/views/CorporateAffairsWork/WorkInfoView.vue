@@ -8,7 +8,7 @@
         <el-tab-pane label="非订单事务" name="no_order_work">
           <component :is="NoOrderWorkComponent" v-if="activeName === 'no_order_work'"/>
         </el-tab-pane>
-        <el-tab-pane label="QC验货事务" name="qc_work">
+        <el-tab-pane label="特殊事务" name="qc_work">
           <component :is="QcWorkComponent" v-if="activeName === 'qc_work'"/>
         </el-tab-pane>
       </el-tabs>

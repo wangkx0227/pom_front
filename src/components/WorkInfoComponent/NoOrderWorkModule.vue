@@ -71,7 +71,7 @@
           </el-row>
         </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="DelayApplyForDialogVisible=false">取消</el-button>
+          <el-button @click="DelayApplyDialogClose">取消</el-button>
           <el-button type="primary" @click="DelayApplySaveData">提交</el-button>
         </span>
       </el-dialog>
@@ -117,12 +117,15 @@
         </el-table-column>
         <el-table-column label="延期列表" align="center" width="180">
           <template v-slot="{ row }">
-            <el-button v-if="row.delay_status && delay_method_list.includes('GET')" size="mini" type="text" @click="OpenDelayDialog(row)">延期列表查看</el-button>
+            <el-button v-if="row.delay_status && delay_method_list.includes('GET')" size="mini" type="text"
+                       @click="OpenDelayDialog(row)">延期列表查看
+            </el-button>
           </template>
         </el-table-column>
         <el-table-column label="附件列表" align="center" width="180">
           <template v-slot="{ row }">
-            <el-button v-if="row.annex_status && annex_method_list.includes('GET')" size="mini" type="text" @click="OpenAnnexFileDialog(row)">附件列表查看
+            <el-button v-if="row.annex_status && annex_method_list.includes('GET')" size="mini" type="text"
+                       @click="OpenAnnexFileDialog(row)">附件列表查看
             </el-button>
           </template>
         </el-table-column>
@@ -389,7 +392,7 @@ export default {
     completeNoOrderWork(row) {
       this.loading = true;
       this.$http
-          .put("work_info/no_order_matter_list/", {
+          .put("work/no_order_matter_list/", {
             data: row,
           })
           .then((res) => {
@@ -459,7 +462,7 @@ export default {
         let jsonData = JSON.stringify(this.open_work_annex_row_data);
         formData.append('data', jsonData);
         this.$http
-            .put("work_info/no_order_matter_list/", formData, {
+            .put("work/no_order_matter_list/", formData, {
               headers: {
                 'Content-Type': 'multipart/form-data', // 必须设置请求头
               }
@@ -502,7 +505,7 @@ export default {
       } else {
         this.addDelayApplyForData.id = this.open_delay_row_data.id
         this.$http
-            .post("work_info/no_order_matter_list/", {
+            .post("work/no_order_matter_list/", {
               data: this.addDelayApplyForData,
             })
             .then((res) => {
@@ -533,6 +536,12 @@ export default {
       let day = newDate.getDate();
       this.addDelayApplyForData.new_time = `${year}-${month}-${day}`;
     },
+    // 延期申请 - 点击取消按钮回调
+    DelayApplyDialogClose() {
+      this.DelayApplyForDialogVisible = false;
+      this.getNoOrderWorkListData(); // 重新加载一下数据
+    },
+
     // 事务完成/延期提交关闭弹窗 - 进行回调
     DialogClose(done) {
       done(); // 关闭窗口
@@ -576,7 +585,7 @@ export default {
       this.AnnexFileTableLoading = true;
       const pk = row.id
       this.$http
-          .delete("work_info/no_order_matter_file_list/", {
+          .delete("work/no_order_matter_file_list/", {
             data: {pk: pk},
           })
           .then((res) => {
@@ -693,7 +702,7 @@ export default {
       this.DelayTableLoading = true;
       const pk = row.id
       this.$http
-          .delete("work_info/no_order_matter_delay_list/", {
+          .delete("work/no_order_matter_delay_list/", {
             data: {pk: pk},
           })
           .then((res) => {

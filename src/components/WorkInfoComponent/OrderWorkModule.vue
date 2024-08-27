@@ -71,7 +71,7 @@
           </el-row>
         </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="DelayApplyForDialogVisible=false">取消</el-button>
+          <el-button @click="DelayApplyDialogClose">取消</el-button>
           <el-button type="primary" @click="DelayApplySaveData">提交</el-button>
         </span>
       </el-dialog>
@@ -534,6 +534,11 @@ export default {
       let month = newDate.getMonth() + 1; // 月份从 1 开始
       let day = newDate.getDate();
       this.addDelayApplyForData.new_time = `${year}-${month}-${day}`;
+    },
+    // 延期申请 - 点击取消按钮回调
+    DelayApplyDialogClose() {
+      this.DelayApplyForDialogVisible = false;
+      this.getOrderWorkListData(); // 重新加载一下数据
     },
     // 事务完成/延期提交关闭弹窗 - 进行回调
     DialogClose(done) {
