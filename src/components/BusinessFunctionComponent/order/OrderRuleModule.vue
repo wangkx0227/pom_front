@@ -19,6 +19,7 @@
             <div>1、匹配规则需要根据订单的简写来，比如TGD240，可以写为TD240或者D240。</div>
             <div>2、如果是多个匹配规则请使用 / 进行区分。</div>
             <div>3、如果固定规定用户，那么匹配的全部订单生成的事项都归属的当前固定用户。</div>
+            <div>4、特殊规则，设置，默认为否，设置完毕后当前产生的事务不在数据订单事务，而属于特殊事务。</div>
           </template>
         </el-alert>
         <el-form :model="addRuleForm" label-position="top" :rules="RuleRules" ref="addRuleRef">
@@ -33,7 +34,7 @@
                 <el-input v-model="addRuleForm.rule_mate"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="12">
+            <el-col :span="8">
               <el-form-item label="是否固定归属用户" prop="is_file">
                 <el-select v-model="addRuleForm.is_bind_user" collapse-tags clearable placeholder="请输选择">
                   <el-option v-for="item in is_bind_user_list" :key="item.value" :label="item.label"
@@ -42,7 +43,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="12">
+            <el-col :span="8">
               <el-form-item label="绑定用户">
                 <el-cascader
                     :disabled="!addRuleForm.is_bind_user"
@@ -56,6 +57,14 @@
                     <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
                   </template>
                 </el-cascader>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="特殊规则">
+                <el-select  v-model="addRuleForm.is_special" collapse-tags clearable placeholder="请输选择">
+                  <el-option v-for="item in is_bind_user_list" :key="item.value" :label="item.label" :value="item.value">
+                  </el-option>
+                </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="24">
@@ -90,7 +99,7 @@
             <el-input v-model="row.rule_name" v-else></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="规则匹配项"  width="300" align="center">
+        <el-table-column label="规则匹配项" width="300" align="center">
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.rule_mate }}</span>
             <el-input v-model="row.rule_mate" v-else></el-input>
@@ -105,7 +114,7 @@
             <el-input type="textarea" v-model="row.rule_description" v-else></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="是否固定归属用户"  width="180" align="center">
+        <el-table-column label="是否固定归属用户" width="180" align="center">
           <template v-slot="{ row }">
             <span v-if="!row.editable">
               <el-tag v-if="row.is_bind_user" type="success">是</el-tag>
@@ -117,7 +126,7 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column label="绑定用户" align="center">
+        <el-table-column label="绑定用户" width="180" align="center">
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.user_name }}</span>
             <div v-else>
@@ -134,6 +143,18 @@
                 </template>
               </el-cascader>
             </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="特殊规则" width="180" align="center">
+          <template v-slot="{ row }">
+             <span v-if="!row.editable">
+              <el-tag v-if="row.is_special" type="success">是</el-tag>
+              <el-tag v-else>否</el-tag>
+            </span>
+            <el-select v-else v-model="row.is_special" collapse-tags clearable placeholder="请输选择">
+              <el-option v-for="item in is_special_list" :key="item.value" :label="item.label" :value="item.value">
+              </el-option>
+            </el-select>
           </template>
         </el-table-column>
         <el-table-column label="创建日期" align="center" prop="create_date" width="180"></el-table-column>
@@ -202,6 +223,7 @@ export default {
         is_bind_user: 0,
         user_id_list: [],
         user_id: "",
+        is_special: 0,
       },
       // 弹窗内的表单验证
       RuleRules: {
@@ -238,6 +260,10 @@ export default {
       user_data_list: [],
       // 是否将当前的匹配规则固定到这个用户身上
       is_bind_user_list: [
+        {label: '否', value: 0},
+        {label: '是', value: 1},
+      ],
+      is_special_list: [
         {label: '否', value: 0},
         {label: '是', value: 1},
       ],

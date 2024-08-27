@@ -57,7 +57,7 @@
                 </el-switch>
               </el-form-item>
             </el-col>
-            <el-col :span="12">
+            <el-col :span="8">
               <el-form-item label="事务的时间类型" prop="is_show">
                 <el-select v-model="addOrderMatterForm.matter_cycle_time_type" collapse-tags clearable
                            placeholder="请输选择">
@@ -67,7 +67,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="12">
+            <el-col :span="8">
               <el-form-item label="事务的时间" prop="is_show">
                 <el-input-number :min="0"
                                  :max="100"
@@ -76,26 +76,27 @@
                 ></el-input-number>
               </el-form-item>
             </el-col>
-            <el-col :span="12">
+            <el-col :span="8">
               <el-form-item label="是否有监督人" prop="is_show">
                 <el-select v-model="addOrderMatterForm.is_supervisor" collapse-tags clearable
-                           placeholder="请输选择">
+                           placeholder="请输选择" @change="supervisorChange">
                   <el-option v-for="item in is_is_supervisor_list" :key="item.value" :label="item.label"
                              :value="item.value">
                   </el-option>
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="12">
-              <el-form-item v-show="addOrderMatterForm.is_supervisor === 1" label="监督人缓冲时间(天)" prop="is_show">
+            <el-col :span="8">
+              <el-form-item label="监督人缓冲时间(天)" prop="is_show">
                 <el-input-number :min="0"
                                  :max="100"
                                  controls-position="right"
                                  v-model="addOrderMatterForm.is_supervisor_cycle_time"
+                                 :disabled="addOrderMatterForm.is_supervisor === 0"
                 ></el-input-number>
               </el-form-item>
             </el-col>
-            <el-col :span="12">
+            <el-col :span="8">
               <el-form-item label="绑定事务规则" prop="is_show">
                 <el-select v-model="addOrderMatterForm.order_matter_rule_list" collapse-tags clearable
                            placeholder="请输选择" multiple
@@ -551,7 +552,13 @@ export default {
     // 开关方法变动回调函数。
     changeSwitch(newValue, row) {
       row.is_show = newValue ? 1 : 0;
-    }
+    },
+    // 是否有监督人的方法
+    supervisorChange(val) {
+      if (val === 0) {
+        this.addOrderMatterForm.is_supervisor_cycle_time = 0;
+      }
+    },
   },
 };
 </script>
