@@ -53,21 +53,21 @@ const routes = [
         path: "supervise_info", // 监督页面
         name: "supervise_info",
         component: () =>
-          import("@/views/CorporateAffairsWork/WorkInfoView.vue"),
+          import("@/views/CorporateAffairsWork/SupervisoryWorkView"),
         meta: { title: "监督信息", icon: "el-icon-tickets" },
       },
       {
         path: "departmental_info", // 部门事务页面
         name: "Departmental_info",
         component: () =>
-          import("@/views/CorporateAffairsWork/WorkInfoView.vue"),
+          import("@/views/CorporateAffairsWork/DepartmentWorkView"),
         meta: { title: "部门事务", icon: "el-icon-office-building" },
       },
       {
         path: "delayed_info", // 延期审核页面
         name: "delayed_info",
         component: () =>
-          import("@/views/CorporateAffairsWork/WorkInfoView.vue"),
+          import("@/views/CorporateAffairsWork/DelayWorkView"),
         meta: { title: "延期审核事务", icon: "el-icon-copy-document" },
       },
       {
@@ -134,7 +134,7 @@ const routes = [
     children: [
       // 功能菜单类别
       {
-        path: "factory_bind_user", // 
+        path: "factory_bind_user", //
         name: "factory_bind_user",
         component: () =>
           import("@/views/BusinessFunctionMenu/FactoryBindUserView.vue"),

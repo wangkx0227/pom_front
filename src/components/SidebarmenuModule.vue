@@ -47,17 +47,19 @@
       <el-menu-item index="/basic_function/user_roles/">角色管理</el-menu-item>
       <el-menu-item index="/basic_function/front_menu/">菜单管理</el-menu-item>
       <el-menu-item index="/basic_function/users_access">用户访问查询</el-menu-item>
+      <el-menu-item index="7-10">公告发布</el-menu-item>
     </el-submenu>
     <el-submenu index="7">
       <template v-slot:title>
         <i class="el-icon-setting"></i>
         <span>功能设置</span>
       </template>
+      <el-menu-item index="/business_function/order_matter">订单</el-menu-item>
       <el-menu-item index="/business_function/no_order_matter">非订单</el-menu-item>
-      <el-menu-item index="/business_function/order_matter">订单类</el-menu-item>
       <el-menu-item index="7-4">事务变更</el-menu-item>
       <el-menu-item index="/business_function/factory_bind_user">工厂绑定</el-menu-item>
       <el-menu-item index="/business_function/email">邮件功能</el-menu-item>
+      <el-menu-item index="7-8">事务查询</el-menu-item>
     </el-submenu>
   </el-menu>
 </template>
