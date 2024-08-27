@@ -82,6 +82,12 @@ const routes = [
         component: () => import("@/views/UserDropdown/PersonalAccessView"),
         meta: { title: "个人访问记录" },
       },
+      {
+        path: "message", // 用户下来菜单中的访问记录页面
+        name: "message",
+        component: () => import("@/views/UserDropdown/MessageView"),
+        meta: { title: "个人消息管理" },
+      },
     ],
   },
 

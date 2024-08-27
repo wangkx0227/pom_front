@@ -3,9 +3,12 @@
     <div class="header">
       <h5 class="title-h5">POM管理系统</h5>
       <div style="margin-right: 15px">
+        <el-badge is-dot class="item" style="margin-right: 15px">
+          <el-button class="share-button" icon="el-icon-bell" type="info" size="mini" @click="messageInfo"></el-button>
+        </el-badge>
         <span class="tag-group__title gradient-text">登录用户：</span>
         <el-dropdown @command="changeDropdown" trigger="click">
-          <el-button type="info" class="userTag" size="mini">
+          <el-button type="success" class="userTag" size="mini">
             <i class="el-icon-user"></i>
             {{ user_name }}
           </el-button>
@@ -89,6 +92,14 @@ export default {
       const url = window.location.pathname;
       if (url !== "/index/user_info") {
         this.$router.push({name: "user_info"});
+      }
+    },
+    // 消息页面跳转
+    messageInfo() {
+      // 访问的是当前组件的网址，什么都不做
+      const url = window.location.pathname;
+      if (url !== "/index/message") {
+        this.$router.push({name: "message"});
       }
     },
     // 退出登录按钮
