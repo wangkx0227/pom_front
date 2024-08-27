@@ -96,7 +96,17 @@
         <el-table-column label="事项名称" align="center" width="500">
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.matter_name }}</span>
-            <el-input v-model="row.matter_name" v-else></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column label="PO" align="center" width="180">
+          <template v-slot="{ row }">
+          </template>
+        </el-table-column>
+        <el-table-column label="ITEM列表" align="center" width="180">
+          <template v-slot="{ row }">
+            <el-button  size="mini" type="text">
+              ITEM列表
+            </el-button>
           </template>
         </el-table-column>
         <el-table-column label="跟进人用户" align="center" width="180" prop="user_name">
