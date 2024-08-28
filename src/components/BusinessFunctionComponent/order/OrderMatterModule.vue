@@ -312,7 +312,7 @@ export default {
           {required: true, message: "请输事务的名称", trigger: "blur"},
           {
             min: 1,
-            max: 15,
+            max: 99,
             message: "长度在 1 到 99 个字符之间",
             trigger: "blur",
           },

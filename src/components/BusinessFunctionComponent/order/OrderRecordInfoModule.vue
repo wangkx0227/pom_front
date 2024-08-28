@@ -360,6 +360,7 @@ export default {
     // 作为item 弹窗的关闭窗口调用函数
     dialogTableClose(done) {
       done(); // 关闭窗口
+      this.item_list = [];
     },
     // 删除记录
     deleteRow(index, rows, row) {

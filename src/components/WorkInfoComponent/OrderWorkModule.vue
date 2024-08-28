@@ -98,14 +98,11 @@
             <span v-if="!row.editable">{{ row.matter_name }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="PO" align="center" width="180">
-          <template v-slot="{ row }">
-          </template>
+        <el-table-column label="PO" align="center" width="180" prop="po">
         </el-table-column>
         <el-table-column label="ITEM列表" align="center" width="180">
           <template v-slot="{ row }">
-            <el-button  size="mini" type="text">
-              ITEM列表
+            <el-button size="mini" type="text" @click="getOrderRecordItem(row)"> 查看详情
             </el-button>
           </template>
         </el-table-column>
@@ -127,12 +124,15 @@
         </el-table-column>
         <el-table-column label="延期列表" align="center" width="180">
           <template v-slot="{ row }">
-            <el-button v-if="row.delay_status && delay_method_list.includes('GET')" size="mini" type="text" @click="OpenDelayDialog(row)">延期列表查看</el-button>
+            <el-button v-if="row.delay_status && delay_method_list.includes('GET')" size="mini" type="text"
+                       @click="OpenDelayDialog(row)">延期列表查看
+            </el-button>
           </template>
         </el-table-column>
         <el-table-column label="附件列表" align="center" width="180">
           <template v-slot="{ row }">
-            <el-button v-if="row.annex_status && annex_method_list.includes('GET')" size="mini" type="text" @click="OpenAnnexFileDialog(row)">附件列表查看
+            <el-button v-if="row.annex_status && annex_method_list.includes('GET')" size="mini" type="text"
+                       @click="OpenAnnexFileDialog(row)">附件列表查看
             </el-button>
           </template>
         </el-table-column>
@@ -260,6 +260,23 @@
         </el-table>
       </el-dialog>
     </div>
+    <!--  item列表的弹窗  -->
+    <div class="dialog">
+      <el-dialog title="ITEM详情列表" :visible.sync="dialogTableVisible" :before-close="dialogItemTableClose" width="30%">
+        <el-alert title="注意：" type="warning">
+          <template slot='title'>
+            <div>需要注意的事项:</div>
+            <div>1、当前ITEM信息是由订单系统提供。</div>
+            <div>2、每一个订单记录都会对应多个ITEM信息。</div>
+            <div>3、当订单信息保存后，传入POM后，记录就会固定不会变动。</div>
+          </template>
+        </el-alert>
+        <el-table :data="item_list" height="200" border v-loading="dialogTableLoading">
+          <el-table-column property="index" label="#" align="center"></el-table-column>
+          <el-table-column property="item" label="ITEM" width="450" align="center"></el-table-column>
+        </el-table>
+      </el-dialog>
+    </div>
   </div>
 </template>
 
@@ -317,6 +334,10 @@ export default {
       },
       open_delay_row_data: null,
       DelayApplyForTableLoading: false,
+      // item列表
+      item_list: [],
+      dialogTableVisible: false,
+      dialogTableLoading: false,
     };
   },
   created() {
@@ -395,7 +416,6 @@ export default {
       this.search_end_time = '';
       this.getOrderWorkListData();
     },
-
     // 需要进行修改
     // 完成事务按钮 - 不需要上传附件
     completeNoOrderWork(row) {
@@ -728,6 +748,33 @@ export default {
           .finally(() => {
             this.DelayTableLoading = false;
           });
+    },
+    // 查看item列表
+    getOrderRecordItem(row) {
+      this.dialogTableVisible = true;
+      this.dialogTableLoading = true;
+      const order_record_id = row.order_record_info_id;
+      this.$http
+          .get(`business_function/order_record_info/?query=item&order_record_id=${order_record_id}`)
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.item_list = data.data;
+            } else {
+              this.item_list = [];
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.dialogTableLoading = false;
+          });
+    },
+    // 作为item 弹窗的关闭窗口调用函数
+    dialogItemTableClose(done) {
+      done(); // 关闭窗口
+      this.item_list = [];
     },
   },
 };
