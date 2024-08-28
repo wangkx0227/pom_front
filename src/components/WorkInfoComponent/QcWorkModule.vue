@@ -31,6 +31,20 @@
         </el-table-column>
         <el-table-column label="应完成时间" align="center" width="180" prop="expected_completion_time">
         </el-table-column>
+        <el-table-column label="描述信息" align="center" width="180">
+          <template v-slot="{ row }">
+            <div v-if="row.is_link_description">
+            <el-link :underline="false" icon="el-icon-video-play"
+                     :href="row.description"
+                     target="_blank" type="primary">视频地址</el-link>
+            </div>
+            <div v-else>
+              <el-tooltip class="item" effect="dark" :content="row.description" placement="bottom" v-if="!row.editable">
+                <div class="cell ellipsis">{{ row.description }}</div>
+              </el-tooltip>
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column label="完成状态" align="center" width="180">
           <template v-slot="{ row }">
             <el-tag type="success" v-if="row.complete_status === 1">已完成</el-tag>
