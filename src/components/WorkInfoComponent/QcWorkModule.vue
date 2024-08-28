@@ -42,7 +42,7 @@
         <el-table-column label="操作" align="center" width="180">
           <template v-slot="scope">
             <!-- 完成后，隐藏申请延期按钮 -->
-            <div v-if="method_list.includes('PUT')">
+            <div v-if="method_list.includes('PUT') && scope.row === 0">
               <el-popover placement="top" width="160" v-model="scope.row.visible">
                 <p>完成事项后，按照当前的时间记录，请问是要完成码？</p>
                 <div style="text-align: right; margin: 0">
@@ -175,8 +175,27 @@ export default {
     },
     // 完成事项函数
     completeSpecialMatter(row) {
-      console.log(row)
       row.visible = false;
+      this.$http
+          .put("work/special_matter_list/", {
+            data: row,
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.$message.success(data.message);
+              this.getSpecialMatterListData();
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.loading = false;
+            row.visible = false;
+          })
     },
     // 获取ITEM列表
     getOrderRecordItem(row) {
