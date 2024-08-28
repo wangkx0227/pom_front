@@ -22,7 +22,7 @@
         </el-upload>
         <span slot="footer" class="dialog-footer">
           <el-button @click="OrderWorkDialogButtonClose">取消上传</el-button>
-          <el-button type="primary" @click="completeNoOrderWorkFile">确定上传</el-button>
+          <el-button type="primary" @click="completeOrderWorkFile">确定上传</el-button>
         </span>
       </el-dialog>
     </div>
@@ -145,14 +145,14 @@
           <template v-slot="scope">
             <!-- 完成后，隐藏申请延期按钮 -->
             <div v-if="method_list.includes('PUT') && !scope.row.complete_status" style="display: inline-block;">
-              <el-button v-if="scope.row.is_file" size="mini" type="text" @click="OpenNoOrderWorkDialog(scope.row)">
+              <el-button v-if="scope.row.is_file" size="mini" type="text" @click="OpenOrderWorkDialog(scope.row)">
                 事务完成
               </el-button>
               <el-popover v-else placement="top" width="160" v-model="scope.row.visible">
                 <p>完成事项后，按照当前的时间记录，请问是要完成码？</p>
                 <div style="text-align: right; margin: 0">
                   <el-button size="mini" type="text" @click="scope.row.visible = false">否</el-button>
-                  <el-button type="primary" size="mini" @click="completeNoOrderWork(scope.row)">是</el-button>
+                  <el-button type="primary" size="mini" @click="completeOrderWork(scope.row)">是</el-button>
                 </div>
                 <template v-slot:reference>
                   <el-button size="mini" type="text">完成事务</el-button>
@@ -263,14 +263,6 @@
     <!--  item列表的弹窗  -->
     <div class="dialog">
       <el-dialog title="ITEM详情列表" :visible.sync="dialogTableVisible" :before-close="dialogItemTableClose" width="30%">
-        <el-alert title="注意：" type="warning">
-          <template slot='title'>
-            <div>需要注意的事项:</div>
-            <div>1、当前ITEM信息是由订单系统提供。</div>
-            <div>2、每一个订单记录都会对应多个ITEM信息。</div>
-            <div>3、当订单信息保存后，传入POM后，记录就会固定不会变动。</div>
-          </template>
-        </el-alert>
         <el-table :data="item_list" height="200" border v-loading="dialogTableLoading">
           <el-table-column property="index" label="#" align="center"></el-table-column>
           <el-table-column property="item" label="ITEM" width="450" align="center"></el-table-column>
@@ -418,7 +410,7 @@ export default {
     },
     // 需要进行修改
     // 完成事务按钮 - 不需要上传附件
-    completeNoOrderWork(row) {
+    completeOrderWork(row) {
       this.loading = true;
       this.$http
           .put("work/order_matter_list/", {
@@ -442,7 +434,7 @@ export default {
           })
     },
     // 事项完成 - 打开上传附件弹窗
-    OpenNoOrderWorkDialog(row) {
+    OpenOrderWorkDialog(row) {
       this.OrderWorkDialogVisible = true;
       this.open_work_annex_row_data = row;
     },
@@ -479,7 +471,7 @@ export default {
 
     },
     // 事务完成- 文件上传到后端接口,自定义上传 完成事务按钮 - 需要上传附件
-    completeNoOrderWorkFile() {
+    completeOrderWorkFile() {
       if (this.fileList.length === 0) {
         this.$message.error("请上传文件后再进行提交！")
 
@@ -774,7 +766,6 @@ export default {
     // 作为item 弹窗的关闭窗口调用函数
     dialogItemTableClose(done) {
       done(); // 关闭窗口
-      this.item_list = [];
     },
   },
 };
