@@ -56,7 +56,7 @@
         <el-table-column label="操作" align="center" width="180">
           <template v-slot="scope">
             <!-- 完成后，隐藏申请延期按钮 -->
-            <div v-if="method_list.includes('PUT') && scope.row === 0">
+            <div v-if="method_list.includes('PUT') && scope.row.complete_status === 0">
               <el-popover placement="top" width="160" v-model="scope.row.visible">
                 <p>完成事项后，按照当前的时间记录，请问是要完成码？</p>
                 <div style="text-align: right; margin: 0">
