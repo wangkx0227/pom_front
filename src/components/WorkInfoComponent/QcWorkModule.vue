@@ -19,6 +19,8 @@
         <el-table-column prop="index" label="#" align="center"></el-table-column>
         <el-table-column label="事项名称" align="center" width="500" prop="matter_name">
         </el-table-column>
+        <el-table-column label="事项名称" align="center" width="180" prop="factory_name">
+        </el-table-column>
         <el-table-column label="PO" align="center" prop="po" width="180">
         </el-table-column>
         <el-table-column label="ITEM列表" align="center" width="180">
