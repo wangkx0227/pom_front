@@ -141,7 +141,7 @@
                 </template>
               </el-popover>
             </div>
-            <div  style="display: inline-block;" v-if="scope.row.is_exceptional === 0 && exceptional_method_list.includes('PUT')">
+            <div  style="display: inline-block;" v-if="scope.row.is_exceptional === 0 && exceptional_method_list.includes('PUT') && scope.row.is_termination === 0">
               <el-button size="mini" type="text" @click="OrderStop(scope.row)">事项终止</el-button>
             </div>
           </template>
