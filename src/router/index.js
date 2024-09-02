@@ -53,7 +53,7 @@ const routes = [
         path: "supervise_info", // 监督页面
         name: "supervise_info",
         component: () =>
-          import("@/views/CorporateAffairsWork/SupervisoryWorkView"),
+          import("@/views/CorporateAffairsWork/SuperviseMattersView"),
         meta: { title: "监督信息", icon: "el-icon-tickets" },
       },
       {

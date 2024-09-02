@@ -1,6 +1,13 @@
 <template>
   <div class="work" v-loading="loading">
-    <div class="head_search_add">
+    <div class="head_filter_criteria">
+      <el-radio-group v-model="radio_criteria">
+        <el-radio-button label="all">全部</el-radio-button>
+        <el-radio-button label="finish">完成</el-radio-button>
+        <el-radio-button label="not_finish">未完成</el-radio-button>
+      </el-radio-group>
+    </div>
+    <div class="head_search">
       <el-date-picker
           v-model="time_frame_list"
           type="daterange"
@@ -98,6 +105,7 @@ export default {
   name: "QcOrderWorkModule",
   data() {
     return {
+      radio_criteria: 'all',
       loading: false, // 数据加载样式
       data_total: 0, // 数据总数
       page_status: 0, // 分页状态变量，当上下一页时进行改变，只有是0时点击数字页码会改变
@@ -243,7 +251,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .el-input.is-disabled .el-input__inner {
   color: black !important;
 }
@@ -257,5 +265,9 @@ export default {
   max-height: 80px;
   min-height: 80px;
   overflow: scroll;
+}
+.head_filter_criteria,
+.head_search {
+  margin-bottom: 10px;
 }
 </style>

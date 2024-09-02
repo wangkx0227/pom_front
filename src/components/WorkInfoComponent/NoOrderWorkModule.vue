@@ -1,82 +1,13 @@
 <template>
   <div class="work" v-loading="loading">
-    <!--  事项完成上传附件窗口  -->
-    <div class="dialog">
-      <el-dialog title="事务附件上传"
-                 width="25%"
-                 :visible.sync="NoOrderWorkDialogVisible"
-                 :before-close="DialogClose"
-      >
-        <el-upload
-            class="upload-demo"
-            action=""
-            multiple
-            :limit="10"
-            :on-change="handleChangeFile"
-            :before-upload="beforeUploadFile"
-            :on-exceed="handleExceedFile"
-            :auto-upload="false"
-            :file-list="fileList">
-          <el-button type="success" size="mini">点击上传</el-button>
-          <div slot="tip" class="el-upload__tip">支持png,pdf,doc,docx,xlsx,xls,jpg,gif格式文件，且不能超过5M</div>
-        </el-upload>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="NoOrderWorkDialogButtonClose">取消上传</el-button>
-          <el-button type="primary" @click="completeNoOrderWorkFile">确定上传</el-button>
-        </span>
-      </el-dialog>
+    <div class="head_filter_criteria">
+      <el-radio-group v-model="radio_criteria">
+        <el-radio-button label="all">全部</el-radio-button>
+        <el-radio-button label="finish">完成</el-radio-button>
+        <el-radio-button label="not_finish">未完成</el-radio-button>
+      </el-radio-group>
     </div>
-    <!-- 延期申请提交窗口   -->
-    <div class="dialog">
-      <el-dialog title="事务延期申请"
-                 width="35%"
-                 :visible.sync="DelayApplyForDialogVisible"
-                 v-loading="DelayApplyForTableLoading"
-                 :before-close="DialogClose">
-        <el-alert
-            title="注意："
-            type="warning"
-            description="请根据实际情况申请延期时间！">
-        </el-alert>
-        <el-form :model="addDelayApplyForData" label-position="top">
-          <el-row :gutter="24">
-            <el-col :span="12">
-              <el-form-item label="原完成事务时间">
-                <el-date-picker
-                    :disabled="true"
-                    v-model="addDelayApplyForData.old_time"
-                    type="date"
-                    placeholder="选择日期">
-                </el-date-picker>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="新完成事务时间">
-                <el-date-picker
-                    :disabled="true"
-                    v-model="addDelayApplyForData.new_time"
-                    type="date"
-                    placeholder="选择日期">
-                </el-date-picker>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="申请延期天数(1-100)">
-                <el-input-number v-model="addDelayApplyForData.delay_day"
-                                 @change="DelayDayNumberChange"
-                                 :min="0"
-                                 :max="100"></el-input-number>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-form>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="DelayApplyDialogClose">取消</el-button>
-          <el-button type="primary" @click="DelayApplySaveData">提交</el-button>
-        </span>
-      </el-dialog>
-    </div>
-    <div class="head_search_add">
+    <div class="head_search">
       <el-date-picker
           v-model="time_frame_list"
           type="daterange"
@@ -253,6 +184,82 @@
         </el-table>
       </el-dialog>
     </div>
+    <!--  事项完成上传附件窗口  -->
+    <div class="dialog">
+      <el-dialog title="事务附件上传"
+                 width="25%"
+                 :visible.sync="NoOrderWorkDialogVisible"
+                 :before-close="DialogClose"
+      >
+        <el-upload
+            class="upload-demo"
+            action=""
+            multiple
+            :limit="10"
+            :on-change="handleChangeFile"
+            :before-upload="beforeUploadFile"
+            :on-exceed="handleExceedFile"
+            :auto-upload="false"
+            :file-list="fileList">
+          <el-button type="success" size="mini">点击上传</el-button>
+          <div slot="tip" class="el-upload__tip">支持png,pdf,doc,docx,xlsx,xls,jpg,gif格式文件，且不能超过5M</div>
+        </el-upload>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="NoOrderWorkDialogButtonClose">取消上传</el-button>
+          <el-button type="primary" @click="completeNoOrderWorkFile">确定上传</el-button>
+        </span>
+      </el-dialog>
+    </div>
+    <!-- 延期申请提交窗口   -->
+    <div class="dialog">
+      <el-dialog title="事务延期申请"
+                 width="35%"
+                 :visible.sync="DelayApplyForDialogVisible"
+                 v-loading="DelayApplyForTableLoading"
+                 :before-close="DialogClose">
+        <el-alert
+            title="注意："
+            type="warning"
+            description="请根据实际情况申请延期时间！">
+        </el-alert>
+        <el-form :model="addDelayApplyForData" label-position="top">
+          <el-row :gutter="24">
+            <el-col :span="12">
+              <el-form-item label="原完成事务时间">
+                <el-date-picker
+                    :disabled="true"
+                    v-model="addDelayApplyForData.old_time"
+                    type="date"
+                    placeholder="选择日期">
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="新完成事务时间">
+                <el-date-picker
+                    :disabled="true"
+                    v-model="addDelayApplyForData.new_time"
+                    type="date"
+                    placeholder="选择日期">
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="申请延期天数(1-100)">
+                <el-input-number v-model="addDelayApplyForData.delay_day"
+                                 @change="DelayDayNumberChange"
+                                 :min="0"
+                                 :max="100"></el-input-number>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="DelayApplyDialogClose">取消</el-button>
+          <el-button type="primary" @click="DelayApplySaveData">提交</el-button>
+        </span>
+      </el-dialog>
+    </div>
   </div>
 </template>
 
@@ -262,6 +269,7 @@ export default {
   name: "NoOrderWorkModule",
   data() {
     return {
+      radio_criteria: 'all',
       no_order_matter_list: [], // 查询数据列表
       loading: false, // 数据加载样式
       addLoading: false, // 控制弹窗创建按钮
@@ -725,7 +733,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .el-input.is-disabled .el-input__inner {
   color: black !important;
 }
@@ -739,5 +747,10 @@ export default {
   max-height: 80px;
   min-height: 80px;
   overflow: scroll;
+}
+
+.head_filter_criteria,
+.head_search {
+  margin-bottom: 10px;
 }
 </style>
