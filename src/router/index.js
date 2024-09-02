@@ -43,10 +43,10 @@ const routes = [
         meta: { title: "仪表盘", icon: "el-icon-pie-chart" },
       },
       {
-        path: "work_info", // 事务页面
-        name: "work_info",
+        path: "matters_info", // 事务页面
+        name: "matters_info",
         component: () =>
-          import("@/views/CorporateAffairsWork/WorkInfoView.vue"),
+          import("@/views/CorporateAffairsWork/MattersInfoView.vue"),
         meta: { title: "事务信息", icon: "el-icon-date" },
       },
       {
@@ -60,7 +60,7 @@ const routes = [
         path: "departmental_info", // 部门事务页面
         name: "Departmental_info",
         component: () =>
-          import("@/views/CorporateAffairsWork/DepartmentWorkView"),
+          import("@/views/CorporateAffairsWork/DepartmentMattersView"),
         meta: { title: "部门事务", icon: "el-icon-office-building" },
       },
       {

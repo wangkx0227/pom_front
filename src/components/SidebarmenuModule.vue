@@ -13,7 +13,7 @@
         <span>仪表盘</span>
       </template>
     </el-menu-item>
-    <el-menu-item index="/index/work_info/">
+    <el-menu-item index="/index/matters_info/">
       <i class="el-icon-date"></i>
       <template v-slot:title>
         <span>事务信息</span>
