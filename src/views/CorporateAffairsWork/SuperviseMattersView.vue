@@ -26,7 +26,7 @@
           <el-table-column prop="index" label="#" align="center"></el-table-column>
           <el-table-column label="监督事项信息" align="center" prop="">
             <template v-slot="{ row }">
-              <el-button size="mini" type="text"> 查看详情
+              <el-button size="mini" type="text" @click="getMatterInfo(row)"> 查看详情
               </el-button>
             </template>
           </el-table-column>
@@ -66,6 +66,13 @@
                        v-model:current-page="page">
         </el-pagination>
       </div>
+      <!--  item列表的弹窗  -->
+      <div class="dialog">
+        <el-dialog title="事务信息" :visible.sync="dialogTableVisible" :before-close="dialogItemTableClose" width="30%">
+          <el-table  height="200" border v-loading="dialogTableLoading">
+          </el-table>
+        </el-dialog>
+      </div>
     </el-card>
   </div>
 </template>
@@ -87,7 +94,9 @@ export default {
       // 单选查询
       radio_criteria: "all",
       // 权限
-      method_list:[],
+      method_list: [],
+      dialogTableVisible: false,
+      dialogTableLoading: false,
     };
   },
   created() {
@@ -190,6 +199,14 @@ export default {
             this.loading = false;
             row.visible = false;
           })
+    },
+    // 查看事务的详细信息
+    getMatterInfo(row) {
+      this.dialogTableVisible = true;
+      // this.dialogTableLoading = true;
+    },
+    dialogItemTableClose(done) {
+      done(); // 关闭窗口
     },
   },
 }
