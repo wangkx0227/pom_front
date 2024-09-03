@@ -191,7 +191,7 @@ export default {
 </script>
 
 <style>
-@import url("@/static/currency.css");
+@import url("@/static/convention.css");
 
 @media screen and (max-width: 700px) {
   .users_access .el-tag {

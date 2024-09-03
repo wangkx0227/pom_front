@@ -33,5 +33,5 @@ export default {
 </script>
 
 <style scoped>
-@import url("@/static/currency.css");
+@import url("@/static/convention.css");
 </style>
