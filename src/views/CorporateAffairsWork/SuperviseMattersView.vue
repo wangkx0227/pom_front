@@ -1,5 +1,5 @@
 <template>
-  <div class="supervision_matters">
+  <div class="supervision_matters" v-loading="loading">
     <el-card class="box-card">
       <div class="head_filter_criteria">
         <el-radio-group v-model="radio_criteria">
@@ -67,11 +67,16 @@
         </el-pagination>
       </div>
       <!--  item列表的弹窗  -->
-      <div class="dialog">
-        <el-dialog title="事务信息" :visible.sync="dialogTableVisible" :before-close="dialogItemTableClose" width="30%">
-          <el-table  height="200" border v-loading="dialogTableLoading">
-          </el-table>
-        </el-dialog>
+
+      <div :v-loading="drawerLoading">
+        <el-drawer
+            title="事项完成详情记录"
+            :visible.sync="drawer"
+            direction="rtl"
+            :with-header="false"
+        >
+          <span>我来啦!</span>
+        </el-drawer>
       </div>
     </el-card>
   </div>
@@ -95,8 +100,8 @@ export default {
       radio_criteria: "all",
       // 权限
       method_list: [],
-      dialogTableVisible: false,
-      dialogTableLoading: false,
+      drawer: false,
+      drawerLoading: false,
     };
   },
   created() {
@@ -202,8 +207,8 @@ export default {
     },
     // 查看事务的详细信息
     getMatterInfo(row) {
-      this.dialogTableVisible = true;
-      // this.dialogTableLoading = true;
+      this.drawer = true;
+      this.drawerLoading = true;
     },
     dialogItemTableClose(done) {
       done(); // 关闭窗口
