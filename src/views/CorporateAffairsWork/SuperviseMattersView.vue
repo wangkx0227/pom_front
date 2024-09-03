@@ -26,8 +26,7 @@
           <el-table-column prop="index" label="#" align="center"></el-table-column>
           <el-table-column label="监督事项信息" align="center" prop="">
             <template v-slot="{ row }">
-              <el-button size="mini" type="text" @click="getMatterInfo(row)"> 查看详情
-              </el-button>
+              <el-button size="mini" type="text" @click="getMatterInfo(row)"> 查看详情 </el-button>
             </template>
           </el-table-column>
           <el-table-column label="监督人" align="center" prop="user_name">
@@ -67,16 +66,56 @@
         </el-pagination>
       </div>
       <!--  item列表的弹窗  -->
-
-      <div :v-loading="drawerLoading">
-        <el-drawer
-            title="事项完成详情记录"
-            :visible.sync="drawer"
-            direction="rtl"
-            :with-header="false"
-        >
-          <span>我来啦!</span>
-        </el-drawer>
+      <div>
+        <el-dialog
+            title="事务的详细信息"
+            :visible.sync="dialogVisible"
+            width="40%"
+            :before-close="dialogTableClose">
+          <div>
+            <el-descriptions direction="vertical" :column="4" border>
+              <el-descriptions-item label="跟进人" :span="1">{{ follow_matter_info_data.user_name }}</el-descriptions-item>
+              <el-descriptions-item label="工厂名称" :span="3">{{
+                  follow_matter_info_data.factory_name
+                }}
+              </el-descriptions-item>
+              <el-descriptions-item label="PO" :span="1">{{ follow_matter_info_data.po }}</el-descriptions-item>
+              <el-descriptions-item label="完成状态" :span="1">
+                <el-tag v-if="follow_matter_info_data.complete_status">完成</el-tag>
+                <el-tag v-else type="warning">未完成</el-tag>
+              </el-descriptions-item>
+              <el-descriptions-item label="是否上传附件" :span="1">
+                <el-tag v-if="follow_matter_info_data.is_file">有</el-tag>
+                <el-tag v-else type="warning">无</el-tag>
+              </el-descriptions-item>
+              <el-descriptions-item label="完成时间" :span="3">{{
+                  follow_matter_info_data.complete_time
+                }}
+              </el-descriptions-item>
+              <el-descriptions-item label="事务名称">{{ follow_matter_info_data.matter_name }}</el-descriptions-item>
+            </el-descriptions>
+          </div>
+          <div style="margin-top: 5px" v-show="follow_matter_info_data.is_file">
+            <el-table :data="annex_data_list" height="300" border v-loading="AnnexFileLoading">
+              <el-table-column label="附件列表" align="center">
+                <el-table-column property="index" label="#" align="center"></el-table-column>
+                <el-table-column property="file_name" label="文件名称" width="350" align="center"></el-table-column>
+                <el-table-column property="create_date" label="上传时间" width="180" align="center"></el-table-column>
+                <el-table-column label="操作" width="180" align="center">
+                  <template v-slot="scope">
+                    <el-button
+                        size="mini"
+                        type="text"
+                        @click="DownloadAnnexFile(scope.row)"
+                        v-if="download_file_method_list.includes('GET')"
+                    >下载
+                    </el-button>
+                  </template>
+                </el-table-column>
+              </el-table-column>
+            </el-table>
+          </div>
+        </el-dialog>
       </div>
     </el-card>
   </div>
@@ -100,8 +139,12 @@ export default {
       radio_criteria: "all",
       // 权限
       method_list: [],
-      drawer: false,
-      drawerLoading: false,
+      dialogVisible: false,
+      AnnexFileLoading: false,
+      // 跟进人事务详情数据,附件信息
+      follow_matter_info_data: {},
+      annex_data_list: [],
+      download_file_method_list: [],
     };
   },
   created() {
@@ -207,12 +250,66 @@ export default {
     },
     // 查看事务的详细信息
     getMatterInfo(row) {
-      this.drawer = true;
-      this.drawerLoading = true;
+      this.dialogVisible = true;
+      this.AnnexFileLoading = true;
+      this.$http
+          .get(`work/supervise_matter_list/?details=follow&pk=${row.id}`)
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.follow_matter_info_data = data.data.follow_matter_info_data;
+              this.annex_data_list = data.data.annex_data_list;
+              this.download_file_method_list = data.data.download_file_method_list;
+            } else {
+              this.follow_matter_info_data = [];
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.AnnexFileLoading = false;
+          });
     },
-    dialogItemTableClose(done) {
+    dialogTableClose(done) {
       done(); // 关闭窗口
+      this.follow_matter_info_data = [];
+      this.follow_matter_info_data = {};
     },
+    // 附件列表- 附件文件下载
+    DownloadAnnexFile(row) {
+      this.AnnexFileTableLoading = true;
+      this.$http.get(`work/download_file/?pk=${row.id}&download_type=order`, {responseType: 'blob'})
+          .then((res) => {
+            const contentDisposition = res.headers['content-disposition'];
+            let filename = 'file.pdf'; // 默认文件名
+            if (contentDisposition) {
+              const match = contentDisposition.split("=");
+              if (match && match.length > 1) {
+                if (/^".*"$/.test(match[1])) {
+                  filename = decodeURIComponent(match[1].slice(1, -1));
+                } else {
+                  filename = decodeURIComponent(match[1]);
+                }
+              }
+            }
+            const url = window.URL.createObjectURL(new Blob([res.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', filename); // 替换为你的文件名
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => { // 无论是对还是错都会执行
+            this.AnnexFileTableLoading = false;
+          });
+    },
+
   },
 }
 </script>
