@@ -1,7 +1,7 @@
 <template>
   <div class="roles_users">
     <el-card class="box-card">
-      <el-tabs v-model="activeName" @tab-click="menuHandleClick">
+      <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="角色设置" name="roles">
           <component :is="frontComponent" v-if="activeName === 'roles'" />
         </el-tab-pane>
@@ -21,7 +21,7 @@ export default {
     };
   },
   methods: {
-    menuHandleClick(tab) {
+    handleClick(tab) {
       this.activeName = tab.name;
     },
   },

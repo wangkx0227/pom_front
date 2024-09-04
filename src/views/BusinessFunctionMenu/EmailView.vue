@@ -1,5 +1,5 @@
 <template>
-  <div class="email">
+  <div class="email_info">
     <el-card class="box-card">
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="报表展示" name="report_mailing_list">

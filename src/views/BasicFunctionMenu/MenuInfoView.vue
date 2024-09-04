@@ -1,7 +1,7 @@
 <template>
   <div class="user_list_info">
     <el-card class="box-card">
-      <el-tabs v-model="activeName" @tab-click="menuHandleClick">
+      <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="前端菜单管理" name="front">
           <component :is="frontComponent" v-if="activeName === 'front'" />
         </el-tab-pane>
@@ -29,7 +29,7 @@ export default {
     };
   },
   methods: {
-    menuHandleClick(tab) {
+    handleClick(tab) {
       this.activeName = tab.name;
     },
   },

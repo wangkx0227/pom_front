@@ -1,5 +1,5 @@
 <template>
-  <div class="work" v-loading="loading">
+  <div class="no_matter" v-loading="loading">
     <div class="head_search_add">
       <el-button v-if="method_list.includes('POST')" type="info" icon="el-icon-circle-plus-outline" plain
                  @click="dialogDisplay">添加
