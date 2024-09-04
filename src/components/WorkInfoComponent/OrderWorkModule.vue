@@ -22,7 +22,7 @@
       </el-button>
     </div>
     <div class="table_content">
-      <el-table :data="order_matter_list" style="width: 100%">
+      <el-table :data="order_matter_list" style="width: 100%"  height="550">
         <el-table-column prop="index" label="#" align="center"></el-table-column>
         <el-table-column label="事项名称" align="center" prop="matter_name" width="500">
           <template v-slot="{ row }">

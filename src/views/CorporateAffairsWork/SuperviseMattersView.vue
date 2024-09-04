@@ -22,7 +22,7 @@
         </el-button>
       </div>
       <div class="table_content">
-        <el-table :data="SuperviseMattersData" style="width: 100%" max-height="580">
+        <el-table :data="SuperviseMattersData" style="width: 100%" height="550">
           <el-table-column prop="index" label="#" align="center"></el-table-column>
           <el-table-column label="监督事项信息" align="center" prop="">
             <template v-slot="{ row }">
