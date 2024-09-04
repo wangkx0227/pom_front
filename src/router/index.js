@@ -46,7 +46,7 @@ const routes = [
         path: "matters_info", // 事务页面
         name: "matters_info",
         component: () =>
-          import("@/views/CorporateAffairsWork/MattersInfoView.vue"),
+          import("@/views/CorporateAffairsWork/OrderMattersInfoView.vue"),
         meta: { title: "事务信息", icon: "el-icon-date" },
       },
       {
