@@ -20,8 +20,8 @@ export default {
     return {
       activeName: "role",
       // 使用懒加载形式加载组件
-      roleComponent: () => import("@/components/BasicFunctionComponent/user/PositionModule"),
-      userComponent: () => import("@/components/BasicFunctionComponent/user/UserModule"),
+      roleComponent: () => import("@/components/BasicFunctionComponent/users/PositionModule"),
+      userComponent: () => import("@/components/BasicFunctionComponent/users/UserModule"),
     };
   },
   methods: {

@@ -14,7 +14,7 @@
 
 <script>
 export default {
-    name: "PermissionsDdialogModule",
+    name: "PermissionsDialogAssembly",
     data() {
         return {
             P_loading: false,
