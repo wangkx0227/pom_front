@@ -17,7 +17,7 @@
       </el-button>
     </div>
     <div class="table_content">
-      <el-table :data="MenueData" style="width: 100%">
+      <el-table :data="MenueData" style="width: 100%"  height="620">
         <el-table-column prop="index" label="#" align="center"></el-table-column>
         <el-table-column prop="menu_url" label="路径" align="center" width="350"></el-table-column>
         <el-table-column prop="menu_url_alias" label="路径别名" align="center" width="180"></el-table-column>

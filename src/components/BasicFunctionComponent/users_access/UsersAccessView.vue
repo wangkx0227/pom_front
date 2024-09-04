@@ -18,7 +18,7 @@
                   description="根据用查看，当前用户在什么时间段内点击了什么按钮，访问了哪些菜单！读取：访问 修改与添加：提交数据 删除：清除数据"
         ></el-alert>
       </div>
-      <el-table :data="roleData" style="width: 100%">
+      <el-table :data="roleData" style="width: 100%" height="550">
         <el-table-column prop="index" label="#" align="center"></el-table-column>
         <el-table-column label="用户名称" align="center" prop="user_name">
         </el-table-column>
