@@ -109,7 +109,7 @@
   </div>
 </template>
 <script>
-import PermissionsDialog from "@/components/BasicFunctionComponent/role/role_assembly/PermissionsDdialogAssembly";
+import PermissionsDialog from "@/components/BasicFunctionComponent/roles/role_assembly/PermissionsDdialogAssembly";
 export default {
   name: "RolesUserModule",
   components: {
