@@ -266,8 +266,4 @@ export default {
   min-height: 80px;
   overflow: scroll;
 }
-.head_filter_criteria,
-.head_search {
-  margin-bottom: 10px;
-}
 </style>

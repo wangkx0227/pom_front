@@ -749,8 +749,4 @@ export default {
   overflow: scroll;
 }
 
-.head_filter_criteria,
-.head_search {
-  margin-bottom: 10px;
-}
 </style>

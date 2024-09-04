@@ -139,8 +139,14 @@
     margin-left: 10px;
     margin-right: 2px;
 }
-
+/*分页*/
 .pagination {
+    display: flex;
+    justify-content:flex-end;
     margin-top: 10px;
-    float: right;
+}
+
+.head_filter_criteria,
+.head_search {
+    margin-bottom: 10px;
 }
