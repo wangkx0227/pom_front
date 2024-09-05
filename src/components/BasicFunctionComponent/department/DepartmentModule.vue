@@ -17,14 +17,6 @@
           <el-form-item label="部门名称" prop="department">
             <el-input v-model="addDepartmentForm.department"></el-input>
           </el-form-item>
-          <el-form-item label="关联公司">
-            <el-select popper-class="select_class" v-model="addDepartmentForm.firmIdList" multiple collapse-tags
-                       clearable
-                       placeholder="请选择">
-              <el-option v-for="item in FirmDataList" :key="item.id" :label="item.firm" :value="item.id">
-              </el-option>
-            </el-select>
-          </el-form-item>
           <el-form-item label="描述信息" prop="description">
             <el-input type="textarea" v-model="addDepartmentForm.description"></el-input>
           </el-form-item>
@@ -58,20 +50,6 @@
         <el-table-column label="创建日期" align="center" width="180" prop="create_date">
         </el-table-column>
         <el-table-column label="修改日期" align="center" width="180" prop="update_date">
-        </el-table-column>
-        <el-table-column label="归属公司" align="center" width="500">
-          <template v-slot="{ row }">
-            <div class="tag-group" v-if="!row.editable">
-              <el-tag style="margin-right: 2px" v-for="firm_name in row.firm_name_list" :key="firm_name" type="success"
-                      effect="plain">
-                {{ firm_name }}
-              </el-tag>
-            </div>
-            <el-select v-else v-model="FirmIdList" style="margin-left: 20px" multiple collapse-tags clearable>
-              <el-option v-for="item in FirmDataList" :key="item.id" :label="item.firm" :value="item.id">
-              </el-option>
-            </el-select>
-          </template>
         </el-table-column>
         <el-table-column label="操作" align="center" width="180">
           <template v-slot="scope">
@@ -137,7 +115,6 @@ export default {
       //  添加弹出框数据
       addDepartmentForm: {
         department: "",
-        firmIdList: [],
         description: "",
       },
       // 弹出框内输入框大小
@@ -161,9 +138,6 @@ export default {
       data_total: 0, // 数据总数
       page_status: 0, // 分页状态变量，当上下一页时进行改变，只有是0时点击数字页码会改变
       page: 1,
-      // 下拉框
-      FirmIdList: [], // 公司id列表
-      FirmDataList: [], // 搜索后的列表
       // 权限
       method_list: [],
     };
@@ -171,7 +145,6 @@ export default {
   created() {
     this.loading = true;
     this.getDepartmentData();
-    this.getFirmData();
   },
   methods: {
     //删除按钮显示小弹框
@@ -298,7 +271,7 @@ export default {
               this.data_total = data.data.data_total;
               this.method_list = data.data.method_list;
             } else {
-              this.firmData = [];
+              this.DepartmentData = [];
             }
           })
           .catch((error) => {
@@ -335,37 +308,13 @@ export default {
     // 搜索功能
     searchData() {
       this.loading = true;
-      if (this.search) {
-        this.page = 1;
-        this.getDepartmentData();
-      } else {
-        this.getDepartmentData();
-      }
+      this.page = 1;
+      this.getDepartmentData();
     },
     // 重置
     reloadData() {
       this.search = "";
       this.getDepartmentData();
-    },
-    // 远程下拉框搜索,使用方法
-    // 通过查询参数，模糊查询公司名称
-    getFirmData() {
-      this.$http
-          .get("foundation/firm/?status=all")
-          .then((res) => {
-            let data = res.data;
-            if (data.code === 200) {
-              this.FirmDataList = data.data;
-            } else {
-              this.FirmDataList = [];
-            }
-          })
-          .catch((error) => {
-            this.$message.error(error.message);
-          })
-          .finally(() => {
-            this.loading = false;
-          });
     },
   },
 };

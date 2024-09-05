@@ -2,14 +2,8 @@
   <div class="department_info">
     <el-card class="box-card">
       <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="公司管理" name="first">
-          <component :is="firstComponent" v-if="activeName === 'first'" />
-        </el-tab-pane>
         <el-tab-pane label="部门管理" name="second">
           <component :is="secondComponent" v-if="activeName === 'second'" />
-        </el-tab-pane>
-        <el-tab-pane label="账户前缀管理" name="third">
-          <component :is="thirdComponent" v-if="activeName === 'third'" />
         </el-tab-pane>
       </el-tabs>
     </el-card>
@@ -21,11 +15,9 @@ export default {
   name: "DepartmentInfoView",
   data() {
     return {
-      activeName: "first",
+      activeName: "second",
       // 使用懒加载形式加载组件
-      firstComponent: () => import("@/components/BasicFunctionComponent/department/FirmModule"),
       secondComponent: () => import("@/components/BasicFunctionComponent/department/DepartmentModule"),
-      thirdComponent: () => import("@/components/BasicFunctionComponent/department/PrefixModule"),
     };
   },
   methods: {
