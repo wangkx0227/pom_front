@@ -23,7 +23,7 @@
       <div class="table_content">
         <el-table :data="SuperviseMattersData" style="width: 100%" height="550">
           <el-table-column prop="index" label="#" align="center"></el-table-column>
-          <el-table-column label="监督事项信息" align="center" prop="">
+          <el-table-column label="监督事项详情" align="center" prop="">
             <template v-slot="{ row }">
               <el-button size="mini" type="text" @click="getMatterInfo(row)"> 查看详情 </el-button>
             </template>
