@@ -13,7 +13,7 @@
     </div>
     <div class="dialog">
       <el-dialog title="用户添加" :visible.sync="dialogDisplayVar" width="35%" :before-close="handleClose">
-        <el-form :model="addusersForm" label-position="top" :rules="usersRules" ref="addusersRef">
+        <el-form :model="addusersForm" label-position="top" :rules="usersRules" ref="addUsersRef">
           <el-row :gutter="20">
             <el-col :span="12">
               <el-form-item label="姓名" prop="user_name">
@@ -36,9 +36,9 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="请选择前缀(必填项)" prop="prefix_id">
-                <el-select v-model="addusersForm.prefix_id" clearable placeholder="请选择">
-                  <el-option v-for="item in prefixIdList" :key="item.id" :label="item.prefix" :value="item.id">
+              <el-form-item label="请选择部门(必填项)" prop="department_id">
+                <el-select v-model="addusersForm.department_id" clearable placeholder="请选择">
+                  <el-option v-for="item in departmentIdList" :key="item.id" :label="item.department" :value="item.id">
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -71,8 +71,8 @@
         </el-form>
         <template v-slot:footer>
           <div class="dialog-footer">
-            <el-button @click="dialogClose('addusersRef')">取 消</el-button>
-            <el-button type="primary" @click="addusersData('addusersRef')" :loading="addLoading">立即创建
+            <el-button @click="dialogClose('addUsersRef')">取 消</el-button>
+            <el-button type="primary" @click="addUsersData('addUsersRef')" :loading="addLoading">立即创建
             </el-button>
           </div>
         </template>
@@ -111,11 +111,6 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="用户唯一ID" align="center" width="180">
-          <template v-slot="{ row }">
-            <el-tag>{{ row.prefix }}-{{ row.user_id }}</el-tag>
-          </template>
-        </el-table-column>
         <el-table-column label="创建日期" align="center" width="180">
           <template v-slot="{ row }">
             <el-tooltip class="item" effect="dark" :content="row.create_date" placement="bottom">
@@ -132,11 +127,15 @@
         </el-table-column>
         <el-table-column label="归属部门" align="center" width="180">
           <template v-slot="{ row }">
-            <div class="tag-group">
+            <div class="tag-group" v-if="!row.editable">
               <el-tag style="margin-right: 2px" type="success" effect="plain">
                 {{ row.department }}
               </el-tag>
             </div>
+            <el-select v-else v-model="row.department_id" clearable placeholder="请选择">
+              <el-option v-for="item in departmentIdList" :key="item.id" :label="item.department" :value="item.id">
+              </el-option>
+            </el-select>
           </template>
         </el-table-column>
         <el-table-column label="职务/岗位" align="center" width="180">
@@ -218,15 +217,9 @@
 </template>
 
 <script>
-
 export default {
   name: "usersModule",
   data() {
-    let descriptionLen = (rule, value, callback) => {
-      if (this.addusersForm.description.length >= 200) {
-        callback(new Error("长度在不能超出 200 个字符"));
-      }
-    };
     return {
       // 用来控制当前账户是否可以被使用的变量列表与变量值
       is_show_list: [
@@ -253,7 +246,7 @@ export default {
         passwd: "",
         email: "",
         is_show: "",
-        prefix_id: "",
+        department_id: "",
         position_id: "",
       },
       // 弹出框内输入框大小
@@ -267,7 +260,7 @@ export default {
           {
             min: 1,
             max: 15,
-            message: "长度在 1 到 5 个字符之间",
+            message: "长度在 1 到 15 个字符之间",
             trigger: "blur",
           },
         ],
@@ -276,18 +269,14 @@ export default {
           {
             min: 1,
             max: 15,
-            message: "长度在 1 到 5 个字符之间",
+            message: "长度在 1 到 15 个字符之间",
             trigger: "blur",
           },
         ],
         email: [
           {type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change']}
         ],
-        user_id: [
-          {required: true, message: '不能为空'},
-          {type: 'number', message: '必须为数字值'}
-        ],
-        prefix_id: [
+        department_id: [
           {required: true, message: "必填项", trigger: "blur"},
         ],
         position_id: [
@@ -305,8 +294,8 @@ export default {
 
       // 职位数据列表
       positionIdList: [],
-      // 前缀数据列表
-      prefixIdList: [],
+      // 部门数据列表
+      departmentIdList: [],
       // 角色数据列表
       roleIdList: [],
       // 可访问权限列表,关于用户的增删改查功能
@@ -319,10 +308,9 @@ export default {
   created() {
     this.loading = true;
     this.getPositionData();
-    this.getPrefixData();
+    this.getDepartmentData();
     this.getRoleData();
-    this.getusersDate();
-    this.getForceLogin();
+    this.getUsersDate();
   },
   methods: {
     //删除按钮显示小弹框
@@ -403,13 +391,13 @@ export default {
       this.getusersDate(); // 进行回调，重新载入一下数据
     },
     // 弹窗内创建按钮
-    addusersData(formName) {
+    addUsersData(formName) {
       if (!this.addusersForm.login_name) {
         this.$message.error("姓名属于必填项！");
       } else if (!this.addusersForm.user_name) {
         this.$message.error("用户名属于必填项！");
-      } else if (!this.addusersForm.prefix_id) {
-        this.$message.error("前缀属于必填项！");
+      } else if (!this.addusersForm.department_id) {
+        this.$message.error("部门属于必填项！");
       } else if (!this.addusersForm.position_id) {
         this.$message.error("职位属于必填项！");
       } else if (!this.addusersForm.role_id) {
@@ -441,7 +429,7 @@ export default {
       }
     },
     // 获取数据
-    getusersDate() {
+    getUsersDate() {
       let get_url;
       if (this.search) {
         get_url = `users/info/?page=${this.page}&search=${this.search}`;
@@ -456,6 +444,7 @@ export default {
               this.usersData = data.data.data;
               this.data_total = data.data.data_total;
               this.method_list = data.data.method_list;
+              this.ForceLogin_method_list = data.data.force_login_method_list;
             } else {
               this.firmData = [];
             }
@@ -474,38 +463,34 @@ export default {
       this.page_status = page;
       this.page = page;
       // 下一页按钮
-      this.getusersDate();
+      this.getUsersDate();
     },
     prevPage(page) {
       this.loading = true;
       this.page_status = page;
       this.page = page;
       // 上一页按钮
-      this.getusersDate();
+      this.getUsersDate();
     },
     currentPage(page) {
       this.loading = true;
       this.page = page;
       // 点击按钮触发
       if (this.page_status === 0) {
-        this.getusersDate();
+        this.getUsersDate();
       }
     },
     // 搜索功能
     searchDate() {
       this.loading = true;
-      if (this.search) {
-        this.page = 1;
-        this.getusersDate();
-      } else {
-        this.getusersDate();
-      }
+      this.page = 1;
+      this.getUsersDate();
     },
     // 重置
     reloadDate() {
       this.loading = true;
       this.search = "";
-      this.getusersDate();
+      this.getUsersDate();
     },
     // 下拉框api调用方法-职位
     getPositionData() {
@@ -524,16 +509,34 @@ export default {
           })
     },
     // 下拉框api调用方法-前缀
-    getPrefixData() {
+    getDepartmentData() {
       this.$http
-          .get("foundation/prefix/?status=all")
+          .get("foundation/department/?status=all")
           .then((res) => {
             let data = res.data;
             if (data.code === 200) {
-              this.prefixIdList = data.data;
+              this.departmentIdList = data.data;
             } else {
-              this.prefixIdList = [];
+              this.departmentIdList = [];
             }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+    },
+    // 下拉框api调用方法-角色
+    getRoleData() {
+      this.$http
+          .get(
+              "users/roles/?status=all")
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.roleIdList = data.data;
+            } else {
+              this.roleIdList = [];
+            }
+
           })
           .catch((error) => {
             this.$message.error(error.message);
@@ -561,42 +564,6 @@ export default {
             this.loading = false
           });
     },
-    //管理员强制退出功能权限获取
-    getForceLogin() {
-      this.$http
-          .get("users/force_exit/")
-          .then((res) => {
-            let data = res.data;
-            if (data.code === 200) {
-              this.ForceLogin_method_list = data.data
-            }
-          })
-          .catch((error) => {
-            this.$message.error(error.message);
-          })
-          .finally(() => {
-            this.loading = false
-          });
-    },
-    // 角色查询
-    getRoleData() {
-      this.$http
-          .get(
-              "users/roles/?status=all")
-          .then((res) => {
-            let data = res.data;
-            if (data.code === 200) {
-              this.roleIdList = data.data;
-            } else {
-              this.roleIdList = [];
-            }
-
-          })
-          .catch((error) => {
-            this.$message.error(error.message);
-          })
-    },
-
   },
 };
 </script>
