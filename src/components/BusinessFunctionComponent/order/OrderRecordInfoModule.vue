@@ -91,7 +91,7 @@
       </el-dialog>
     </div>
     <div class="table_content">
-      <el-table :data="order_record_info_list" style="width: 100%">
+      <el-table :data="order_record_info_list" style="width: 100%" height="610">
         <el-table-column prop="index" label="#" align="center"></el-table-column>
         <el-table-column label="客户ID" align="center" prop="client_id">
         </el-table-column>

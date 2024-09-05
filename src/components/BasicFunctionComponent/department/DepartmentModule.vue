@@ -31,7 +31,7 @@
       </el-dialog>
     </div>
     <div class="table_content">
-      <el-table :data="DepartmentData" style="width: 100%">
+      <el-table :data="DepartmentData" style="width: 100%" height="610">
         <el-table-column prop="index" label="#" align="center"></el-table-column>
         <el-table-column label="部门名称" align="center">
           <template v-slot="{ row }">
