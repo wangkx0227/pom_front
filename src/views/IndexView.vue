@@ -90,7 +90,7 @@ export default {
     userInfo() {
       // 访问的是当前组件的网址，什么都不做
       const url = window.location.pathname;
-      if (url !== "/index/user_info") {
+      if (url !== "/index/user_info/") {
         this.$router.push({name: "user_info"});
       }
     },
@@ -130,7 +130,7 @@ export default {
     userAccess() {
       // 访问的是当前组件的网址，什么都不做
       const url = window.location.pathname;
-      if (url !== '/index/personal_access') {
+      if (url !== '/index/personal_access/') {
         this.$router.push({
           name: "personal_access",
         },);

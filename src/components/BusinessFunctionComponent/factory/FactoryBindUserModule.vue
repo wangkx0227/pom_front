@@ -1,6 +1,5 @@
 <template>
   <div class="factory_bind_user" v-loading="loading">
-    <el-card class="box-card">
       <div class="head_search_add">
         <el-popover placement="top" width="160" style="margin-right: 5px;" v-model="loadVisibleApiFactory">
           <p>你确定重新加载当后端接口吗？</p>
@@ -26,7 +25,7 @@
                     description="工厂的信息来自于订单系统，如果订单系统有添加，请点击加载菜单按钮，需要根据工厂绑定用户，不然事务无法生成！"
           ></el-alert>
         </div>
-        <el-table :data="factoryData" style="width: 100%" height="595">
+        <el-table :data="factoryData" style="width: 100%" height="540">
           <el-table-column prop="index" label="#" align="center"></el-table-column>
           <el-table-column label="工厂名称" align="center" prop="factory_name">
           </el-table-column>
@@ -77,7 +76,6 @@
                        :total="data_total" v-model:current-page="page">
         </el-pagination>
       </div>
-    </el-card>
   </div>
 </template>
 
@@ -278,5 +276,4 @@ export default {
 </script>
 
 <style>
-@import url("@/static/convention.css");
 </style>
