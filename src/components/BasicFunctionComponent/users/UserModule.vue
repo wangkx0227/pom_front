@@ -329,7 +329,7 @@ export default {
             let data = res.data;
             if (data.code === 200) {
               this.$message.success(data.message);
-              this.getusersDate();
+              this.getUsersDate();
               rows.splice(index, 1);
             } else {
               this.$message.error(data.message);
@@ -360,7 +360,7 @@ export default {
             if (data.code === 200) {
               row.editable = false;
               this.$message.success(data.message);
-              this.getusersDate();
+              this.getUsersDate();
             } else {
               this.$message.error(data.message);
             }
@@ -382,13 +382,13 @@ export default {
       this.loading = true;
       this.dialogDisplayVar = false;
       this.$refs[formName].resetFields();
-      this.getusersDate(); // 进行回调，重新载入一下数据
+      this.getUsersDate(); // 进行回调，重新载入一下数据
     },
     // ×关闭
     handleClose() {
       this.loading = true;
       this.dialogDisplayVar = false;
-      this.getusersDate(); // 进行回调，重新载入一下数据
+      this.getUsersDate(); // 进行回调，重新载入一下数据
     },
     // 弹窗内创建按钮
     addUsersData(formName) {
