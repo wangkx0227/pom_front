@@ -284,7 +284,7 @@
 <script>
 // 按钮权限还没有进行设置
 export default {
-  name: "OrderWorkModule",
+  name: "DepartmentWorkModule",
   data() {
     return {
       radio_criteria: 'all',

@@ -5,7 +5,11 @@
         <el-tab-pane label="部门管理" name="second">
           <component :is="secondComponent" v-if="activeName === 'second'" />
         </el-tab-pane>
+        <el-tab-pane label="职务管理" name="duties">
+          <component :is="dutiesComponent" v-if="activeName === 'duties'" />
+        </el-tab-pane>
       </el-tabs>
+
     </el-card>
   </div>
 </template>
@@ -18,6 +22,7 @@ export default {
       activeName: "second",
       // 使用懒加载形式加载组件
       secondComponent: () => import("@/components/BasicFunctionComponent/department/DepartmentModule"),
+      dutiesComponent: () => import("@/components/BasicFunctionComponent/department/PositionModule"),
     };
   },
   methods: {
