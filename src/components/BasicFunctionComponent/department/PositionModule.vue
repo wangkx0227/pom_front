@@ -13,6 +13,9 @@
     </div>
     <div class="dialog">
       <el-dialog title="用户前缀添加" :visible.sync="dialogDisplayVar" width="30%" :before-close="handleClose">
+        <el-alert title="注意：" type="info"
+                  description="组员：40 组长：60 经理：80 管理：100"
+        ></el-alert>
         <el-form :model="addpositionForm" label-position="top" :rules="positionRules" ref="addpositionRef">
           <el-row :gutter="24">
             <el-col :span="12">
@@ -51,11 +54,9 @@
             <el-input v-model="row.position" v-else></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="权重" align="center">
+        <el-table-column label="权重（添加完毕后不可修改）" align="center">
           <template v-slot="{ row }">
-            <span v-if="!row.editable">{{ row.position_num }}</span>
-            <el-input-number v-else v-model="row.position_num" controls-position="right" :min="1"
-                             :max="100"></el-input-number>
+            <span >{{ row.position_num }}</span>
           </template>
         </el-table-column>
         <el-table-column label="职位描述信息" align="center">
