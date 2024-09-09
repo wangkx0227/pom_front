@@ -2,7 +2,7 @@
   <div class="position" v-loading="loading">
     <div class="head_search_add">
       <el-button type="info" icon="el-icon-circle-plus-outline" plain @click="dialogDisplay"
-        v-if="method_list.includes('POST')">添加
+                 v-if="method_list.includes('POST')">添加
       </el-button>
       <el-input placeholder="请输入搜索职位名称" v-model="search" clearable class="input_search">
       </el-input>
@@ -12,14 +12,26 @@
       </el-button>
     </div>
     <div class="dialog">
-      <el-dialog title="用户前缀添加" :visible.sync="dialogDisplayVar" width="35%" :before-close="handleClose">
+      <el-dialog title="用户前缀添加" :visible.sync="dialogDisplayVar" width="30%" :before-close="handleClose">
         <el-form :model="addpositionForm" label-position="top" :rules="positionRules" ref="addpositionRef">
-          <el-form-item label="职位名称" prop="position">
-            <el-input v-model="addpositionForm.position"></el-input>
-          </el-form-item>
-          <el-form-item label="职位描述信息" prop="description">
-            <el-input type="textarea" v-model="addpositionForm.description"></el-input>
-          </el-form-item>
+          <el-row :gutter="24">
+            <el-col :span="12">
+              <el-form-item label="职位名称" prop="position">
+                <el-input v-model="addpositionForm.position"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="权重（1-100）" prop="position_num">
+                <el-input-number v-model="addpositionForm.position_num" controls-position="right" :min="1"
+                                 :max="100"></el-input-number>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="职位描述信息" prop="description">
+                <el-input type="textarea" v-model="addpositionForm.description"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
         </el-form>
         <template v-slot:footer>
           <div class="dialog-footer">
@@ -37,6 +49,13 @@
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.position }}</span>
             <el-input v-model="row.position" v-else></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column label="权重" align="center">
+          <template v-slot="{ row }">
+            <span v-if="!row.editable">{{ row.position_num }}</span>
+            <el-input-number v-else v-model="row.position_num" controls-position="right" :min="1"
+                             :max="100"></el-input-number>
           </template>
         </el-table-column>
         <el-table-column label="职位描述信息" align="center">
@@ -64,7 +83,7 @@
             </div>
             <div v-if="method_list.includes('DELETE')" style="display: inline-block;">
               <el-popover v-if="!scope.row.editable" placement="top" width="160" v-model="scope.row.visible"
-                trigger="manual">
+                          trigger="manual">
                 <p>删除后无恢复，请问确定删除吗？</p>
                 <div style="text-align: right; margin: 0">
                   <el-button size="mini" type="text" @click="scope.row.visible = false">取消
@@ -79,8 +98,9 @@
               </el-popover>
             </div>
             <div v-if="method_list.includes('PUT')" style="display: inline-block;">
-              <el-button style="margin-left: 0" v-if="scope.row.editable" @click="scope.row.editable = false" size="mini"
-                type="text">取消
+              <el-button style="margin-left: 0" v-if="scope.row.editable" @click="scope.row.editable = false"
+                         size="mini"
+                         type="text">取消
               </el-button>
             </div>
           </template>
@@ -89,7 +109,8 @@
     </div>
     <div class="pagination">
       <el-pagination hide-on-single-page @current-change="currentPage" @prev-click="prevPage" @next-click="nextPage"
-        background layout="total,prev, pager, next" :page-size="10" :total="data_total" v-model:current-page="page">
+                     background layout="total,prev, pager, next" :page-size="10" :total="data_total"
+                     v-model:current-page="page">
       </el-pagination>
     </div>
   </div>
@@ -114,7 +135,8 @@ export default {
       addpositionForm: {
         position: "",
         description: "",
-        department_id: "",
+        position_num: 1,
+
       },
       // 弹出框内输入框大小
       formLabelWidth: "120px",
@@ -123,7 +145,7 @@ export default {
       // 弹窗内的表单验证
       positionRules: {
         position: [
-          { required: true, message: "请输入职位名称", trigger: "blur" },
+          {required: true, message: "请输入职位名称", trigger: "blur"},
           {
             min: 1,
             max: 15,
@@ -131,7 +153,10 @@ export default {
             trigger: "blur",
           },
         ],
-        description: [{ validator: descriptionLen, trigger: "blur" }],
+        position_num: [
+          {required: true, message: "请输入职务权重", trigger: "blur"},
+        ],
+        description: [{validator: descriptionLen, trigger: "blur"}],
       },
       // 分页
       data_total: 0, // 数据总数
@@ -156,25 +181,25 @@ export default {
       let pk = row.id;
       this.loading = true;
       this.$http
-        .delete("foundation/position/", {
-          data: { pk: pk },
-        })
-        .then((res) => {
-          let data = res.data;
-          if (data.code === 200) {
-            this.$message.success(data.message);
-            this.getpositionDate();
-            rows.splice(index, 1);
-          } else {
-            this.$message.error(data.message);
-          }
-        })
-        .catch((error) => {
-          this.$message.error(error.message);
-        })
-        .finally(() => {
-          this.loading = false;
-        });
+          .delete("foundation/position/", {
+            data: {pk: pk},
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.$message.success(data.message);
+              this.getpositionDate();
+              rows.splice(index, 1);
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.loading = false;
+          });
     },
     // 编辑按钮，修改row.editable值 让这条可以进行修改
     editRow(row) {
@@ -186,25 +211,25 @@ export default {
       this.loading = true;
 
       this.$http
-        .put("foundation/position/", {
-          data: row,
-        })
-        .then((res) => {
-          let data = res.data;
-          if (data.code === 200) {
-            row.editable = false;
-            this.$message.success(data.message);
-            this.getpositionDate();
-          } else {
-            this.$message.error(data.message);
-          }
-        })
-        .catch((error) => {
-          this.$message.error(error.message);
-        })
-        .finally(() => {
-          this.loading = false;
-        });
+          .put("foundation/position/", {
+            data: row,
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              row.editable = false;
+              this.$message.success(data.message);
+              this.getpositionDate();
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.loading = false;
+          });
     },
     // 显示弹框
     dialogDisplay() {
@@ -229,27 +254,27 @@ export default {
         this.addLoading = false;
       } else {
         this.$http
-          .post("foundation/position/", {
-            data: this.addpositionForm,
-          })
-          .then((res) => {
-            let data = res.data;
-            if (data.code === 200) {
-              this.$message.success(data.message);
-              data.data.index = 1;
-              data.data.department = "新增"; // 给个默认值，进行显示
-              this.positionData.unshift(data.data);
-              this.$refs[formName].resetFields();
-            } else {
-              this.$message.error(data.message);
-            }
-          })
-          .catch((error) => {
-            this.$message.error(error.message);
-          })
-          .finally(() => {
-            this.addLoading = false;
-          });
+            .post("foundation/position/", {
+              data: this.addpositionForm,
+            })
+            .then((res) => {
+              let data = res.data;
+              if (data.code === 200) {
+                this.$message.success(data.message);
+                data.data.index = 1;
+                data.data.department = "新增"; // 给个默认值，进行显示
+                this.positionData.unshift(data.data);
+                this.$refs[formName].resetFields();
+              } else {
+                this.$message.error(data.message);
+              }
+            })
+            .catch((error) => {
+              this.$message.error(error.message);
+            })
+            .finally(() => {
+              this.addLoading = false;
+            });
       }
     },
     // 获取数据
@@ -261,23 +286,23 @@ export default {
         get_url = `foundation/position/?page=${this.page}`;
       }
       this.$http
-        .get(get_url)
-        .then((res) => {
-          let data = res.data;
-          if (data.code === 200) {
-            this.positionData = data.data.data;
-            this.data_total = data.data.data_total;
-            this.method_list = data.data.method_list;
-          } else {
-            this.firmData = [];
-          }
-        })
-        .catch((error) => {
-          this.$message.error(error.message);
-        })
-        .finally(() => {
-          this.page_status = 0;
-        });
+          .get(get_url)
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.positionData = data.data.data;
+              this.data_total = data.data.data_total;
+              this.method_list = data.data.method_list;
+            } else {
+              this.firmData = [];
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.page_status = 0;
+          });
     },
     // 页码功能
     nextPage(page) {
