@@ -11,8 +11,10 @@
             label="#" align="center">
         </el-table-column>
         <el-table-column
-            prop="user_name"
             label="姓名" align="center">
+          <template v-slot="{ row }">
+            <el-button type="text">{{row.user_name}}</el-button>
+          </template>
         </el-table-column>
         <el-table-column
             prop="department"
@@ -26,8 +28,7 @@
       <el-table
           :data="user_data_group_leader_list"
           tooltip-effect="dark"
-          style="width: 100%"
-          @selection-change="handleSelectionChange">
+          style="width: 100%">
         <el-table-column
             type="selection">
         </el-table-column>
@@ -36,8 +37,10 @@
             label="#" align="center">
         </el-table-column>
         <el-table-column
-            prop="user_name"
             label="姓名" align="center">
+          <template v-slot="{ row }">
+            <el-button type="text">{{row.user_name}}</el-button>
+          </template>
         </el-table-column>
         <el-table-column
             prop="department"
@@ -51,8 +54,7 @@
       <el-table
           :data="user_data_member_list"
           tooltip-effect="dark"
-          style="width: 100%"
-          @selection-change="handleSelectionChange">
+          style="width: 100%">
         <el-table-column
             type="selection"
         >
@@ -62,8 +64,10 @@
             label="#" align="center">
         </el-table-column>
         <el-table-column
-            prop="user_name"
             label="姓名" align="center">
+          <template v-slot="{ row }">
+            <el-button type="text">{{row.user_name}}</el-button>
+          </template>
         </el-table-column>
         <el-table-column
             prop="department"
@@ -90,20 +94,8 @@ export default {
     this.getRelationshipData();
   },
   methods: {
-    toggleSelection(rows) {
-      if (rows) {
-        rows.forEach(row => {
-          this.$refs.multipleTable.toggleRowSelection(row);
-        });
-      } else {
-        this.$refs.multipleTable.clearSelection();
-      }
-    },
-    handleSelectionChange(val) {
-      this.multipleSelection = val;
-    },
+    // 获取当前经理组长和组件的全部用户信息
     getRelationshipData(){
-
       this.$http
           .get("users/user_relationship/")
           .then((res) => {
@@ -124,6 +116,7 @@ export default {
             this.loading = false;
           });
     },
+    //
   }
 
 };
