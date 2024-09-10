@@ -13,7 +13,11 @@
         <el-table-column
             label="姓名" align="center">
           <template v-slot="{ row }">
-            <el-button type="text" @click="getPositionRelationshipData(row,'leader')">{{ row.user_name }}</el-button>
+            <el-button
+                type="text"
+                @click="getPositionRelationshipData(row,'leader')"
+            >{{ row.user_name }}
+            </el-button>
           </template>
         </el-table-column>
         <el-table-column
@@ -27,11 +31,12 @@
       <el-divider>组长</el-divider>
       <el-table
           ref="multipleTableLeader"
+          @selection-change="SelectionChangeUserBind"
           :data="user_data_group_leader_list"
           tooltip-effect="dark"
           style="width: 100%">
         <el-table-column
-            type="selection">
+            type="selection" v-if="leader_selected_status">
         </el-table-column>
         <el-table-column
             prop="index"
@@ -59,6 +64,7 @@
           style="width: 100%">
         <el-table-column
             type="selection"
+            v-if="member_selected_status"
         >
         </el-table-column>
         <el-table-column
@@ -89,6 +95,12 @@ export default {
       user_data_manage_list: [],
       user_data_group_leader_list: [],
       user_data_member_list: [],
+      // 选中的变量
+      selected_user_id: null,
+      leader_selected_status: false, // 组长列的选择框展示
+      member_selected_status: false, // 组员列的选择框展示
+      // 选中的变量
+      SelectionUserIdList: [],
     };
   },
   created() {
@@ -143,50 +155,88 @@ export default {
     },
     // 获取经理职务，管理的组长信息
     getPositionRelationshipData(row, type) {
-      this.loading = true;
-      this.$http
-          .post("users/user_relationship/", {
-            data: row,
-            relationship_type: type,
-          })
-          .then((res) => {
-            let data = res.data;
-            if (data.code === 200) {
-              const relationship_user_list = data.data;
-              let relationship_list = []; // 存储的绑定关系信息
-              if (type === 'leader') {
-                // 经理下的组长关系
-                for (let i = 0; this.user_data_group_leader_list.length > i; i++) {
-                  // 判断关系
-                  if (relationship_user_list.includes(this.user_data_group_leader_list[i].user_id)) {
-                    relationship_list.push(this.user_data_group_leader_list[i])
+      // 点击第二次不触发事件
+      if (this.selected_user_id !== row.user_id) {
+        this.loading = true;
+        this.selected_user_id = row.user_id;
+        this.$http
+            .post("users/user_relationship/", {
+              data: row,
+              relationship_type: type,
+            })
+            .then((res) => {
+              let data = res.data;
+              if (data.code === 200) {
+                const relationship_user_list = data.data;
+                let relationship_list = []; // 存储的绑定关系信息
+                if (type === 'leader') {
+                  this.leader_selected_status = true;
+                  this.member_selected_status = false;
+                  // 经理下的组长关系
+                  for (let i = 0; this.user_data_group_leader_list.length > i; i++) {
+                    // 判断关系
+                    if (relationship_user_list.includes(this.user_data_group_leader_list[i].user_id)) {
+                      relationship_list.push(this.user_data_group_leader_list[i])
+                    }
+                  }
+                } else {
+                  this.member_selected_status = true;
+                  this.leader_selected_status = false;
+                  // 查询组长下的组员关系
+                  for (let i = 0; this.user_data_member_list.length > i; i++) {
+                    // 判断关系
+                    if (relationship_user_list.includes(this.user_data_member_list[i].user_id)) {
+                      relationship_list.push(this.user_data_member_list[i])
+                    }
                   }
                 }
-
+                this.RelationshipSelection(relationship_list, type);
               } else {
-                // 查询组长下的组员关系
-                for (let i = 0; this.user_data_member_list.length > i; i++) {
-                  // 判断关系
-                  if (relationship_user_list.includes(this.user_data_member_list[i].user_id)) {
-                    relationship_list.push(this.user_data_member_list[i])
-                  }
-                }
+                this.$message.error(data.message);
               }
-              this.RelationshipSelection(relationship_list, type);
-              console.log(relationship_list)
-            } else {
-              this.$message.error(data.message);
-            }
-          })
-          .catch((error) => {
-            this.$message.error(error.message);
-          })
-          .finally(() => {
-            this.loading = false;
-          });
+            })
+            .catch((error) => {
+              this.$message.error(error.message);
+            })
+            .finally(() => {
+              this.loading = false;
+            });
+      }
     },
+    // 选中关系绑定函数，有问题！！！！
+    SelectionChangeUserBind(val) {
+      this.SelectionUserIdList = val;
+      //   if (this.selected_user_id) {
+      //     this.loading = true;
+      //     this.$http
+      //         .put("users/user_relationship/", {
+      //           selected_user_id: this.selected_user_id,
+      //           association_user_id_list: this.SelectionUserIdList,
+      //         })
+      //         .then((res) => {
+      //           let data = res.data;
+      //           if (data.code === 200) {
+      //
+      //           } else {
+      //             this.$message.error(data.message);
+      //           }
+      //         })
+      //         .catch((error) => {
+      //           this.$message.error(error.message);
+      //         })
+      //         .finally(() => {
+      //           this.loading = false;
+      //         });
+      //   } else {
+      //     this.$message.error("请选中上级后，在进行关联！");
+      //   }
+      // }
+      this.$nextTick(() => {
+        // 现在DOM已经更新
+        console.log('已经加载完成', this.SelectionUserIdList);
+      });
+    }
   }
-
 };
 </script>
 
