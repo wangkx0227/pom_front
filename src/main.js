@@ -31,20 +31,26 @@ axios.interceptors.request.use(
         return Promise.reject(error);
     },
 );
-
+// 设置全局状态变量
+let isTokenExpiredShown = false;
 // axios响应拦截器,错误处理拦截
 axios.interceptors.response.use(
     function (response) {
         // 出现这种响应头部信息，那么就说明访问令牌过期，后端会返回一个新的相应令牌，设置即可
         const newAuthorization = response.headers['new-authorization'];
-        if (newAuthorization) {
+        if (newAuthorization && !isTokenExpiredShown) {
             // 获取新的token 进行存储
+            isTokenExpiredShown = true; // 标记已显示过期提示
             localStorage.setItem("authorization", "Bearer " + newAuthorization);
             // 刷新用户访问页面，当获取新token 是无法直接到达接口，获取的数据就是空的，对用户不友好，重新刷新页面
             Message.error("访问令牌已过期，2秒后页面刷新！")
             setTimeout(() => {
                 window.location.reload();
+                isTokenExpiredShown = false; // 重置标记
             },2000)
+        }else if (newAuthorization) {
+            // 如果token过期提示已经显示过，但token更新了，也更新localStorage
+            localStorage.setItem("authorization", "Bearer " + newAuthorization);
         }
         return response;
     },
