@@ -31,7 +31,7 @@ axios.interceptors.request.use(
         return Promise.reject(error);
     },
 );
-// 设置全局状态变量
+// 设置全局状态变量，设置防抖，防止因为页面多个后端接口访问，导致提示令牌过期多次
 let isTokenExpiredShown = false;
 // axios响应拦截器,错误处理拦截
 axios.interceptors.response.use(
