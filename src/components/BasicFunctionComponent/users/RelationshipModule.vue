@@ -28,6 +28,9 @@
     </div>
     <div style="width: 32%;text-align: center;">
       <h3>组长</h3>
+      <div v-if="leader_selected_status" style="display: inline;position: absolute;top: 0;right: 34%">
+        <el-button size="mini" type="primary" @click="SaveRelationshipData">关系绑定</el-button>
+      </div>
       <el-divider>组长</el-divider>
       <el-table
           ref="multipleTableLeader"
@@ -36,7 +39,7 @@
           tooltip-effect="dark"
           style="width: 100%">
         <el-table-column
-            type="selection" v-if="leader_selected_status">
+            type="selection" align="center" v-if="leader_selected_status">
         </el-table-column>
         <el-table-column
             prop="index"
@@ -56,14 +59,19 @@
     </div>
     <div style="width: 32%;text-align: center">
       <h3>组员</h3>
+      <div v-if="member_selected_status" style="display: inline;position: absolute;top: 0;right: 0">
+        <el-button size="mini" type="primary" @click="SaveRelationshipData">关系绑定</el-button>
+      </div>
       <el-divider>组员</el-divider>
       <el-table
           ref="multipleTableMember"
+          @selection-change="SelectionChangeUserBind"
           :data="user_data_member_list"
           tooltip-effect="dark"
           style="width: 100%">
         <el-table-column
             type="selection"
+            align="center"
             v-if="member_selected_status"
         >
         </el-table-column>
@@ -115,7 +123,6 @@ export default {
           .then((res) => {
             let data = res.data;
             if (data.code === 200) {
-              console.log(data)
               this.user_data_manage_list = data.data.user_data_manage_list;
               this.user_data_group_leader_list = data.data.user_data_group_leader_list;
               this.user_data_member_list = data.data.user_data_member_list;
@@ -190,7 +197,10 @@ export default {
                     }
                   }
                 }
-                this.RelationshipSelection(relationship_list, type);
+                // 页面元素加载完毕后调用，有问题，让添加完毕关系后，在点击无法默认选中
+                this.$nextTick(() => {
+                  this.RelationshipSelection(relationship_list, type);
+                });
               } else {
                 this.$message.error(data.message);
               }
@@ -203,38 +213,36 @@ export default {
             });
       }
     },
-    // 选中关系绑定函数，有问题！！！！
+    // 选中关系绑定函数，有问题！！！！显示加载出现问题
     SelectionChangeUserBind(val) {
       this.SelectionUserIdList = val;
-      //   if (this.selected_user_id) {
-      //     this.loading = true;
-      //     this.$http
-      //         .put("users/user_relationship/", {
-      //           selected_user_id: this.selected_user_id,
-      //           association_user_id_list: this.SelectionUserIdList,
-      //         })
-      //         .then((res) => {
-      //           let data = res.data;
-      //           if (data.code === 200) {
-      //
-      //           } else {
-      //             this.$message.error(data.message);
-      //           }
-      //         })
-      //         .catch((error) => {
-      //           this.$message.error(error.message);
-      //         })
-      //         .finally(() => {
-      //           this.loading = false;
-      //         });
-      //   } else {
-      //     this.$message.error("请选中上级后，在进行关联！");
-      //   }
-      // }
-      this.$nextTick(() => {
-        // 现在DOM已经更新
-        console.log('已经加载完成', this.SelectionUserIdList);
-      });
+    },
+    // 提交关系绑定按钮函数
+    SaveRelationshipData() {
+      this.loading = true;
+      this.$http
+          .put("users/user_relationship/", {
+            selected_user_id: this.selected_user_id,
+            association_user_id_list: this.SelectionUserIdList,
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.$message.success(data.message);
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.loading = false;
+            this.SelectionUserIdList = [];
+            this.selected_user_id = null;
+            this.leader_selected_status = false;
+            this.member_selected_status = false;
+          });
     }
   }
 };
