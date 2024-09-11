@@ -2,7 +2,7 @@
   <div class="users_access" v-loading="loading">
     <div class="head_search_add">
       <el-autocomplete class="inline-input" v-model="search_user_name" :fetch-suggestions="querySearch"
-                       placeholder="请输入内容" :trigger-on-focus="false" @select="userIdSelect"
+                       placeholder="请输入用户名" :trigger-on-focus="false" @select="userIdSelect"
                        style="margin-right: 5px;"></el-autocomplete>
       <el-date-picker v-model="time_frame_list" type="datetimerange" range-separator="至" start-placeholder="开始日期"
                       end-placeholder="结束日期" style="margin-right: 5px;">

@@ -89,16 +89,14 @@ export default {
     // 跳转用户信息
     userInfo() {
       // 访问的是当前组件的网址，什么都不做
-      const url = window.location.pathname;
-      if (url !== "/index/user_info/") {
+      if (this.$route.path !== "/index/user_info") {
         this.$router.push({name: "user_info"});
       }
     },
     // 消息页面跳转
     messageInfo() {
       // 访问的是当前组件的网址，什么都不做
-      const url = window.location.pathname;
-      if (url !== "/index/message") {
+      if (this.$route.path !== "/index/message") {
         this.$router.push({name: "message"});
       }
     },
@@ -129,8 +127,7 @@ export default {
     // 用户访问记录
     userAccess() {
       // 访问的是当前组件的网址，什么都不做
-      const url = window.location.pathname;
-      if (url !== '/index/personal_access/') {
+      if (this.$route.path !== '/index/personal_access') {
         this.$router.push({
           name: "personal_access",
         },);

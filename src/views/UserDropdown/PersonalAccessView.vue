@@ -78,7 +78,7 @@ export default {
             this.personalAccessData = data.data.data;
             this.data_total = data.data.data_total;
           } else {
-            this.firmData = [];
+            this.personalAccessData = [];
           }
         })
         .catch((error) => {
