@@ -223,7 +223,10 @@
         </el-table-column>
         <el-table-column label="绑定事务规则" align="center" width="300">
           <template v-slot="{ row }">
-            <span v-if="!row.editable">{{ row.rule_name_value }}</span>
+            <el-tooltip v-if="!row.editable" class="item" effect="dark" :content="row.rule_name_value" placement="bottom">
+              <span v-if="row.rule_name_value">{{ row.rule_name_value.substring(0, 25) }}
+              <span v-if="row.rule_name_value && row.rule_name_value.length >= 25">...</span></span>
+            </el-tooltip>
             <div v-else>
               <el-select v-model="row.order_matter_rule_list" collapse-tags clearable
                          placeholder="请输选择" multiple
