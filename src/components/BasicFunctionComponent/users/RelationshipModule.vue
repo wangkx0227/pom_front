@@ -29,7 +29,7 @@
     <div style="width: 32%;text-align: center;">
       <h3>组长</h3>
       <div v-if="leader_selected_status" style="display: inline;position: absolute;top: 0;right: 34%">
-        <el-button size="mini" type="primary" @click="SaveRelationshipData">关系绑定</el-button>
+        <el-button size="mini" type="primary" @click="SaveRelationshipData" plain>确定</el-button>
       </div>
       <el-divider>组长</el-divider>
       <el-table
@@ -60,7 +60,7 @@
     <div style="width: 32%;text-align: center">
       <h3>组员</h3>
       <div v-if="member_selected_status" style="display: inline;position: absolute;top: 0;right: 0">
-        <el-button size="mini" type="primary" @click="SaveRelationshipData">关系绑定</el-button>
+        <el-button size="mini" type="primary" @click="SaveRelationshipData" plain>确定</el-button>
       </div>
       <el-divider>组员</el-divider>
       <el-table
@@ -240,8 +240,6 @@ export default {
             this.loading = false;
             this.SelectionUserIdList = [];
             this.selected_user_id = null;
-            this.leader_selected_status = false;
-            this.member_selected_status = false;
           });
     }
   }
