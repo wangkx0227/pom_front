@@ -128,7 +128,7 @@
         <el-table-column label="归属部门" align="center" width="180">
           <template v-slot="{ row }">
             <div class="tag-group" v-if="!row.editable">
-              <el-tag style="margin-right: 2px" type="success" effect="plain" v-if="row.department">
+              <el-tag style="margin-right: 2px" type="position" effect="plain" v-if="row.department">
                 {{ row.department }}
               </el-tag>
             </div>
