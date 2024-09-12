@@ -101,6 +101,7 @@ export default {
             })
             .finally(() => {
               this.loading = false;
+              this.login.password = '';
             });
       }
 
