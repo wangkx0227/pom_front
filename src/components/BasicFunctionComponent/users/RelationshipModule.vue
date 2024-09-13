@@ -160,7 +160,7 @@ export default {
         }
       }
     },
-    // 获取经理职务，管理的组长信息
+    // 获取经理职务，管理的组长信息,存在问题~~~~~~~~
     getPositionRelationshipData(row, type) {
       // 点击第二次不触发事件
       if (this.selected_user_id !== row.user_id) {
