@@ -19,22 +19,13 @@
     <div class="head_search" style="display: flex;">
       <div class="select_filter">
         <el-select v-model="user_id" placeholder="请根据用户筛选">
-          <el-option
-              v-for="item in user_info_list"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
+          <el-option v-for="item in user_info_list" :key="item.value" :label="item.label" :value="item.value">
           </el-option>
         </el-select>
       </div>
       <div class="data_filter" style="margin-left:5px">
-        <el-date-picker
-            v-model="time_frame_list"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            style="margin-right: 5px;">
+        <el-date-picker v-model="time_frame_list" type="daterange" range-separator="至" start-placeholder="开始日期"
+          end-placeholder="结束日期" style="margin-right: 5px;">
         </el-date-picker>
       </div>
       <div class="filter_button">
@@ -53,9 +44,9 @@
             <span v-if="!row.editable">{{ row.matter_name }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="事务负责人" align="center"  prop="user_name">
+        <el-table-column label="事务负责人" align="center" prop="user_name">
         </el-table-column>
-        <el-table-column label="应完成时间" align="center" width="180"  prop="expected_completion_time">
+        <el-table-column label="应完成时间" align="center" width="180" prop="expected_completion_time">
         </el-table-column>
         <el-table-column label="事务类型" align="center">
           <template v-slot="{ row }">
@@ -71,11 +62,11 @@
             <el-tag v-else type="danger" effect="plain">未完成</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="实际完成时间" align="center"  prop="complete_time" width="180">
+        <el-table-column label="实际完成时间" align="center" prop="complete_time" width="180">
         </el-table-column>
         <el-table-column label="操作" align="center" width="180">
           <template v-slot="scope">
-            <el-button  size="mini" type="text">
+            <el-button size="mini" type="text" @click="getModuleInfo(scope.row)">
               查看事务详情
             </el-button>
           </template>
@@ -84,9 +75,22 @@
     </div>
     <div class="pagination">
       <el-pagination hide-on-single-page @current-change="currentPage" @prev-click="prevPage" @next-click="nextPage"
-                     background layout="total,prev, pager, next" :page-size="10" :total="data_total"
-                     v-model:current-page="page">
+        background layout="total,prev, pager, next" :page-size="10" :total="data_total" v-model:current-page="page">
       </el-pagination>
+    </div>
+    <div class="module_drawer">
+      <el-drawer :visible.sync="ModuleDrawer" direction="rtl" :before-close="DrawerClose" >
+        <div class="DrawerLoading">
+          <el-skeleton :rows="6" animated :loading="DrawerLoading"/>
+        </div>
+        <template slot="title">
+          <h3>事务信息详情</h3>
+        </template>
+        <div class="DrawerContent" v-if="!DrawerLoading">
+          <span>我来啦!</span>
+          
+        </div>
+      </el-drawer>
     </div>
   </div>
 </template>
@@ -114,7 +118,9 @@ export default {
       page: 1,
       // 可访问权限列表
       method_list: [],
-
+      // 弹窗变量
+      ModuleDrawer:false,
+      DrawerLoading:false,
     };
   },
   created() {
@@ -131,25 +137,25 @@ export default {
         get_url = `work/departmental_matter_list/?page=${this.page}&end_time=${this.search_end_time}&start_time=${this.search_start_time}`;
       }
       this.$http
-          .get(get_url)
-          .then((res) => {
-            let data = res.data;
-            if (data.code === 200) {
-              this.department_matter_list = data.data.get_departmental_data_list;
-              this.user_info_list = data.data.select_user_list;
-              this.data_total = data.data.data_total;
-              this.method_list = data.data.method_list;
-            } else {
-              this.department_matter_list = [];
-            }
-          })
-          .catch((error) => {
-            this.$message.error(error.message);
-          })
-          .finally(() => {
-            this.page_status = 0;
-            this.loading = false;
-          });
+        .get(get_url)
+        .then((res) => {
+          let data = res.data;
+          if (data.code === 200) {
+            this.department_matter_list = data.data.get_departmental_data_list;
+            this.user_info_list = data.data.select_user_list;
+            this.data_total = data.data.data_total;
+            this.method_list = data.data.method_list;
+          } else {
+            this.department_matter_list = [];
+          }
+        })
+        .catch((error) => {
+          this.$message.error(error.message);
+        })
+        .finally(() => {
+          this.page_status = 0;
+          this.loading = false;
+        });
     },
     // 页码功能
     nextPage(page) {
@@ -192,6 +198,18 @@ export default {
       this.status_radio = 'all';
       this.type_radio = 'all';
       this.getDepartmentWorkListData();
+    },
+    // 查看事务
+    getModuleInfo(row){
+      this.ModuleDrawer = true;
+      this.DrawerLoading = false;
+      // setTimeout(()=>{
+      //   this.DrawerLoading = false;
+      // },1000)
+    },
+    // 抽屉函数
+    DrawerClose(done){
+      done();
     },
   },
 };
