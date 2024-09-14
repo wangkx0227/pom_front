@@ -31,7 +31,7 @@
     </div>
     <div class="content">
       <Breadcrumb></Breadcrumb>
-      <div class="main" style="margin-top: 5px; margin-left: 5px; margin-right: 5px">
+      <div class="main" style="margin-top: 5px; margin-left: 5px; margin-right: 8px;">
         <keep-alive>
           <router-view></router-view>
         </keep-alive>

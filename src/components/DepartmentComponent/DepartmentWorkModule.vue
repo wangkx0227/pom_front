@@ -57,10 +57,18 @@
         </el-table-column>
         <el-table-column label="应完成时间" align="center" width="180"  prop="expected_completion_time">
         </el-table-column>
+        <el-table-column label="事务类型" align="center">
+          <template v-slot="{ row }">
+            <el-tag v-if="row.type === 'order_matter'" type="success">订单类型</el-tag>
+            <el-tag v-if="row.type === 'no_order_matter'" type="info">非订单类型</el-tag>
+            <el-tag v-if="row.type === 'special'">特殊类型</el-tag>
+            <el-tag v-if="row.type === 'supervise'">监督类型</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column label="完成状态" align="center">
           <template v-slot="{ row }">
-            <el-tag v-if="row.complete_status === 1">完成</el-tag>
-            <el-tag v-else type="danger">未完成</el-tag>
+            <el-tag v-if="row.complete_status === 1" effect="plain">完成</el-tag>
+            <el-tag v-else type="danger" effect="plain">未完成</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="实际完成时间" align="center"  prop="complete_time" width="180">
@@ -126,9 +134,9 @@ export default {
           .get(get_url)
           .then((res) => {
             let data = res.data;
-            console.log(data)
             if (data.code === 200) {
-              this.department_matter_list = data.data;
+              this.department_matter_list = data.data.get_departmental_data_list;
+              this.user_info_list = data.data.select_user_list;
               this.data_total = data.data.data_total;
               this.method_list = data.data.method_list;
             } else {
