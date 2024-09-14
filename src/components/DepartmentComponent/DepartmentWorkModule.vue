@@ -195,6 +195,7 @@ export default {
             this.user_info_list = data.data.select_user_list;
             this.data_total = data.data.data_total;
             this.method_list = data.data.method_list;
+            this.data_total = data.data.data_total;
           } else {
             this.department_matter_list = [];
           }
