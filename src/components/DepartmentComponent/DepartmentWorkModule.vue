@@ -78,17 +78,61 @@
         background layout="total,prev, pager, next" :page-size="10" :total="data_total" v-model:current-page="page">
       </el-pagination>
     </div>
-    <div class="module_drawer">
-      <el-drawer :visible.sync="ModuleDrawer" direction="rtl" :before-close="DrawerClose" >
+    <div class="matter_drawer">
+      <el-drawer :visible.sync="ModuleDrawer" direction="rtl" :before-close="DrawerClose" size="45%">
         <div class="DrawerLoading">
-          <el-skeleton :rows="6" animated :loading="DrawerLoading"/>
+          <el-skeleton :rows="6" animated :loading="DrawerLoading" />
         </div>
         <template slot="title">
           <h3>事务信息详情</h3>
         </template>
-        <div class="DrawerContent" v-if="!DrawerLoading">
-          <span>我来啦!</span>
-          
+        <div class="DrawerContent" v-if="!DrawerLoading" style="margin-left: 5px;">
+          <div class="matter_info">
+            <el-descriptions direction="vertical" :column="4" border>
+              <el-descriptions-item label="事务负责人">{{ this.matter_info.user_name }}</el-descriptions-item>
+              <el-descriptions-item label="PO">{{ this.matter_info.po }}</el-descriptions-item>
+              <el-descriptions-item label="ITEM" :span="2">
+                <el-button size="mini" type="text">
+                  查看ITEM列表
+                </el-button>
+              </el-descriptions-item>
+              <el-descriptions-item label="工厂名称">{{ this.matter_info.factory_name }}</el-descriptions-item>
+            </el-descriptions>
+          </div>
+          <el-divider></el-divider>
+          <div class="delay_table">
+            <el-table :data="DelayData" style="width: 100%" height="275" border>
+              <el-table-column label="延期列表" align="center">
+                <el-table-column prop="date" label="日期" width="180" align="center">
+                </el-table-column>
+                <el-table-column prop="name" label="姓名" width="180" align="center">
+                </el-table-column>
+                <el-table-column prop="address" label="地址" width="180" align="center">
+                </el-table-column>
+                <el-table-column prop="address" label="地址" width="180" align="center">
+                </el-table-column>
+                <el-table-column prop="address" label="地址" width="180" align="center">
+                </el-table-column>
+              </el-table-column>
+            </el-table>
+          </div>
+          <el-divider></el-divider>
+          <div class="file_table">
+            <el-table :data="fileData" style="width: 100%" border height="275">
+              <el-table-column label="附件列表" align="center">
+                <el-table-column prop="date" label="日期" width="180" align="center">
+                </el-table-column>
+                <el-table-column prop="name" label="姓名" width="180" align="center">
+                </el-table-column>
+                <el-table-column prop="address" label="地址" width="180" align="center">
+                </el-table-column>
+                <el-table-column prop="address" label="地址" width="180" align="center">
+                </el-table-column>
+                <el-table-column prop="address" label="地址" width="180" align="center">
+                </el-table-column>
+              </el-table-column>
+            </el-table>
+          </div>
         </div>
       </el-drawer>
     </div>
@@ -119,8 +163,14 @@ export default {
       // 可访问权限列表
       method_list: [],
       // 弹窗变量
-      ModuleDrawer:false,
-      DrawerLoading:false,
+      ModuleDrawer: false,
+      DrawerLoading: false,
+      // 附件信息
+      fileData: [],
+      // 延期信息
+      DelayData: [],
+      // 基础信息
+      matter_info:{},
     };
   },
   created() {
@@ -200,15 +250,32 @@ export default {
       this.getDepartmentWorkListData();
     },
     // 查看事务
-    getModuleInfo(row){
+    getModuleInfo(row) {
       this.ModuleDrawer = true;
-      this.DrawerLoading = false;
-      // setTimeout(()=>{
-      //   this.DrawerLoading = false;
-      // },1000)
+      this.DrawerLoading = true;
+      this.$http
+        .post("work/departmental_matter_list/", {
+          data: row,
+        })
+        .then((res) => {
+          let data = res.data;
+          if (data.code === 200) {
+              this.matter_info = data.data.matter_info;
+              this.DelayData = data.data.matter_delay_list;
+              this.fileData = data.data.matter_file_list;
+          } else {
+            this.$message.error(data.message);
+          }
+        })
+        .catch((error) => {
+          this.$message.error(error.message);
+        })
+        .finally(() => {
+          this.DrawerLoading = false;
+        });
     },
     // 抽屉函数
-    DrawerClose(done){
+    DrawerClose(done) {
       done();
     },
   },
