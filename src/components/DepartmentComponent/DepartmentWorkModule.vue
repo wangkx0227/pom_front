@@ -90,15 +90,15 @@
         <div class="DrawerContent" v-if="!DrawerLoading" style="margin-left: 5px;">
           <div class="matter_info">
             <el-descriptions direction="vertical" :column="4" border>
-              <el-descriptions-item label="事务负责人">{{ this.matter_info.user_name }}</el-descriptions-item>
-              <el-descriptions-item label="PO">{{ this.matter_info.po }}</el-descriptions-item>
+              <el-descriptions-item label="事务负责人">{{ matter_info.user_name }}</el-descriptions-item>
+              <el-descriptions-item label="PO">{{ matter_info.po }}</el-descriptions-item>
               <el-descriptions-item label="ITEM信息" :span="2">
-                <span v-if="!this.matter_info.order_record_id">无</span>
-                <el-button v-else size="mini" type="text">
+                <span v-if="!matter_info.order_record_id">无</span>
+                <el-button v-else size="mini" type="text" @click="CatItemInfo(matter_info.order_record_id)">
                   查看ITEM列表
                 </el-button>
               </el-descriptions-item>
-              <el-descriptions-item label="工厂名称">{{ this.matter_info.factory_name }}</el-descriptions-item>
+              <el-descriptions-item label="工厂名称">{{ matter_info.factory_name }}</el-descriptions-item>
             </el-descriptions>
           </div>
           <el-divider v-if="!isHidden"></el-divider>
@@ -136,7 +136,7 @@
                 </el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                   <template v-slot="{ row }">
-                    <el-button size="mini" type="text"  @click="DownloadAnnexFile(row)" :loading="Downloading" >
+                    <el-button size="mini" type="text" @click="DownloadAnnexFile(row)" :loading="Downloading">
                       下载
                     </el-button>
                   </template>
@@ -146,6 +146,19 @@
           </div>
         </div>
       </el-drawer>
+    </div>
+    <div class="matter_item_dialog">
+      <el-dialog
+          title="提示"
+          :visible.sync="ItemDialogVisible"
+          :before-close="dialogItemTableClose"
+          width="30%"
+      >
+        <el-table :data="item_list" height="200" border v-loading="ItemTableLoading" >
+          <el-table-column property="index" label="#" align="center"></el-table-column>
+          <el-table-column property="item" label="ITEM" width="450" align="center"></el-table-column>
+        </el-table>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -185,7 +198,12 @@ export default {
       // 类型
       type: null,
       // 下载按钮加载
-      Downloading:false,
+      Downloading: false,
+      // item 详情弹出
+      ItemDialogVisible: false,
+      ItemTableLoading: false,
+      // item列表
+      item_list: [],
     };
   },
   created() {
@@ -331,6 +349,32 @@ export default {
           .finally(() => { // 无论是对还是错都会执行
             this.Downloading = false;
           });
+    },
+    // 查看item详情
+    CatItemInfo(order_record_id) {
+      this.ItemDialogVisible = true;
+      this.ItemTableLoading = true;
+      this.$http
+          .get(`business_function/order_record_info/?query=item&order_record_id=${order_record_id}`)
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.item_list = data.data;
+            } else {
+              this.item_list = [];
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.ItemTableLoading = false;
+          });
+    },
+    // item弹窗关闭
+    dialogItemTableClose(done) {
+      done(); // 关闭窗口
+      this.item_list = [];
     },
   },
   computed: {
