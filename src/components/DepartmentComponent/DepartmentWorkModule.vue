@@ -136,7 +136,7 @@
                 </el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                   <template v-slot="{ row }">
-                    <el-button size="mini" type="text">
+                    <el-button size="mini" type="text"  @click="DownloadAnnexFile(row)" :loading="Downloading" >
                       下载
                     </el-button>
                   </template>
@@ -184,6 +184,8 @@ export default {
       matter_info: {},
       // 类型
       type: null,
+      // 下载按钮加载
+      Downloading:false,
     };
   },
   created() {
@@ -285,7 +287,6 @@ export default {
             this.$message.error(error.message);
           })
           .finally(() => {
-            console.log(this.FileData)
             this.DrawerLoading = false;
           });
     },
@@ -296,6 +297,40 @@ export default {
       this.DelayData = [];
       this.fileData = [];
       this.type = null;
+    },
+    // 附件下载
+    DownloadAnnexFile(row) {
+      this.Downloading = true;
+      let download_type = this.type === 'order_matter' ? 'order' : 'no_order';
+      this.$http.get(`work/download_file/?pk=${row.id}&download_type=${download_type}`, {responseType: 'blob'})
+          .then((res) => {
+            const contentDisposition = res.headers['content-disposition'];
+            let filename = 'file.pdf'; // 默认文件名
+            if (contentDisposition) {
+              const match = contentDisposition.split("=");
+              if (match && match.length > 1) {
+                if (/^".*"$/.test(match[1])) {
+                  filename = decodeURIComponent(match[1].slice(1, -1));
+                } else {
+                  filename = decodeURIComponent(match[1]);
+                }
+              }
+            }
+            const url = window.URL.createObjectURL(new Blob([res.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', filename); // 替换为你的文件名
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => { // 无论是对还是错都会执行
+            this.Downloading = false;
+          });
     },
   },
   computed: {
