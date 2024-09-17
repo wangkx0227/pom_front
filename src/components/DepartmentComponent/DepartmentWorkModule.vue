@@ -25,7 +25,7 @@
       </div>
       <div class="data_filter" style="margin-left:5px">
         <el-date-picker v-model="time_frame_list" type="daterange" range-separator="至" start-placeholder="开始日期"
-          end-placeholder="结束日期" style="margin-right: 5px;">
+                        end-placeholder="结束日期" style="margin-right: 5px;">
         </el-date-picker>
       </div>
       <div class="filter_button">
@@ -75,13 +75,14 @@
     </div>
     <div class="pagination">
       <el-pagination hide-on-single-page @current-change="currentPage" @prev-click="prevPage" @next-click="nextPage"
-        background layout="total,prev, pager, next" :page-size="10" :total="data_total" v-model:current-page="page">
+                     background layout="total,prev, pager, next" :page-size="10" :total="data_total"
+                     v-model:current-page="page">
       </el-pagination>
     </div>
     <div class="matter_drawer">
       <el-drawer :visible.sync="ModuleDrawer" direction="rtl" :before-close="DrawerClose" size="45%">
         <div class="DrawerLoading">
-          <el-skeleton :rows="6" animated :loading="DrawerLoading" />
+          <el-skeleton :rows="6" animated :loading="DrawerLoading"/>
         </div>
         <template slot="title">
           <h3>事务信息详情</h3>
@@ -91,10 +92,11 @@
             <el-descriptions direction="vertical" :column="4" border>
               <el-descriptions-item label="事务负责人">{{ this.matter_info.user_name }}</el-descriptions-item>
               <el-descriptions-item label="PO">{{ this.matter_info.po }}</el-descriptions-item>
-              <el-descriptions-item label="ITEM" :span="2">
-                <el-button size="mini" type="text">
-                  查看ITEM列表
-                </el-button>
+              <el-descriptions-item label="ITEM信息" :span="2">
+                  <span v-if="!this.matter_info.order_record_id">无</span>
+                  <el-button v-else size="mini" type="text">
+                    查看ITEM列表
+                  </el-button>
               </el-descriptions-item>
               <el-descriptions-item label="工厂名称">{{ this.matter_info.factory_name }}</el-descriptions-item>
             </el-descriptions>
@@ -170,7 +172,7 @@ export default {
       // 延期信息
       DelayData: [],
       // 基础信息
-      matter_info:{},
+      matter_info: {},
     };
   },
   created() {
@@ -187,26 +189,26 @@ export default {
         get_url = `work/departmental_matter_list/?page=${this.page}&end_time=${this.search_end_time}&start_time=${this.search_start_time}`;
       }
       this.$http
-        .get(get_url)
-        .then((res) => {
-          let data = res.data;
-          if (data.code === 200) {
-            this.department_matter_list = data.data.get_departmental_data_list;
-            this.user_info_list = data.data.select_user_list;
-            this.data_total = data.data.data_total;
-            this.method_list = data.data.method_list;
-            this.data_total = data.data.data_total;
-          } else {
-            this.department_matter_list = [];
-          }
-        })
-        .catch((error) => {
-          this.$message.error(error.message);
-        })
-        .finally(() => {
-          this.page_status = 0;
-          this.loading = false;
-        });
+          .get(get_url)
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.department_matter_list = data.data.get_departmental_data_list;
+              this.user_info_list = data.data.select_user_list;
+              this.data_total = data.data.data_total;
+              this.method_list = data.data.method_list;
+              this.data_total = data.data.data_total;
+            } else {
+              this.department_matter_list = [];
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.page_status = 0;
+            this.loading = false;
+          });
     },
     // 页码功能
     nextPage(page) {
@@ -255,25 +257,25 @@ export default {
       this.ModuleDrawer = true;
       this.DrawerLoading = true;
       this.$http
-        .post("work/departmental_matter_list/", {
-          data: row,
-        })
-        .then((res) => {
-          let data = res.data;
-          if (data.code === 200) {
+          .post("work/departmental_matter_list/", {
+            data: row,
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
               this.matter_info = data.data.matter_info;
               this.DelayData = data.data.matter_delay_list;
               this.fileData = data.data.matter_file_list;
-          } else {
-            this.$message.error(data.message);
-          }
-        })
-        .catch((error) => {
-          this.$message.error(error.message);
-        })
-        .finally(() => {
-          this.DrawerLoading = false;
-        });
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.DrawerLoading = false;
+          });
     },
     // 抽屉函数
     DrawerClose(done) {
