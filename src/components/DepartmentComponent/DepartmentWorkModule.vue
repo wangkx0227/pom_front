@@ -50,10 +50,10 @@
         </el-table-column>
         <el-table-column label="事务类型" align="center">
           <template v-slot="{ row }">
-            <el-tag v-if="row.type === 'order_matter'" type="success">订单类型</el-tag>
-            <el-tag v-if="row.type === 'no_order_matter'" type="info">非订单类型</el-tag>
-            <el-tag v-if="row.type === 'special'">特殊类型</el-tag>
-            <el-tag v-if="row.type === 'supervise'">监督类型</el-tag>
+            <el-tag v-if="row.type === 'order_matter'" type="success">订单：跟进类型</el-tag>
+            <el-tag v-if="row.type === 'no_order_matter'" type="info">非订单：常规类型</el-tag>
+            <el-tag v-if="row.type === 'special'">非订单：特殊类型</el-tag>
+            <el-tag v-if="row.type === 'supervise'">订单：监督类型</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="完成状态" align="center">
@@ -93,19 +93,19 @@
               <el-descriptions-item label="事务负责人">{{ this.matter_info.user_name }}</el-descriptions-item>
               <el-descriptions-item label="PO">{{ this.matter_info.po }}</el-descriptions-item>
               <el-descriptions-item label="ITEM信息" :span="2">
-                  <span v-if="!this.matter_info.order_record_id">无</span>
-                  <el-button v-else size="mini" type="text">
-                    查看ITEM列表
-                  </el-button>
+                <span v-if="!this.matter_info.order_record_id">无</span>
+                <el-button v-else size="mini" type="text">
+                  查看ITEM列表
+                </el-button>
               </el-descriptions-item>
               <el-descriptions-item label="工厂名称">{{ this.matter_info.factory_name }}</el-descriptions-item>
             </el-descriptions>
           </div>
-          <el-divider></el-divider>
-          <div class="delay_table">
+          <el-divider v-if="!isHidden"></el-divider>
+          <div class="delay_table" v-if="!isHidden">
             <el-table :data="DelayData" style="width: 100%" height="275" border>
               <el-table-column label="延期列表" align="center">
-                <el-table-column prop="index" label="#"  align="center">
+                <el-table-column prop="index" label="#" align="center">
                 </el-table-column>
                 <el-table-column prop="old_time" label="原项目完成时间" width="180" align="center">
                 </el-table-column>
@@ -124,17 +124,17 @@
               </el-table-column>
             </el-table>
           </div>
-          <el-divider></el-divider>
-          <div class="file_table">
-            <el-table :data="fileData" style="width: 100%" border height="275">
+          <el-divider v-if="!isHidden"></el-divider>
+          <div class="file_table" v-if="!isHidden">
+            <el-table :data="FileData" style="width: 100%" border height="275">
               <el-table-column label="附件列表" align="center">
-                <el-table-column prop="index" label="#"  align="center">
+                <el-table-column prop="index" label="#" align="center">
                 </el-table-column>
                 <el-table-column prop="file_name" label="文件名称" width="350" align="center">
                 </el-table-column>
                 <el-table-column prop="create_date" label="上传时间" width="180" align="center">
                 </el-table-column>
-                <el-table-column  label="操作" width="180" align="center">
+                <el-table-column label="操作" width="180" align="center">
                   <template v-slot="{ row }">
                     <el-button size="mini" type="text">
                       下载
@@ -177,11 +177,13 @@ export default {
       ModuleDrawer: false,
       DrawerLoading: false,
       // 附件信息
-      fileData: [],
+      FileData: [],
       // 延期信息
       DelayData: [],
       // 基础信息
       matter_info: {},
+      // 类型
+      type: null,
     };
   },
   created() {
@@ -202,11 +204,10 @@ export default {
           .then((res) => {
             let data = res.data;
             if (data.code === 200) {
-              this.department_matter_list = data.data.get_departmental_data_list;
               this.user_info_list = data.data.select_user_list;
+              this.department_matter_list = data.data.get_departmental_data_list;
               this.data_total = data.data.data_total;
               this.method_list = data.data.method_list;
-              this.data_total = data.data.data_total;
             } else {
               this.department_matter_list = [];
             }
@@ -274,7 +275,8 @@ export default {
             if (data.code === 200) {
               this.matter_info = data.data.matter_info;
               this.DelayData = data.data.matter_delay_list;
-              this.fileData = data.data.matter_file_list;
+              this.FileData = data.data.matter_file_list;
+              this.type = data.data.type;
             } else {
               this.$message.error(data.message);
             }
@@ -283,14 +285,25 @@ export default {
             this.$message.error(error.message);
           })
           .finally(() => {
+            console.log(this.FileData)
             this.DrawerLoading = false;
           });
     },
     // 抽屉函数
     DrawerClose(done) {
       done();
+      this.matter_info = {};
+      this.DelayData = [];
+      this.fileData = [];
+      this.type = null;
     },
   },
+  computed: {
+    // 计算属性
+    isHidden() {
+      return this.type === 'special' || this.type === 'supervise';
+    }
+  }
 };
 </script>
 
