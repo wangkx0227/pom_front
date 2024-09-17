@@ -105,15 +105,21 @@
           <div class="delay_table">
             <el-table :data="DelayData" style="width: 100%" height="275" border>
               <el-table-column label="延期列表" align="center">
-                <el-table-column prop="date" label="日期" width="180" align="center">
+                <el-table-column prop="index" label="#"  align="center">
                 </el-table-column>
-                <el-table-column prop="name" label="姓名" width="180" align="center">
+                <el-table-column prop="old_time" label="原项目完成时间" width="180" align="center">
                 </el-table-column>
-                <el-table-column prop="address" label="地址" width="180" align="center">
+                <el-table-column prop="delay_day" label="延期时间" width="180" align="center">
                 </el-table-column>
-                <el-table-column prop="address" label="地址" width="180" align="center">
+                <el-table-column prop="new_time" label="新事项完成时间" width="180" align="center">
                 </el-table-column>
-                <el-table-column prop="address" label="地址" width="180" align="center">
+                <el-table-column prop="delay_number" label="申请次数" width="180" align="center">
+                </el-table-column>
+                <el-table-column prop="delay_examine_status" label="审核状态" width="180" align="center">
+                  <template v-slot="{ row }">
+                    <el-tag v-if="row.delay_examine_status" effect="plain">已审核</el-tag>
+                    <el-tag v-else effect="plain" type="danger">未审核</el-tag>
+                  </template>
                 </el-table-column>
               </el-table-column>
             </el-table>
@@ -122,15 +128,18 @@
           <div class="file_table">
             <el-table :data="fileData" style="width: 100%" border height="275">
               <el-table-column label="附件列表" align="center">
-                <el-table-column prop="date" label="日期" width="180" align="center">
+                <el-table-column prop="index" label="#"  align="center">
                 </el-table-column>
-                <el-table-column prop="name" label="姓名" width="180" align="center">
+                <el-table-column prop="file_name" label="文件名称" width="350" align="center">
                 </el-table-column>
-                <el-table-column prop="address" label="地址" width="180" align="center">
+                <el-table-column prop="create_date" label="上传时间" width="180" align="center">
                 </el-table-column>
-                <el-table-column prop="address" label="地址" width="180" align="center">
-                </el-table-column>
-                <el-table-column prop="address" label="地址" width="180" align="center">
+                <el-table-column  label="操作" width="180" align="center">
+                  <template v-slot="{ row }">
+                    <el-button size="mini" type="text">
+                      下载
+                    </el-button>
+                  </template>
                 </el-table-column>
               </el-table-column>
             </el-table>
