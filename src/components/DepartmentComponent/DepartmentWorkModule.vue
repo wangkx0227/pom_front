@@ -94,7 +94,7 @@
               <el-descriptions-item label="PO">{{ matter_info.po }}</el-descriptions-item>
               <el-descriptions-item label="ITEM信息" :span="2">
                 <span v-if="!matter_info.order_record_id">无</span>
-                <el-button v-else size="mini" type="text" @click="CatItemInfo(matter_info.order_record_id)">
+                <el-button v-else size="mini" type="text" @click="getMatterItemInfo(matter_info.order_record_id)">
                   查看ITEM列表
                 </el-button>
               </el-descriptions-item>
@@ -351,7 +351,7 @@ export default {
           });
     },
     // 查看item详情
-    CatItemInfo(order_record_id) {
+    getMatterItemInfo(order_record_id) {
       this.ItemDialogVisible = true;
       this.ItemTableLoading = true;
       this.$http
