@@ -66,7 +66,7 @@
         </el-table-column>
         <el-table-column label="操作" align="center" width="180">
           <template v-slot="scope">
-            <el-button size="mini" type="text" @click="getModuleInfo(scope.row)">
+            <el-button size="mini" type="text" @click="getModuleInfo(scope.row)" v-if="method_list.includes('POST')">
               查看事务详情
             </el-button>
           </template>
@@ -94,7 +94,7 @@
               <el-descriptions-item label="PO">{{ matter_info.po }}</el-descriptions-item>
               <el-descriptions-item label="ITEM信息" :span="2">
                 <span v-if="!matter_info.order_record_id">无</span>
-                <el-button v-else size="mini" type="text" @click="getMatterItemInfo(matter_info.order_record_id)">
+                <el-button v-else size="mini" type="text" @click="getMatterItemInfo(matter_info.order_record_id)" v-if="order_record_info_method_list.includes('GET')">
                   查看ITEM列表
                 </el-button>
               </el-descriptions-item>
@@ -136,7 +136,7 @@
                 </el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                   <template v-slot="{ row }">
-                    <el-button size="mini" type="text" @click="DownloadAnnexFile(row)" :loading="Downloading">
+                    <el-button size="mini" type="text" @click="DownloadAnnexFile(row)" :loading="Downloading" v-if="download_file_method_list.includes('GET')">
                       下载
                     </el-button>
                   </template>
@@ -186,6 +186,8 @@ export default {
       page: 1,
       // 可访问权限列表
       method_list: [],
+      order_record_info_method_list: [],
+      download_file_method_list:[],
       // 弹窗变量
       ModuleDrawer: false,
       DrawerLoading: false,
@@ -228,6 +230,9 @@ export default {
               this.department_matter_list = data.data.get_departmental_data_list;
               this.data_total = data.data.data_total;
               this.method_list = data.data.method_list;
+              this.order_record_info_method_list = data.data.order_record_info_method_list;
+              this.download_file_method_list = data.data.download_file_method_list;
+              
             } else {
               this.department_matter_list = [];
             }
