@@ -37,7 +37,7 @@
 
     </div>
     <div class="table_content">
-      <el-table :data="department_matter_list" style="width: 100%" height="550">
+      <el-table :data="department_matter_list" style="width: 100%" height="548">
         <el-table-column prop="index" label="#" align="center"></el-table-column>
         <el-table-column label="事项名称" align="center" prop="matter_name" width="500">
           <template v-slot="{ row }">
@@ -153,7 +153,7 @@
     </div>
     <div class="matter_item_dialog">
       <el-dialog
-          title="提示"
+            title="ITEM信息详情"
           :visible.sync="ItemDialogVisible"
           :before-close="dialogItemTableClose"
           width="30%"

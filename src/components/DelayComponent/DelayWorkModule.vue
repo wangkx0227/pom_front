@@ -41,9 +41,11 @@
         </el-table-column>
         <el-table-column label="ITEM" align="center" width="180">
           <template v-slot="{ row }">
-            <el-button 
-            size="mini" 
-            type="text" 
+            <el-button
+                v-if="row.type !== 'no_order_matter_delay'"
+                @click="getMatterItemInfo(row.ori_id)"
+                size="mini"
+                type="text"
             >
             查看ITEM列表
           </el-button>
@@ -77,7 +79,7 @@
         </el-table-column>
         <el-table-column label="操作" align="center" width="180">
           <template v-slot="scope">
-            <el-button size="mini" type="text">
+            <el-button size="mini" type="text" v-if="scope.row.complete_status === 0">
               审批
             </el-button>
           </template>
@@ -90,6 +92,19 @@
                      v-model:current-page="page">
       </el-pagination>
    </div>
+    <div class="matter_item_dialog">
+      <el-dialog
+          title="ITEM信息详情"
+          :visible.sync="ItemDialogVisible"
+          :before-close="dialogItemTableClose"
+          width="30%"
+      >
+        <el-table :data="item_list" height="200" border v-loading="ItemTableLoading" >
+          <el-table-column property="index" label="#" align="center"></el-table-column>
+          <el-table-column property="item" label="ITEM" width="450" align="center"></el-table-column>
+        </el-table>
+      </el-dialog>
+    </div>
   </div>
 </template>
 
@@ -112,6 +127,10 @@ export default {
       data_total: 0, // 数据总数
       page_status: 0, // 分页状态变量，当上下一页时进行改变，只有是0时点击数字页码会改变
       page: 1,
+      // item 详情弹出
+      ItemDialogVisible: false,
+      ItemTableLoading: false,
+      item_list:[],
     };
   },
   created() {
@@ -188,6 +207,30 @@ export default {
       this.search_end_time = '';
       this.type_radio = 'all';
       this.getDelayWorkListData();
+    },
+    getMatterItemInfo(order_record_id) {
+      this.ItemDialogVisible = true;
+      this.ItemTableLoading = true;
+      this.$http
+          .get(`business_function/order_record_info/?query=item&order_record_id=${order_record_id}`)
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.item_list = data.data;
+            } else {
+              this.item_list = [];
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.ItemTableLoading = false;
+          });
+    },
+    dialogItemTableClose(done) {
+      done(); // 关闭窗口
+      this.item_list = [];
     },
   },
 };
