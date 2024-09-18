@@ -29,5 +29,5 @@ data() {
 </script>
 
 <style scoped>
-
+@import url("@/static/convention.css");
 </style>
