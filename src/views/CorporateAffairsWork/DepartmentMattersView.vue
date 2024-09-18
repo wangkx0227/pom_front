@@ -1,5 +1,5 @@
 <template>
-  <div class="order_info_list">
+  <div class="department_order_info_list">
     <el-card class="box-card">
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="部门事务" name="department">
