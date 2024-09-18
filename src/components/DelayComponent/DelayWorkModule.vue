@@ -42,30 +42,30 @@
         <el-table-column label="ITEM" align="center" width="180">
           <template v-slot="{ row }">
             <el-button
-                v-if="row.type !== 'no_order_matter_delay'"
+                v-if="row.type !== 'no_order_matter_delay' && order_record_info_method_list.includes('GET')"
                 @click="getMatterItemInfo(row.ori_id)"
                 size="mini"
                 type="text"
             >
-            查看ITEM列表
-          </el-button>
+              查看ITEM列表
+            </el-button>
           </template>
         </el-table-column>
-        <el-table-column label="事务类型" align="center"  width="180">
+        <el-table-column label="事务类型" align="center" width="180">
           <template v-slot="{ row }">
             <el-tag v-if="row.type === 'order_matter_delay'" type="info">订单</el-tag>
-            <el-tag  v-else-if="row.type === 'no_order_matter_delay'">非订单</el-tag>
+            <el-tag v-else-if="row.type === 'no_order_matter_delay'">非订单</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="事务完成状态" align="center"  width="180" >
+        <el-table-column label="事务完成状态" align="center" width="180">
           <template v-slot="{ row }">
             <el-tag v-if="row.complete_status === 0" type="info" effect="plain">未完成</el-tag>
-            <el-tag  v-else-if="row.complete_status === 1" effect="plain">已完成</el-tag>
+            <el-tag v-else-if="row.complete_status === 1" effect="plain">已完成</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="旧完成时间" align="center" width="180" prop="old_time">
         </el-table-column>
-        <el-table-column label="延期天数" align="center" width="180"  prop="delay_day">
+        <el-table-column label="延期天数" align="center" width="180" prop="delay_day">
         </el-table-column>
         <el-table-column label="申请次数" align="center" width="180" prop="delay_number">
         </el-table-column>
@@ -74,14 +74,30 @@
         <el-table-column label="延期审核状态" align="center" width="180">
           <template v-slot="{ row }">
             <el-tag v-if="row.delay_examine_status === 0" type="info" effect="plain">未审核</el-tag>
-            <el-tag  v-else-if="row.delay_examine_status === 1" effect="plain">已审核</el-tag>
+            <el-tag v-else-if="row.delay_examine_status === 1" effect="plain">已审核</el-tag>
           </template>
+        </el-table-column>
+        <el-table-column label="审核时间" align="center" width="180" prop="delay_examine_time">
         </el-table-column>
         <el-table-column label="操作" align="center" width="180">
           <template v-slot="scope">
-            <el-button size="mini" type="text" v-if="scope.row.complete_status === 0">
-              审批
-            </el-button>
+            <div v-if="scope.row.complete_status === 0">
+              <el-popover
+                  width="160"
+                  placement="top"
+                  trigger="manual" v-model="scope.row.visible"
+                  v-if="method_list.includes('PUT') && scope.row.delay_examine_status === 0"
+              >
+                <p>审核当前延期事务后，相关跟进事务与监督事务时间会发生变化！？</p>
+                <div style="text-align: right; margin: 0">
+                  <el-button size="mini" type="text" @click="scope.row.visible = false">取消</el-button>
+                  <el-button type="primary" size="mini" @click="SubmitExamineDelay(scope.row)">确定</el-button>
+                </div>
+                <template v-slot:reference>
+                  <el-button size="mini" type="text" slot="reference" @click="ExamineDelay(scope.row)">审批</el-button>
+                </template>
+              </el-popover>
+            </div>
           </template>
         </el-table-column>
       </el-table>
@@ -91,7 +107,7 @@
                      background layout="total,prev, pager, next" :page-size="10" :total="data_total"
                      v-model:current-page="page">
       </el-pagination>
-   </div>
+    </div>
     <div class="matter_item_dialog">
       <el-dialog
           title="ITEM信息详情"
@@ -99,7 +115,7 @@
           :before-close="dialogItemTableClose"
           width="30%"
       >
-        <el-table :data="item_list" height="200" border v-loading="ItemTableLoading" >
+        <el-table :data="item_list" height="200" border v-loading="ItemTableLoading">
           <el-table-column property="index" label="#" align="center"></el-table-column>
           <el-table-column property="item" label="ITEM" width="450" align="center"></el-table-column>
         </el-table>
@@ -130,7 +146,10 @@ export default {
       // item 详情弹出
       ItemDialogVisible: false,
       ItemTableLoading: false,
-      item_list:[],
+      item_list: [],
+      // 权限
+      method_list:[],
+      order_record_info_method_list:[],
     };
   },
   created() {
@@ -155,6 +174,7 @@ export default {
               this.get_delay_data_list = data.data.get_delay_data_list;
               this.data_total = data.data.data_total;
               this.method_list = data.data.method_list;
+              this.order_record_info_method_list = data.data.order_record_info_method_list;
             } else {
               this.department_matter_list = [];
             }
@@ -231,6 +251,34 @@ export default {
     dialogItemTableClose(done) {
       done(); // 关闭窗口
       this.item_list = [];
+    },
+    // 审核按钮
+    ExamineDelay(row) {
+      row.visible = true;
+    },
+    // 提交审核
+    SubmitExamineDelay(row) {
+      this.loading = true;
+      this.$http
+          .put("work/delay_matter_list/", {
+            data: row,
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.$message.success(data.message);
+              this.getDelayWorkListData();
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            row.visible = false;
+            this.loading = false;
+          });
     },
   },
 };
