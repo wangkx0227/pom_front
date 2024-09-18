@@ -51,9 +51,9 @@
         <el-table-column label="事务类型" align="center">
           <template v-slot="{ row }">
             <el-tag v-if="row.type === 'order_matter'" type="success">订单：跟进类型</el-tag>
-            <el-tag v-if="row.type === 'no_order_matter'" type="info">非订单：常规类型</el-tag>
-            <el-tag v-if="row.type === 'special'">非订单：特殊类型</el-tag>
-            <el-tag v-if="row.type === 'supervise'">订单：监督类型</el-tag>
+            <el-tag  v-else-if="row.type === 'no_order_matter'" type="info">非订单：常规类型</el-tag>
+            <el-tag  v-else-if="row.type === 'special'">非订单：特殊类型</el-tag>
+            <el-tag  v-else-if="row.type === 'supervise'">订单：监督类型</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="完成状态" align="center">
@@ -94,7 +94,11 @@
               <el-descriptions-item label="PO">{{ matter_info.po }}</el-descriptions-item>
               <el-descriptions-item label="ITEM信息" :span="2">
                 <span v-if="!matter_info.order_record_id">无</span>
-                <el-button v-else size="mini" type="text" @click="getMatterItemInfo(matter_info.order_record_id)" v-if="order_record_info_method_list.includes('GET')">
+                <el-button 
+                  size="mini" 
+                  type="text" 
+                  @click="getMatterItemInfo(matter_info.order_record_id)" 
+                  v-if="order_record_info_method_list.includes('GET') && matter_info.order_record_id">
                   查看ITEM列表
                 </el-button>
               </el-descriptions-item>
