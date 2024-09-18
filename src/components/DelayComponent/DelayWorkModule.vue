@@ -1,19 +1,11 @@
 <template>
-  <div class="work" v-loading="loading">
-    <div class="head_filter_criteria">
-      <el-radio-group v-model="status_radio" size="small">
-        <el-radio-button label="all">全部</el-radio-button>
-        <el-radio-button label="finish">完成</el-radio-button>
-        <el-radio-button label="not_finish">未完成</el-radio-button>
-      </el-radio-group>
-    </div>
+  <div class="delay_work" v-loading="loading">
     <div class="head_filter_criteria">
       <el-radio-group v-model="type_radio" size="small">
         <el-radio-button label="all">全部</el-radio-button>
-        <el-radio-button label="order_matter">订单事项</el-radio-button>
-        <el-radio-button label="supervise">监督事项</el-radio-button>
-        <el-radio-button label="no_order_matter">非订单事项</el-radio-button>
-        <el-radio-button label="special">特殊事项</el-radio-button>
+        <el-radio-button label="order_matter">未审核</el-radio-button>
+        <el-radio-button label="supervise">已审核</el-radio-button>
+        <el-radio-button label="no_order_matter">拒绝</el-radio-button>
       </el-radio-group>
     </div>
     <div class="head_search" style="display: flex;">
@@ -37,37 +29,41 @@
 
     </div>
     <div class="table_content">
-      <el-table :data="department_matter_list" style="width: 100%" height="550">
+      <el-table :data="department_matter_list" style="width: 100%" height="590">
         <el-table-column prop="index" label="#" align="center"></el-table-column>
         <el-table-column label="事项名称" align="center" prop="matter_name" width="500">
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.matter_name }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="事务负责人" align="center" prop="user_name">
+        <el-table-column label="事务负责人" align="center" prop="user_name" width="180">
         </el-table-column>
-        <el-table-column label="应完成时间" align="center" width="180" prop="expected_completion_time">
+        <el-table-column label="PO" align="center" width="180">
         </el-table-column>
-        <el-table-column label="事务类型" align="center">
+        <el-table-column label="ITEM" align="center" width="180">
+        </el-table-column>
+        <el-table-column label="事务类型" align="center"  width="180">
           <template v-slot="{ row }">
-            <el-tag v-if="row.type === 'order_matter'" type="success">订单：跟进类型</el-tag>
-            <el-tag  v-else-if="row.type === 'no_order_matter'" type="info">非订单：常规类型</el-tag>
-            <el-tag  v-else-if="row.type === 'special'">非订单：特殊类型</el-tag>
-            <el-tag  v-else-if="row.type === 'supervise'">订单：监督类型</el-tag>
+            <el-tag v-if="row.type === 'order_matter'" type="success">订单</el-tag>
+            <el-tag  v-else-if="row.type === 'no_order_matter'" type="info">非订单</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="完成状态" align="center">
-          <template v-slot="{ row }">
-            <el-tag v-if="row.complete_status === 1" effect="plain">完成</el-tag>
-            <el-tag v-else type="danger" effect="plain">未完成</el-tag>
-          </template>
+        <el-table-column label="事务完成状态" align="center"  width="180">
         </el-table-column>
-        <el-table-column label="实际完成时间" align="center" prop="complete_time" width="180">
+        <el-table-column label="旧完成时间" align="center" width="180" prop="expected_completion_time">
+        </el-table-column>
+        <el-table-column label="延期天数" align="center" width="180">
+        </el-table-column>
+        <el-table-column label="申请次数" align="center" width="180">
+        </el-table-column>
+        <el-table-column label="新完成时间" align="center" width="180">
+        </el-table-column>
+        <el-table-column label="延期审核状态" align="center" width="180">
         </el-table-column>
         <el-table-column label="操作" align="center" width="180">
           <template v-slot="scope">
-            <el-button size="mini" type="text" @click="getModuleInfo(scope.row)" v-if="method_list.includes('POST')">
-              查看事务详情
+            <el-button size="mini" type="text">
+              审批
             </el-button>
           </template>
         </el-table-column>
@@ -78,92 +74,7 @@
                      background layout="total,prev, pager, next" :page-size="10" :total="data_total"
                      v-model:current-page="page">
       </el-pagination>
-    </div>
-    <div class="matter_drawer">
-      <el-drawer :visible.sync="ModuleDrawer" direction="rtl" :before-close="DrawerClose" size="45%">
-        <div class="DrawerLoading">
-          <el-skeleton :rows="6" animated :loading="DrawerLoading"/>
-        </div>
-        <template slot="title">
-          <h3>事务信息详情</h3>
-        </template>
-        <div class="DrawerContent" v-if="!DrawerLoading" style="margin-left: 5px;">
-          <div class="matter_info">
-            <el-descriptions direction="vertical" :column="4" border>
-              <el-descriptions-item label="事务负责人">{{ matter_info.user_name }}</el-descriptions-item>
-              <el-descriptions-item label="PO">{{ matter_info.po }}</el-descriptions-item>
-              <el-descriptions-item label="ITEM信息" :span="2">
-                <span v-if="!matter_info.order_record_id">无</span>
-                <el-button 
-                  size="mini" 
-                  type="text" 
-                  @click="getMatterItemInfo(matter_info.order_record_id)" 
-                  v-if="order_record_info_method_list.includes('GET') && matter_info.order_record_id">
-                  查看ITEM列表
-                </el-button>
-              </el-descriptions-item>
-              <el-descriptions-item label="工厂名称">{{ matter_info.factory_name }}</el-descriptions-item>
-            </el-descriptions>
-          </div>
-          <el-divider v-if="!isHidden"></el-divider>
-          <div class="delay_table" v-if="!isHidden">
-            <el-table :data="DelayData" style="width: 100%" height="275" border>
-              <el-table-column label="延期列表" align="center">
-                <el-table-column prop="index" label="#" align="center">
-                </el-table-column>
-                <el-table-column prop="old_time" label="原项目完成时间" width="180" align="center">
-                </el-table-column>
-                <el-table-column prop="delay_day" label="延期时间" width="180" align="center">
-                </el-table-column>
-                <el-table-column prop="new_time" label="新事项完成时间" width="180" align="center">
-                </el-table-column>
-                <el-table-column prop="delay_number" label="申请次数" width="180" align="center">
-                </el-table-column>
-                <el-table-column prop="delay_examine_status" label="审核状态" width="180" align="center">
-                  <template v-slot="{ row }">
-                    <el-tag v-if="row.delay_examine_status" effect="plain">已审核</el-tag>
-                    <el-tag v-else effect="plain" type="danger">未审核</el-tag>
-                  </template>
-                </el-table-column>
-              </el-table-column>
-            </el-table>
-          </div>
-          <el-divider v-if="!isHidden"></el-divider>
-          <div class="file_table" v-if="!isHidden">
-            <el-table :data="FileData" style="width: 100%" border height="275">
-              <el-table-column label="附件列表" align="center">
-                <el-table-column prop="index" label="#" align="center">
-                </el-table-column>
-                <el-table-column prop="file_name" label="文件名称" width="350" align="center">
-                </el-table-column>
-                <el-table-column prop="create_date" label="上传时间" width="180" align="center">
-                </el-table-column>
-                <el-table-column label="操作" width="180" align="center">
-                  <template v-slot="{ row }">
-                    <el-button size="mini" type="text" @click="DownloadAnnexFile(row)" :loading="Downloading" v-if="download_file_method_list.includes('GET')">
-                      下载
-                    </el-button>
-                  </template>
-                </el-table-column>
-              </el-table-column>
-            </el-table>
-          </div>
-        </div>
-      </el-drawer>
-    </div>
-    <div class="matter_item_dialog">
-      <el-dialog
-          title="提示"
-          :visible.sync="ItemDialogVisible"
-          :before-close="dialogItemTableClose"
-          width="30%"
-      >
-        <el-table :data="item_list" height="200" border v-loading="ItemTableLoading" >
-          <el-table-column property="index" label="#" align="center"></el-table-column>
-          <el-table-column property="item" label="ITEM" width="450" align="center"></el-table-column>
-        </el-table>
-      </el-dialog>
-    </div>
+   </div>
   </div>
 </template>
 
@@ -183,33 +94,10 @@ export default {
       // 查询数据列表
       department_matter_list: [],
       loading: false, // 数据加载样式
-      addLoading: false, // 控制弹窗创建按钮
       // 分页
       data_total: 0, // 数据总数
       page_status: 0, // 分页状态变量，当上下一页时进行改变，只有是0时点击数字页码会改变
       page: 1,
-      // 可访问权限列表
-      method_list: [],
-      order_record_info_method_list: [],
-      download_file_method_list:[],
-      // 弹窗变量
-      ModuleDrawer: false,
-      DrawerLoading: false,
-      // 附件信息
-      FileData: [],
-      // 延期信息
-      DelayData: [],
-      // 基础信息
-      matter_info: {},
-      // 类型
-      type: null,
-      // 下载按钮加载
-      Downloading: false,
-      // item 详情弹出
-      ItemDialogVisible: false,
-      ItemTableLoading: false,
-      // item列表
-      item_list: [],
     };
   },
   created() {
@@ -291,107 +179,7 @@ export default {
       this.type_radio = 'all';
       this.getDepartmentWorkListData();
     },
-    // 查看事务
-    getModuleInfo(row) {
-      this.ModuleDrawer = true;
-      this.DrawerLoading = true;
-      this.$http
-          .post("work/departmental_matter_list/", {
-            data: row,
-          })
-          .then((res) => {
-            let data = res.data;
-            if (data.code === 200) {
-              this.matter_info = data.data.matter_info;
-              this.DelayData = data.data.matter_delay_list;
-              this.FileData = data.data.matter_file_list;
-              this.type = data.data.type;
-            } else {
-              this.$message.error(data.message);
-            }
-          })
-          .catch((error) => {
-            this.$message.error(error.message);
-          })
-          .finally(() => {
-            this.DrawerLoading = false;
-          });
-    },
-    // 抽屉函数
-    DrawerClose(done) {
-      done();
-      this.matter_info = {};
-      this.DelayData = [];
-      this.fileData = [];
-      this.type = null;
-    },
-    // 附件下载
-    DownloadAnnexFile(row) {
-      this.Downloading = true;
-      let download_type = this.type === 'order_matter' ? 'order' : 'no_order';
-      this.$http.get(`work/download_file/?pk=${row.id}&download_type=${download_type}`, {responseType: 'blob'})
-          .then((res) => {
-            const contentDisposition = res.headers['content-disposition'];
-            let filename = 'file.pdf'; // 默认文件名
-            if (contentDisposition) {
-              const match = contentDisposition.split("=");
-              if (match && match.length > 1) {
-                if (/^".*"$/.test(match[1])) {
-                  filename = decodeURIComponent(match[1].slice(1, -1));
-                } else {
-                  filename = decodeURIComponent(match[1]);
-                }
-              }
-            }
-            const url = window.URL.createObjectURL(new Blob([res.data]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', filename); // 替换为你的文件名
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            window.URL.revokeObjectURL(url);
-          })
-          .catch((error) => {
-            this.$message.error(error.message);
-          })
-          .finally(() => { // 无论是对还是错都会执行
-            this.Downloading = false;
-          });
-    },
-    // 查看item详情
-    getMatterItemInfo(order_record_id) {
-      this.ItemDialogVisible = true;
-      this.ItemTableLoading = true;
-      this.$http
-          .get(`business_function/order_record_info/?query=item&order_record_id=${order_record_id}`)
-          .then((res) => {
-            let data = res.data;
-            if (data.code === 200) {
-              this.item_list = data.data;
-            } else {
-              this.item_list = [];
-            }
-          })
-          .catch((error) => {
-            this.$message.error(error.message);
-          })
-          .finally(() => {
-            this.ItemTableLoading = false;
-          });
-    },
-    // item弹窗关闭
-    dialogItemTableClose(done) {
-      done(); // 关闭窗口
-      this.item_list = [];
-    },
   },
-  computed: {
-    // 计算属性
-    isHidden() {
-      return this.type === 'special' || this.type === 'supervise';
-    }
-  }
 };
 </script>
 
