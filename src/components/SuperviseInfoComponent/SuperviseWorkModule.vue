@@ -1,7 +1,7 @@
 <template>
   <div class="supervision_matters" v-loading="loading">
       <div class="head_filter_criteria">
-        <el-radio-group v-model="radio_criteria">
+        <el-radio-group v-model="radio_criteria" size="small">
           <el-radio-button label="all">全部</el-radio-button>
           <el-radio-button label="finish">完成</el-radio-button>
           <el-radio-button label="not_finish">未完成</el-radio-button>
@@ -21,7 +21,7 @@
         </el-button>
       </div>
       <div class="table_content">
-        <el-table :data="SuperviseMattersData" style="width: 100%" height="550">
+        <el-table :data="SuperviseMattersData" style="width: 100%" height="590">
           <el-table-column prop="index" label="#" align="center"></el-table-column>
           <el-table-column label="监督事项详情" align="center" prop="">
             <template v-slot="{ row }">
