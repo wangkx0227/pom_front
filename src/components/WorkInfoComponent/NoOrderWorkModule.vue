@@ -36,8 +36,8 @@
         </el-table-column>
         <el-table-column label="完成状态" align="center" width="180">
           <template v-slot="{ row }">
-            <el-tag type="success" v-if="row.complete_status === 1">已完成</el-tag>
-            <el-tag type="danger" v-else>未完成</el-tag>
+            <el-tag effect="plain" v-if="row.complete_status === 1">已完成</el-tag>
+            <el-tag type="info" effect="plain" v-else>未完成</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="是否需要上传附件" align="center" width="180">
