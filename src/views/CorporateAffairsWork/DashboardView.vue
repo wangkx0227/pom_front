@@ -309,7 +309,7 @@ export default {
     // 查看公告信息弹窗
     getNotice(row, column, event){
       console.log(11111)
-    }
+    },
   },
   mounted() {
     this.initPieChart();
@@ -352,7 +352,6 @@ export default {
   margin: 0 10px 10px 10px;
   padding: 0 10px;
 }
-
 
 .box {
   /*border: 1px solid #000; !* 边框用于区分不同的部分 *!*/
