@@ -2,7 +2,7 @@
   <div class="dashboard_info" v-loading="loading">
     <el-card class="box-card">
       <div class="container">
-        <div class="box work_container">
+        <div class=" work_container">
           <div class="work_block">
             <el-result title="订单事务" :subTitle="work_total">
               <template slot="icon">
@@ -32,7 +32,7 @@
             </el-result>
           </div>
         </div>
-        <div class="box work_block">
+        <div class=" work_block">
           <el-tabs v-model="activeName">
             <el-tab-pane label="综合" name="comprehensive">
               <div style="width: 100%; display: inline-block">
@@ -63,7 +63,7 @@
             </el-tab-pane>
           </el-tabs>
         </div>
-        <div class="box work_block">
+        <div class=" work_block">
           <el-table
               :data="tableData"
               height="330"
@@ -88,7 +88,7 @@
             </el-table-column>
           </el-table>
         </div>
-        <div class="box work_block">
+        <div class=" work_block">
           <el-table
               :data="tableData"
               height="330"
@@ -99,12 +99,12 @@
               <el-table-column
                   prop="date"
                   label="事务类型"
-                   align="center">
+                  align="center">
               </el-table-column>
               <el-table-column
                   prop="date"
                   label="应完成日期"
-                   align="center">
+                  align="center">
               </el-table-column>
               <el-table-column
                   prop="title"
@@ -307,7 +307,7 @@ export default {
       console.log("加载数据");
     },
     // 查看公告信息弹窗
-    getNotice(row, column, event){
+    getNotice(row, column, event) {
       console.log(11111)
     },
   },
@@ -351,13 +351,6 @@ export default {
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
   margin: 0 10px 10px 10px;
   padding: 0 10px;
-}
-
-.box {
-  /*border: 1px solid #000; !* 边框用于区分不同的部分 *!*/
-  /*display: flex;*/
-  /*justify-content: center;*/
-  /*align-items: center;*/
 }
 
 
