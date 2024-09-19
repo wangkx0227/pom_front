@@ -1,94 +1,151 @@
 <template>
   <div class="dashboard_info" v-loading="loading">
-    <div style="display: flex; width: 100%; flex-wrap: wrap">
-      <el-card shadow="hover" style="width: 31%; margin-right: 5px">
-        <div style="width: 100%; display: inline-block">
-          <el-statistic :value="work_total" title="累计完成"></el-statistic>
+    <el-card class="box-card">
+      <div class="container">
+        <div class="box work_container">
+          <div class="work_block">
+            <el-result title="订单事务" :subTitle="work_total">
+              <template slot="icon">
+                <i class="el-icon-folder"></i>
+              </template>
+            </el-result>
+          </div>
+          <div class="work_block">
+            <el-result title="非订单事务" :subTitle="work_total">
+              <template slot="icon">
+                <i class="el-icon-folder-opened"></i>
+              </template>
+            </el-result>
+          </div>
+          <div class="work_block">
+            <el-result title="特殊事务" :subTitle="work_total">
+              <template slot="icon">
+                <i class="el-icon-document-copy"></i>
+              </template>
+            </el-result>
+          </div>
+          <div class="work_block">
+            <el-result title="监督事务" :subTitle="work_total">
+              <template slot="icon">
+                <i class="el-icon-tickets"></i>
+              </template>
+            </el-result>
+          </div>
         </div>
-      </el-card>
-      <el-card shadow="hover" style="width: 31%; margin-right: 5px;">
-        <div style="width: 100%; display: inline-block">
-          <el-statistic :value="expire_work" title="已过期"></el-statistic>
+        <div class="box work_block">
+          <el-tabs v-model="activeName">
+            <el-tab-pane label="综合" name="comprehensive">
+              <div style="width: 100%; display: inline-block">
+                <div
+                    ref="lineChart"
+                    class="lineChart"
+                    style="width: 780px; height: 345px"
+                ></div>
+              </div>
+            </el-tab-pane>
+            <el-tab-pane label="饼状图" name="pancake">
+              <div style="width: 100%; display: inline-block">
+                <div
+                    ref="pieChart"
+                    class="pieChart"
+                    style="width: 780px; height: 345px"
+                ></div>
+              </div>
+            </el-tab-pane>
+            <el-tab-pane label="柱状图" name="column">
+              <div style="width: 100%; display: inline-block">
+                <div
+                    ref="columnar"
+                    class="columnar"
+                    style="width: 780px; height: 345px"
+                ></div>
+              </div>
+            </el-tab-pane>
+          </el-tabs>
         </div>
-      </el-card>
-      <el-card shadow="hover" style="width: 31%; margin-right: 5px">
-        <div style="width: 100%; display: inline-block">
-          <el-statistic :value="completed_work" title="已完成"></el-statistic>
+        <div class="box work_block">
+          <el-table
+              :data="tableData"
+              height="330"
+              border
+              @row-click="getNotice"
+              style="width: 100%;margin-top: 5px">
+            <el-table-column label="公告信息展示" align="center">
+              <el-table-column
+                  prop="date"
+                  label="日期"
+                  width="100" align="center">
+              </el-table-column>
+              <el-table-column
+                  prop="title"
+                  label="标题"
+                  align="center">
+              </el-table-column>
+              <el-table-column
+                  prop="user_name"
+                  label="发送者" width="180" align="center">
+              </el-table-column>
+            </el-table-column>
+          </el-table>
         </div>
-      </el-card>
-      <el-card
-        shadow="hover"
-        style="width: 31%; margin-right: 5px; margin-top: 5px"
-      >
-        <div style="width: 100%; display: inline-block">
-          <el-statistic :value="completed_work" title="待完成"></el-statistic>
+        <div class="box work_block">
+          <el-table
+              :data="tableData"
+              height="330"
+              border
+              @row-click="getNotice"
+              style="width: 100%;margin-top: 5px">
+            <el-table-column label="近期待处理" align="center">
+              <el-table-column
+                  prop="date"
+                  label="事务类型"
+                   align="center">
+              </el-table-column>
+              <el-table-column
+                  prop="date"
+                  label="应完成日期"
+                   align="center">
+              </el-table-column>
+              <el-table-column
+                  prop="title"
+                  label="事务名称"
+                  align="center" width="350">
+              </el-table-column>
+              <el-table-column
+                  prop="user_name"
+                  label="状态" align="center">
+              </el-table-column>
+            </el-table-column>
+          </el-table>
         </div>
-      </el-card>
-      <el-card
-        shadow="hover"
-        style="width: 31%; margin-right: 5px; margin-top: 5px"
-      >
-        <div style="width: 100%; display: inline-block">
-          <el-statistic :value="completed_work" title="延期待审">
-          </el-statistic>
-        </div>
-      </el-card>
-      <el-card shadow="hover" style="width: 31%; margin-top: 5px">
-        <div style="width: 100%; display: inline-block">
-          <el-statistic :value="completed_work" title="监督待审">
-          </el-statistic>
-        </div>
-      </el-card>
-      <el-card
-        class="box-card pie-chart-card"
-        shadow="hover"
-        style="width: 35%; margin-right: 5px; margin-top: 5px"
-      >
-        <div style="width: 100%; display: inline-block">
-          <div
-            ref="pieChart"
-            class="pieChart"
-            style="width: 500px; height: 500px"
-          ></div>
-        </div>
-      </el-card>
-      <el-card
-        class="box-card columnar-card"
-        shadow="hover"
-        style="width: 58.4%; margin-top: 5px"
-      >
-        <div style="width: 100%; display: inline-block">
-          <div
-            ref="columnar"
-            class="columnar"
-            style="width: 800px; height: 500px"
-          ></div>
-        </div>
-      </el-card>
-    </div>
+      </div>
+      <div>
+      </div>
+    </el-card>
   </div>
 </template>
 
 <script>
-import { init } from "echarts";
+import {init} from "echarts";
 
 export default {
   name: "DashboardView",
   data() {
     return {
+      activeName: "comprehensive", // 卡片变量
       loading: false, // 访问加载
-      work_total: 100, // 当前用户的完成事项总数
+      work_total: '100', // 当前用户的完成事项总数
       expire_work: 100, // 当前用户事项过期事项总数
       completed_work: 100, // 已完成事项总数
       recent_work: 100, // 近期需要完成
       pieChartData: [
         // 饼状图数据
-        { name: "事项总数", value: 30 },
-        { name: "已过期", value: 40 },
-        { name: "已完成", value: 20 },
-        { name: "待完成", value: 10 },
-        { name: "延期待审核", value: 10 },
-        { name: "监督待审核", value: 10 },
+        {name: "事项总数", value: 30},
+        {name: "已过期", value: 40},
+        {name: "已完成", value: 20},
+        {name: "待完成", value: 10},
+        {name: "延期待审核", value: 10},
+        {name: "监督待审核", value: 10},
       ], // 饼状图需要展示的数据
       xAxisDate: [
         "事项总数",
@@ -99,32 +156,96 @@ export default {
         "监督待审核",
       ], // 柱状图标题
       columnarDate: [100, 100, 100, 100, 20, 10], // 柱状图展示数据
-    };
+      linkChartData: [
+        {
+          name: '订单事务',
+          type: 'line',
+          stack: 'Total',
+          data: [120, 132, 101, 134, 90, 230, 210] // 数据
+        },
+        {
+          name: '非订单事务',
+          type: 'line',
+          stack: 'Total',
+          data: [220, 182, 191, 234, 290, 330, 310]
+        },
+        {
+          name: '特殊事务',
+          type: 'line',
+          stack: 'Total',
+          data: [150, 232, 201, 154, 190, 330, 410]
+        },
+        {
+          name: '监督事务',
+          type: 'line',
+          stack: 'Total',
+          data: [320, 332, 301, 334, 390, 330, 320]
+        },
+        {
+          name: '审核事务',
+          type: 'line',
+          stack: 'Total',
+          data: [820, 932, 901, 934, 1290, 1330, 1320]
+        }
+      ],
+      // 公告数据
+      tableData: [{
+        date: '2016-05-03',
+        title: '上海市普陀区金沙江路 1518 弄',
+        user_name: '王凯鑫'
+      }]
+    }
   },
   methods: {
+    // 饼状图展示
     initPieChart() {
-      let pie_Chart = init(this.$refs.pieChart);
+      const pie_Chart = init(this.$refs.pieChart);
       pie_Chart.setOption({
         title: {
           text: "饼状图展示",
           left: "center",
         },
+        toolbox: {
+          feature: {
+            saveAsImage: {}
+          }
+        },
+        tooltip: {
+          trigger: 'item'
+        },
+        legend: {
+          orient: 'vertical',
+          left: 'left'
+        },
         series: [
           {
             name: "事项展示",
             type: "pie",
-            radius: "50%",
+            radius: "55%",
             data: this.pieChartData,
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            }
           },
         ],
       });
     },
+    // 柱状图展示
     initColumnar() {
-      let pie_Columnar = init(this.$refs.columnar);
+      const pie_Columnar = init(this.$refs.columnar);
       pie_Columnar.setOption({
         title: {
           text: "柱形图展示",
           left: "center",
+        },
+        toolbox: {
+          feature: {
+            saveAsImage: {}
+          }
         },
         axisLabel: {
           show: true, // 是否显示刻度标签，默认显示
@@ -146,14 +267,54 @@ export default {
         ],
       });
     },
+    // 线性图
+    initChart() {
+      const line_Chart = init(this.$refs.lineChart);
+      line_Chart.setOption({
+        title: {
+          text: '综合线性图展示'
+        },
+        tooltip: {
+          trigger: 'axis'
+        },
+        legend: {
+          data: ['订单事务', '非订单事务', '特殊事务', '监督事务', '审核事务']
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
+        toolbox: {
+          feature: {
+            saveAsImage: {}
+          }
+        },
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: ['19号', '20号', '21号', '22号', '23号'] // 显示日期，从当前向后推5天
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: this.linkChartData,
+      })
+    },
     getUserDate() {
       this.loading = false;
       console.log("加载数据");
     },
+    // 查看公告信息弹窗
+    getNotice(row, column, event){
+      console.log(11111)
+    }
   },
   mounted() {
     this.initPieChart();
     this.initColumnar();
+    this.initChart();
   },
   created() {
     // 每次切换到当前页面时，需要调用。
@@ -167,6 +328,40 @@ export default {
 </script>
 
 <style scoped>
+@import url("@/static/convention.css");
+/* 将内容分为4份*/
+.container {
+  display: grid;
+  grid-template-rows: 1fr 1fr; /* 将页面分为上下两等分 */
+  grid-template-columns: 1fr 1fr; /* 将页面分为左右两等分 */
+  height: 84vh; /* 容器高度占满整个视口高度 */
+}
+
+/*将第一个块，分为4分进行处理*/
+.work_container {
+  display: grid;
+  grid-template-rows: 1fr 1fr; /* 将页面分为上下两等分 */
+  grid-template-columns: 1fr 1fr; /* 将页面分为左右两等分 */
+  height: 45vh; /* 容器高度占满整个视口高度 */
+}
+
+/*设置边框*/
+/*图形的样式*/
+.work_block {
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  margin: 0 10px 10px 10px;
+  padding: 0 10px;
+}
+
+
+.box {
+  /*border: 1px solid #000; !* 边框用于区分不同的部分 *!*/
+  /*display: flex;*/
+  /*justify-content: center;*/
+  /*align-items: center;*/
+}
+
+
 @media screen and (max-width: 700px) {
   .pie-chart-card {
     width: 94.5% !important;
