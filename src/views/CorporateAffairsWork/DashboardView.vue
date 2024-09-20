@@ -156,21 +156,21 @@ export default {
       matter_all_data: [], // 仪表盘的待处理展示数据
       pieChartData: [
         // 饼状图数据
-        {name: "事项总数", value: 30},
-        {name: "已过期", value: 40},
-        {name: "已完成", value: 20},
-        {name: "待完成", value: 10},
-        {name: "延期待审核", value: 10},
-        {name: "监督待审核", value: 10},
-      ], // 饼状图需要展示的数据
+        {name: "事项总数（包含已完成）", value: 0},
+        {name: "订单事务", value: 0},
+        {name: "非订单事务", value: 0},
+        {name: "特殊事务", value: 0},
+        {name: "监督事项", value: 0},
+      ],
+      // 饼状图需要展示的数据
       xAxisDate: [
         "事项总数",
-        "已完成",
-        "待完成",
-        "已过期",
-        "延期待审核",
-        "监督待审核",
-      ], // 柱状图标题
+        "订单事务",
+        "非订单事务",
+        "特殊事务",
+        "监督事项",
+      ],
+      // 柱状图标题
       columnarDate: [100, 100, 100, 100, 20, 10], // 柱状图展示数据
       linkChartData: [
         {
@@ -326,6 +326,7 @@ export default {
             if (data.code === 200) {
               this.dashboard_number_data = data.data.dashboard_number_data;
               this.matter_all_data = data.data.matter_all_data;
+              this.pieChartData = data.data.chart_data_list;
             } else {
               this.$message.error(data.message);
             }
@@ -336,8 +337,6 @@ export default {
           .finally(() => {
             this.loading = false;
           });
-
-      console.log("加载数据");
     },
     // 查看公告信息弹窗
     getNotice(row, column, event) {
@@ -345,14 +344,16 @@ export default {
     },
   },
   mounted() {
+    this.loading = true;
+    this.getUserDashboardDate();
     this.initPieChart();
     this.initColumnar();
     this.initChart();
   },
-  created() {
-    this.loading = true;
-    this.getUserDashboardDate();
-  },
+  // created() {
+  //   this.loading = true;
+  //   this.getUserDashboardDate();
+  // },
 };
 </script>
 
