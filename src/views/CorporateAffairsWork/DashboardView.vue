@@ -34,7 +34,7 @@
         </div>
         <div class=" work_block">
           <el-tabs v-model="activeName">
-            <el-tab-pane label="待完成" name="comprehensive">
+            <el-tab-pane label="个人待完成" name="comprehensive">
               <div style="width: 100%; display: inline-block">
                 <div
                     ref="lineChart"
@@ -135,6 +135,15 @@
       <div>
       </div>
     </el-card>
+    <div class="notice_drawer">
+      <el-drawer
+          title="我嵌套了表格!"
+          :before-close="CloseNotice"
+          :visible.sync="NoticeDrawer"
+          direction="rtl"
+          size="50%">
+      </el-drawer>
+    </div>
   </div>
 </template>
 
@@ -169,6 +178,7 @@ export default {
       linkChartData: [], // 数据
       linkChartDate: [], // 时间展示
       // 公告数据
+      NoticeDrawer: false, // 公告的变量
       tableData: [{
         date: '2016-05-03',
         title: '上海市普陀区金沙江路 1518 弄',
@@ -319,8 +329,13 @@ export default {
     },
     // 查看公告信息弹窗
     getNotice(row, column, event) {
-
+      this.NoticeDrawer = true;
+      console.log(row, column, event)
     },
+    // 公告关闭调用函数
+    CloseNotice(done) {
+      done();
+    }
   },
   created() {
     this.loading = true;
