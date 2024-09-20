@@ -70,7 +70,7 @@
               border
               @row-click="getNotice"
               style="width: 100%;margin-top: 5px">
-            <el-table-column label="公告未读" align="center">
+            <el-table-column label="公告信息" align="center">
               <el-table-column
                   prop="date"
                   label="日期"
@@ -171,7 +171,7 @@ export default {
           name: '订单事务',
           type: 'line',
           stack: 'Total',
-          data: [120, 132, 101, 134, 90, 230, 210] // 数据
+          data: [120, 132, 101, ] // 数据
         },
         {
           name: '非订单事务',
