@@ -6,28 +6,28 @@
           <div class="work_block">
             <el-result title="订单事务" :subTitle="`${dashboard_number_data.order_matter_num}`">
               <template slot="icon">
-                <i class="el-icon-folder"></i>
+                <i class="el-icon-folder icon_size" style="font-size: 25px "></i>
               </template>
             </el-result>
           </div>
           <div class="work_block">
             <el-result title="非订单事务" :subTitle="`${dashboard_number_data.no_order_matter_num}`">
               <template slot="icon">
-                <i class="el-icon-folder-opened"></i>
+                <i class="el-icon-folder-opened" style="font-size: 25px "></i>
               </template>
             </el-result>
           </div>
           <div class="work_block">
             <el-result title="特殊事务" :subTitle="`${dashboard_number_data.special_matter_num}`">
               <template slot="icon">
-                <i class="el-icon-document-copy"></i>
+                <i class="el-icon-document-copy" style="font-size: 25px "></i>
               </template>
             </el-result>
           </div>
           <div class="work_block">
             <el-result title="监督事务" :subTitle="`${dashboard_number_data.supervise_matter_num}`">
               <template slot="icon">
-                <i class="el-icon-tickets"></i>
+                <i class="el-icon-tickets" style="font-size: 25px "></i>
               </template>
             </el-result>
           </div>
@@ -43,7 +43,7 @@
                 ></div>
               </div>
             </el-tab-pane>
-            <el-tab-pane label="饼状图" name="pancake">
+            <el-tab-pane label="事务信息展示-饼状图" name="pancake">
               <div style="width: 100%; display: inline-block">
                 <div
                     ref="pieChart"
@@ -52,7 +52,7 @@
                 ></div>
               </div>
             </el-tab-pane>
-            <el-tab-pane label="柱状图" name="column">
+            <el-tab-pane label="事务信息展示-柱状图" name="column">
               <div style="width: 100%; display: inline-block">
                 <div
                     ref="columnar"
@@ -106,9 +106,9 @@
                   align="center" width="150">
                 <template v-slot="{ row }">
                   <el-tag v-if="row.type === 'order_matter'" type="success">订单：跟进类型</el-tag>
-                  <el-tag  v-else-if="row.type === 'no_order_matter'" type="info">非订单：常规类型</el-tag>
-                  <el-tag  v-else-if="row.type === 'special'">非订单：特殊类型</el-tag>
-                  <el-tag  v-else-if="row.type === 'supervise'">订单：监督类型</el-tag>
+                  <el-tag v-else-if="row.type === 'no_order_matter'" type="info">非订单：常规类型</el-tag>
+                  <el-tag v-else-if="row.type === 'special'">非订单：特殊类型</el-tag>
+                  <el-tag v-else-if="row.type === 'supervise'">订单：监督类型</el-tag>
                 </template>
               </el-table-column>
               <el-table-column
@@ -156,19 +156,11 @@ export default {
       matter_all_data: [], // 仪表盘的待处理展示数据
       pieChartData: [
         // 饼状图数据
-        {name: "事项总数（包含已完成）", value: 0},
+        {name: "事项总数", value: 0},
         {name: "订单事务", value: 0},
         {name: "非订单事务", value: 0},
         {name: "特殊事务", value: 0},
         {name: "监督事项", value: 0},
-      ],
-      // 饼状图需要展示的数据
-      xAxisDate: [
-        "事项总数",
-        "订单事务",
-        "非订单事务",
-        "特殊事务",
-        "监督事项",
       ],
       // 柱状图标题
       columnarDate: [100, 100, 100, 100, 20, 10], // 柱状图展示数据
@@ -218,7 +210,7 @@ export default {
       const pie_Chart = init(this.$refs.pieChart);
       pie_Chart.setOption({
         title: {
-          text: "饼状图展示",
+          text: "展示全部的事务分类（包含已完成）",
           left: "center",
         },
         toolbox: {
@@ -255,7 +247,7 @@ export default {
       const pie_Columnar = init(this.$refs.columnar);
       pie_Columnar.setOption({
         title: {
-          text: "柱形图展示",
+          text: "展示全部的事务分类（包含已完成）",
           left: "center",
         },
         toolbox: {
@@ -271,7 +263,13 @@ export default {
           margin: 6, // 刻度标签与轴线之间的距离
         },
         xAxis: {
-          data: this.xAxisDate,
+          data: [
+            "事项总数",
+            "订单事务",
+            "非订单事务",
+            "特殊事务",
+            "监督事项",
+          ],
         },
         yAxis: {},
         series: [
@@ -327,6 +325,10 @@ export default {
               this.dashboard_number_data = data.data.dashboard_number_data;
               this.matter_all_data = data.data.matter_all_data;
               this.pieChartData = data.data.chart_data_list;
+              // 加载图形
+              this.initPieChart();
+              this.initColumnar();
+              this.initChart();
             } else {
               this.$message.error(data.message);
             }
@@ -343,17 +345,10 @@ export default {
 
     },
   },
-  mounted() {
+  created() {
     this.loading = true;
     this.getUserDashboardDate();
-    this.initPieChart();
-    this.initColumnar();
-    this.initChart();
   },
-  // created() {
-  //   this.loading = true;
-  //   this.getUserDashboardDate();
-  // },
 };
 </script>
 
