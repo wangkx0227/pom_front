@@ -264,7 +264,7 @@ export default {
           trigger: 'axis'
         },
         legend: {
-          data: ['订单事务', '非订单事务', '特殊事务', '监督事务', '审核事务']
+          data: ['订单事务', '非订单事务', '特殊事务', '监督事务']
         },
         grid: {
           left: '3%',
@@ -283,7 +283,8 @@ export default {
           data: this.linkChartDate, // 显示日期，从当前向后推5天
         },
         yAxis: {
-          type: 'value'
+          type: 'value',
+          minInterval: 1,
         },
         series: this.linkChartData,
       })
