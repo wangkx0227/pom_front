@@ -166,39 +166,8 @@ export default {
       // 柱状图标题
       columnarDate: [0, 0, 0, 0, 0, 0], // 柱状图展示数据
       // 线型图
-      linkChartData: [
-        {
-          name: '订单事务',
-          type: 'line',
-          stack: 'Total',
-          data: [120, 132, 101, ] // 数据
-        },
-        {
-          name: '非订单事务',
-          type: 'line',
-          stack: 'Total',
-          data: [220, 182, 191, 234, 290, 330, 310]
-        },
-        {
-          name: '特殊事务',
-          type: 'line',
-          stack: 'Total',
-          data: [150, 232, 201, 154, 190, 330, 410]
-        },
-        {
-          name: '监督事务',
-          type: 'line',
-          stack: 'Total',
-          data: [320, 332, 301, 334, 390, 330, 320]
-        },
-        {
-          name: '审核事务',
-          type: 'line',
-          stack: 'Total',
-          data: [820, 932, 901, 934, 1290, 1330, 1320]
-        }
-      ],
-      linkChartDate: [],
+      linkChartData: [], // 数据
+      linkChartDate: [], // 时间展示
       // 公告数据
       tableData: [{
         date: '2016-05-03',
@@ -331,6 +300,7 @@ export default {
               this.columnarDate = data.data.columnar_data_list;
               // 线型图的时间展示
               this.linkChartDate = data.data.link_chart_data.link_chart_date_list;
+              this.linkChartData = data.data.link_chart_data.link_chart_data_list;
               // 加载图形
               this.initPieChart();
               this.initColumnar();
