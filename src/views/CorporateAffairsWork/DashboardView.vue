@@ -154,6 +154,7 @@ export default {
         supervise_matter_num: 0
       }, // 仪表盘第一块的数据展示信息
       matter_all_data: [], // 仪表盘的待处理展示数据
+      // 饼状图
       pieChartData: [
         // 饼状图数据
         {name: "事项总数", value: 0},
@@ -163,7 +164,8 @@ export default {
         {name: "监督事项", value: 0},
       ],
       // 柱状图标题
-      columnarDate: [100, 100, 100, 100, 20, 10], // 柱状图展示数据
+      columnarDate: [0, 0, 0, 0, 0, 0], // 柱状图展示数据
+      // 线型图
       linkChartData: [
         {
           name: '订单事务',
@@ -325,6 +327,7 @@ export default {
               this.dashboard_number_data = data.data.dashboard_number_data;
               this.matter_all_data = data.data.matter_all_data;
               this.pieChartData = data.data.chart_data_list;
+              this.columnarDate = data.data.columnar_data_list;
               // 加载图形
               this.initPieChart();
               this.initColumnar();
