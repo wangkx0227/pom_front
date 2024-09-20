@@ -34,7 +34,7 @@
         </div>
         <div class=" work_block">
           <el-tabs v-model="activeName">
-            <el-tab-pane label="综合" name="comprehensive">
+            <el-tab-pane label="待完成" name="comprehensive">
               <div style="width: 100%; display: inline-block">
                 <div
                     ref="lineChart"
@@ -198,6 +198,7 @@ export default {
           data: [820, 932, 901, 934, 1290, 1330, 1320]
         }
       ],
+      linkChartDate: [],
       // 公告数据
       tableData: [{
         date: '2016-05-03',
@@ -288,7 +289,7 @@ export default {
       const line_Chart = init(this.$refs.lineChart);
       line_Chart.setOption({
         title: {
-          text: '综合线性图展示'
+          text: '待完成'
         },
         tooltip: {
           trigger: 'axis'
@@ -310,7 +311,7 @@ export default {
         xAxis: {
           type: 'category',
           boundaryGap: false,
-          data: ['19号', '20号', '21号', '22号', '23号'] // 显示日期，从当前向后推5天
+          data: this.linkChartDate, // 显示日期，从当前向后推5天
         },
         yAxis: {
           type: 'value'
@@ -328,6 +329,8 @@ export default {
               this.matter_all_data = data.data.matter_all_data;
               this.pieChartData = data.data.chart_data_list;
               this.columnarDate = data.data.columnar_data_list;
+              // 线型图的时间展示
+              this.linkChartDate = data.data.link_chart_data.link_chart_date_list;
               // 加载图形
               this.initPieChart();
               this.initColumnar();
