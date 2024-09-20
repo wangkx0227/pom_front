@@ -4,28 +4,28 @@
       <div class="container">
         <div class=" work_container">
           <div class="work_block">
-            <el-result title="订单事务" :subTitle="work_total">
+            <el-result title="订单事务" :subTitle="`${dashboard_number_data.order_matter_num}`">
               <template slot="icon">
                 <i class="el-icon-folder"></i>
               </template>
             </el-result>
           </div>
           <div class="work_block">
-            <el-result title="非订单事务" :subTitle="work_total">
+            <el-result title="非订单事务" :subTitle="`${dashboard_number_data.no_order_matter_num}`">
               <template slot="icon">
                 <i class="el-icon-folder-opened"></i>
               </template>
             </el-result>
           </div>
           <div class="work_block">
-            <el-result title="特殊事务" :subTitle="work_total">
+            <el-result title="特殊事务" :subTitle="`${dashboard_number_data.special_matter_num}`">
               <template slot="icon">
                 <i class="el-icon-document-copy"></i>
               </template>
             </el-result>
           </div>
           <div class="work_block">
-            <el-result title="监督事务" :subTitle="work_total">
+            <el-result title="监督事务" :subTitle="`${dashboard_number_data.supervise_matter_num}`">
               <template slot="icon">
                 <i class="el-icon-tickets"></i>
               </template>
@@ -70,7 +70,7 @@
               border
               @row-click="getNotice"
               style="width: 100%;margin-top: 5px">
-            <el-table-column label="公告信息展示" align="center">
+            <el-table-column label="公告未读" align="center">
               <el-table-column
                   prop="date"
                   label="日期"
@@ -95,7 +95,7 @@
               border
               @row-click="getNotice"
               style="width: 100%;margin-top: 5px">
-            <el-table-column label="近期待处理" align="center">
+            <el-table-column label="待处理" align="center">
               <el-table-column
                   prop="date"
                   label="事务类型"
@@ -134,10 +134,13 @@ export default {
     return {
       activeName: "comprehensive", // 卡片变量
       loading: false, // 访问加载
-      work_total: '100', // 当前用户的完成事项总数
-      expire_work: 100, // 当前用户事项过期事项总数
-      completed_work: 100, // 已完成事项总数
-      recent_work: 100, // 近期需要完成
+      dashboard_number_data: {
+        order_matter_num: 0,
+        no_order_matter_num: 0,
+        special_matter_num: 0,
+        supervise_matter_num: 0
+      }, // 仪表盘第一块的数据展示信息
+
       pieChartData: [
         // 饼状图数据
         {name: "事项总数", value: 30},
@@ -302,13 +305,29 @@ export default {
         series: this.linkChartData,
       })
     },
-    getUserDate() {
-      this.loading = false;
+    getUserDashboardDate() {
+      this.$http
+          .get('work/dashboard_matter_info/')
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.dashboard_number_data = data.data.dashboard_number_data;
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+
       console.log("加载数据");
     },
     // 查看公告信息弹窗
     getNotice(row, column, event) {
-      console.log(11111)
+
     },
   },
   mounted() {
@@ -317,12 +336,8 @@ export default {
     this.initChart();
   },
   created() {
-    // 每次切换到当前页面时，需要调用。
     this.loading = true;
-    // 数据第一次加载
-    setTimeout(() => {
-      this.getUserDate();
-    }, 1500);
+    this.getUserDashboardDate();
   },
 };
 </script>
