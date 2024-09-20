@@ -90,30 +90,43 @@
         </div>
         <div class=" work_block">
           <el-table
-              :data="tableData"
+              :data="matter_all_data"
               height="330"
               border
-              @row-click="getNotice"
               style="width: 100%;margin-top: 5px">
-            <el-table-column label="待处理" align="center">
+            <el-table-column label="待处理（显示前10条）" align="center">
               <el-table-column
-                  prop="date"
-                  label="事务类型"
+                  prop="index"
+                  label="#"
+                  width="40"
                   align="center">
               </el-table-column>
               <el-table-column
-                  prop="date"
+                  label="事务类型"
+                  align="center" width="150">
+                <template v-slot="{ row }">
+                  <el-tag v-if="row.type === 'order_matter'" type="success">订单：跟进类型</el-tag>
+                  <el-tag  v-else-if="row.type === 'no_order_matter'" type="info">非订单：常规类型</el-tag>
+                  <el-tag  v-else-if="row.type === 'special'">非订单：特殊类型</el-tag>
+                  <el-tag  v-else-if="row.type === 'supervise'">订单：监督类型</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column
+                  prop="expected_completion_time"
                   label="应完成日期"
                   align="center">
               </el-table-column>
               <el-table-column
-                  prop="title"
+                  prop="matter_name"
                   label="事务名称"
                   align="center" width="350">
               </el-table-column>
               <el-table-column
-                  prop="user_name"
-                  label="状态" align="center">
+                  label="状态" align="center" width="100">
+                <template v-slot="{ row }">
+                  <el-tag v-if="row.complete_status === 1" effect="plain">完成</el-tag>
+                  <el-tag v-else type="danger" effect="plain">未完成</el-tag>
+                </template>
               </el-table-column>
             </el-table-column>
           </el-table>
@@ -140,7 +153,7 @@ export default {
         special_matter_num: 0,
         supervise_matter_num: 0
       }, // 仪表盘第一块的数据展示信息
-
+      matter_all_data: [], // 仪表盘的待处理展示数据
       pieChartData: [
         // 饼状图数据
         {name: "事项总数", value: 30},
@@ -312,6 +325,7 @@ export default {
             let data = res.data;
             if (data.code === 200) {
               this.dashboard_number_data = data.data.dashboard_number_data;
+              this.matter_all_data = data.data.matter_all_data;
             } else {
               this.$message.error(data.message);
             }
