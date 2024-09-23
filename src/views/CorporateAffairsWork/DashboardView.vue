@@ -34,7 +34,7 @@
         </div>
         <div class=" work_block">
           <el-tabs v-model="activeName">
-            <el-tab-pane label="个人待完成" name="comprehensive">
+            <el-tab-pane label="近期待完成" name="comprehensive">
               <div style="width: 100%; display: inline-block">
                 <div
                     ref="lineChart"
@@ -43,7 +43,7 @@
                 ></div>
               </div>
             </el-tab-pane>
-            <el-tab-pane label="事务信息展示-饼状图" name="pancake">
+            <el-tab-pane label="全部待完成" name="pancake">
               <div style="width: 100%; display: inline-block">
                 <div
                     ref="pieChart"
@@ -52,7 +52,7 @@
                 ></div>
               </div>
             </el-tab-pane>
-            <el-tab-pane label="事务信息展示-柱状图" name="column">
+            <el-tab-pane label="全部" name="column">
               <div style="width: 100%; display: inline-block">
                 <div
                     ref="columnar"
@@ -192,7 +192,7 @@ export default {
       const pie_Chart = init(this.$refs.pieChart);
       pie_Chart.setOption({
         title: {
-          text: "展示全部的事务分类（包含已完成）",
+          text: "待完成",
           left: "center",
         },
         toolbox: {
