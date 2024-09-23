@@ -20,13 +20,13 @@ const routes = [
     path: "/404",
     name: "404",
     meta: { title: "错误页面：资源错误" },
-    component: () => import("@/views/ErroeViews/404.vue"),
+    component: () => import("@/views/ErrorViews/404.vue"),
   },
   {
     path: "/500",
     name: "500",
     meta: { title: "错误页面：接口错误" },
-    component: () => import("@/views/ErroeViews/500.vue"),
+    component: () => import("@/views/ErrorViews/500.vue"),
   },
   {
     path: "/index",
