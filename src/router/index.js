@@ -86,7 +86,7 @@ const routes = [
         path: "message/", // 用户下来菜单中的访问记录页面
         name: "message",
         component: () => import("@/views/UserDropdown/MessageView"),
-        meta: { title: "个人消息管理" },
+        meta: { title: "个人公告信息" },
       },
     ],
   },
@@ -129,6 +129,12 @@ const routes = [
         name: "users_access",
         component: () => import("@/views/BasicFunctionMenu/UsersAccessView.vue"),
         meta: { title: "用户访问查询" },
+      },
+      {
+        path: "notice/", // 公告发布
+        name: "notice",
+        component: () => import("@/views/BasicFunctionMenu/NoticeView"),
+        meta: { title: "公告发布" },
       },
     ],
   },

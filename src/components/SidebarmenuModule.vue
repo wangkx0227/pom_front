@@ -47,7 +47,7 @@
       <el-menu-item index="/basic_function/user_roles/">角色管理</el-menu-item>
       <el-menu-item index="/basic_function/front_menu/">菜单管理</el-menu-item>
       <el-menu-item index="/basic_function/users_access/">用户访问查询</el-menu-item>
-      <el-menu-item index="7-10">公告发布</el-menu-item>
+      <el-menu-item index="/basic_function/notice/">公告发布</el-menu-item>
     </el-submenu>
     <el-submenu index="7">
       <template v-slot:title>
