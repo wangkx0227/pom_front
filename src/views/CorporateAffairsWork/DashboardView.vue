@@ -166,7 +166,6 @@ export default {
       // 饼状图
       pieChartData: [
         // 饼状图数据
-        {name: "事项总数", value: 0},
         {name: "订单事务", value: 0},
         {name: "非订单事务", value: 0},
         {name: "特殊事务", value: 0},
