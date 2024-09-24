@@ -404,8 +404,13 @@ export default {
             let data = res.data;
             if (data.code === 200) {
               this.$message.success(data.message);
-              this.getRuleData();
               rows.splice(index, 1);
+              if (rows.length === 0) {
+                if (this.page !== 1) {
+                  this.page -= 1;
+                }
+              }
+              this.getRuleData();
             } else {
               this.$message.error(data.message);
             }

@@ -184,8 +184,13 @@ export default {
             let data = res.data;
             if (data.code === 200) {
               this.$message.success(data.message);
-              this.getroleDate();
               rows.splice(index, 1);
+              if (rows.length === 0) {
+                if (this.page !== 1) {
+                  this.page -= 1;
+                }
+              }
+              this.getroleDate();
             } else {
               this.$message.error(data.message);
             }
