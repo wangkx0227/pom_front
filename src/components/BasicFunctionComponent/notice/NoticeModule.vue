@@ -2,7 +2,7 @@
   <div class="factory_bind_user" v-loading="loading">
     <div class="head_search_add">
       <el-button type="info" icon="el-icon-circle-plus-outline" plain @click="addNotice">添加公告</el-button>
-      <el-input placeholder="请输入公告标题" clearable class="input_search" v-model="search" >
+      <el-input placeholder="请输入公告标题" clearable class="input_search" v-model="search">
       </el-input>
       <el-button type="primary" icon="el-icon-search" plain @click="searchDate">搜索
       </el-button>
@@ -10,7 +10,7 @@
       </el-button>
     </div>
     <div class="table_content">
-      <el-table  :data='NoticeListData' style="width: 100%" height="610">
+      <el-table :data='NoticeListData' style="width: 100%" height="610">
         <el-table-column prop="index" label="#" align="center"></el-table-column>
         <el-table-column label="标题" align="center" prop="title">
         </el-table-column>
@@ -22,30 +22,36 @@
         </el-table-column>
         <el-table-column label="操作" align="center" width="180">
           <template v-slot="scope">
-            <el-button v-if="!scope.row.editable" size="mini"
-                       type="text">编辑
+            <el-button size="mini" type="text">编辑
             </el-button>
             <el-divider direction="vertical"></el-divider>
-            <el-button v-if="!scope.row.editable" size="mini"
-                       type="text">删除
+            <el-popover placement="top" width="160" v-model="scope.row.visible"
+              trigger="manual">
+              <p>删除后无恢复，请问确定删除吗？</p>
+              <div style="text-align: right; margin: 0">
+                <el-button size="mini" type="text" @click="scope.row.visible = false">取消
+                </el-button>
+                <el-button type="primary" size="mini" @click="deleteRow(scope.$index, NoticeListData, scope.row)">确定
+                </el-button>
+              </div>
+              <template v-slot:reference>
+                <el-button size="mini" type="text" @click="deleteDisplay(scope.row)">删除
+                </el-button>
+              </template>
+            </el-popover>
             </el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
     <div class="pagination">
-      <el-pagination hide-on-single-page @current-change="currentPage" @prev-click="prevPage"
-                     @next-click="nextPage" background layout="total,prev, pager, next" :page-size="10"
-                     :total="data_total" v-model:current-page="page">
+      <el-pagination hide-on-single-page @current-change="currentPage" @prev-click="prevPage" @next-click="nextPage"
+        background layout="total,prev, pager, next" :page-size="10" :total="data_total" v-model:current-page="page">
       </el-pagination>
     </div>
     <div class="notice_drawer">
-      <el-drawer
-          size="60%"
-          :title="drawer_title"
-          :visible.sync="drawer"
-          direction="rtl"
-          :before-close="NoticeHandleClose">
+      <el-drawer size="60%" :title="drawer_title" :visible.sync="drawer" direction="rtl"
+        :before-close="NoticeHandleClose">
         <div style="margin: 0 auto;width: 80%;height: 100%">
           <div class="notice_title" style="margin-bottom: 10px">
             标题：
@@ -53,29 +59,19 @@
           </div>
           <div class="notice_content" style="margin-bottom: 10px;height: 430px">
             内容：
-            <quill-editor
-                style="height: 350px"
-                v-model="notice_content"
-                ref="myQuillEditor"
-                :options="editorOption"
-                @blur="onEditorBlur($event)"
-                @focus="onEditorFocus($event)"
-                @change="onEditorChange($event)">
+            <quill-editor style="height: 350px" v-model="notice_content" ref="myQuillEditor" :options="editorOption"
+              @blur="onEditorBlur($event)" @focus="onEditorFocus($event)" @change="onEditorChange($event)">
             </quill-editor>
           </div>
           <div>
             公告接受角色：
             <el-select v-model="notice_type" placeholder="请选择公告类型">
-              <el-option
-                  v-for="item in RolesListData"
-                  :key="item.id"
-                  :label="item.role"
-                  :value="item.id">
+              <el-option v-for="item in RolesListData" :key="item.id" :label="item.role" :value="item.id">
               </el-option>
             </el-select>
           </div>
           <el-divider></el-divider>
-          <el-button type="info" plain @click="saveNotice" style='float: right' >提交</el-button>
+          <el-button type="info" plain @click="saveNotice" style='float: right'>提交</el-button>
         </div>
 
       </el-drawer>
@@ -88,7 +84,7 @@ import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 
-import {quillEditor} from 'vue-quill-editor'
+import { quillEditor } from 'vue-quill-editor'
 
 export default {
   components: {
@@ -97,6 +93,7 @@ export default {
   name: "FactoryBindUser",
   data() {
     return {
+      NoticeListData: [],
       // 抽屉的变量
       drawer: false,
       loading: false, // 数据加载样式
@@ -112,20 +109,20 @@ export default {
         modules: {
           toolbar: [
             ['bold', 'italic', 'underline', 'strike'], //加粗，斜体，下划线，删除线
-            [{'list': 'ordered'}], //列表
-            [{'script': 'sub'}, {'script': 'super'}], // 上下标
-            [{'indent': '-1'}, {'indent': '+1'}], // 缩进
-            [{'header': [1, 2, 3, 4, 5, 6]}], //几级标题
+            [{ 'list': 'ordered' }], //列表
+            [{ 'script': 'sub' }, { 'script': 'super' }], // 上下标
+            [{ 'indent': '-1' }, { 'indent': '+1' }], // 缩进
+            [{ 'header': [1, 2, 3, 4, 5, 6] }], //几级标题
             ['clean'], //清除字体样式
             ['image', 'video'] //上传图片、上传视频
           ]
         },
         placeholder: "输入内容..."
       },
-      notice_type: 0 , // 公告类型，按照角色进行区分
+      notice_type: 0, // 公告类型，按照角色进行区分
       RolesListData: [], // 角色列表
       // 搜索
-      search:'',
+      search: null,
     };
   },
   created() {
@@ -144,40 +141,40 @@ export default {
         get_url = `foundation/notice/?page=${this.page}`;
       }
       this.$http
-          .get(get_url)
-          .then((res) => {
-            let data = res.data;
-            if (data.code === 200) {
-              this.NoticeListData = data.data.data;
-            } else {
-              this.NoticeListData = [];
-            }
-          })
-          .catch((error) => {
-            this.$message.error(error.message);
-          })
-          .finally(() => {
-            this.loading = false;
-          });
+        .get(get_url)
+        .then((res) => {
+          let data = res.data;
+          if (data.code === 200) {
+            this.NoticeListData = data.data.data;
+          } else {
+            this.NoticeListData = [];
+          }
+        })
+        .catch((error) => {
+          this.$message.error(error.message);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
     // 获取角色，根据角色进去发送公告
     getRoleData() {
       this.$http
-          .get("users/roles/?status=all",)
-          .then((res) => {
-            let data = res.data;
-            if (data.code === 200) {
-              this.RolesListData = data.data;
-            } else {
-              this.RolesListData = [];
-            }
-            this.RolesListData.unshift({id:0,role:'全部'})
-          })
-          .catch((error) => {
-            this.$message.error(error.message);
-          })
-          .finally(() => {
-          });
+        .get("users/roles/?status=all",)
+        .then((res) => {
+          let data = res.data;
+          if (data.code === 200) {
+            this.RolesListData = data.data;
+          } else {
+            this.RolesListData = [];
+          }
+          this.RolesListData.unshift({ id: 0, role: '全部' })
+        })
+        .catch((error) => {
+          this.$message.error(error.message);
+        })
+        .finally(() => {
+        });
     },
     // 页码功能
     nextPage(page) {
@@ -211,6 +208,7 @@ export default {
     // 重置
     reloadDate() {
       this.page = 1;
+      this.search = null;
       this.getNoticeDate();
     },
     // 添加按钮
@@ -221,24 +219,24 @@ export default {
     // 抽屉的关闭函数
     NoticeHandleClose(done) {
       this.$confirm('确认关闭？关闭后编辑的内容就消失!')
-          .then(_ => {
-            done();
-            this.content = '';
-          })
-          .catch(_ => {
-          });
+        .then(_ => {
+          done();
+          this.content = '';
+        })
+        .catch(_ => {
+        });
     },
     // 抽屉内提交按钮
-    saveNotice(){
-      if(!this.notice_title){
+    saveNotice() {
+      if (!this.notice_title) {
         this.$notify({
           title: '提示',
           message: '标题不能为空！',
           type: 'warning',
           offset: 30,
-          duration:2000,
+          duration: 2000,
         });
-      }else {
+      } else {
         console.log(this.notice_content)
       }
 
@@ -251,10 +249,38 @@ export default {
     onEditorChange() {
     }, // 内容改变触发事件
 
-
+    // 删除
+     //删除按钮显示小弹框
+     deleteDisplay(row) {
+      row.visible = true;
+    },
+    // 删除按钮确认删除
+    deleteRow(index, rows, row) {
+      let pk = row.id;
+      this.loading = true;
+      this.$http
+          .delete("foundation/notice/", {
+            data: {pk: pk},
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.$message.success(data.message);
+              this.getNoticeDate();
+              rows.splice(index, 1);
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+    },
   },
 }
 </script>
 
-<style>
-</style>
+<style></style>
