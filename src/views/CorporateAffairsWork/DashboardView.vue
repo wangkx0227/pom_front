@@ -65,14 +65,14 @@
         </div>
         <div class=" work_block">
           <el-table
-              :data="tableData"
+              :data="notice_data_list"
               height="330"
               border
               @row-click="getNotice"
               style="width: 100%;margin-top: 5px">
             <el-table-column label="公告信息" align="center">
               <el-table-column
-                  prop="date"
+                  prop="create_date"
                   label="日期"
                   width="100" align="center">
               </el-table-column>
@@ -83,7 +83,7 @@
               </el-table-column>
               <el-table-column
                   prop="user_name"
-                  label="发送者" width="180" align="center">
+                  label="发布者" width="180" align="center">
               </el-table-column>
             </el-table-column>
           </el-table>
@@ -178,11 +178,7 @@ export default {
       linkChartDate: [], // 时间展示
       // 公告数据
       NoticeDrawer: false, // 公告的变量
-      tableData: [{
-        date: '2016-05-03',
-        title: '上海市普陀区金沙江路 1518 弄',
-        user_name: '王凯鑫'
-      }]
+      notice_data_list: [], // 公告数据列表展示
     }
   },
   methods: {
@@ -308,6 +304,7 @@ export default {
               this.matter_all_data = data.data.matter_all_data;
               this.pieChartData = data.data.chart_data_list;
               this.columnarDate = data.data.columnar_data_list;
+              this.notice_data_list = data.data.notice_data_list;
               // 线型图的时间展示
               this.linkChartDate = data.data.link_chart_data.link_chart_date_list;
               this.linkChartData = data.data.link_chart_data.link_chart_data_list;
