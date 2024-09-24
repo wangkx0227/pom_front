@@ -25,8 +25,7 @@
             <el-button size="mini" type="text">编辑
             </el-button>
             <el-divider direction="vertical"></el-divider>
-            <el-popover placement="top" width="160" v-model="scope.row.visible"
-              trigger="manual">
+            <el-popover placement="top" width="160" v-model="scope.row.visible" trigger="manual">
               <p>删除后无恢复，请问确定删除吗？</p>
               <div style="text-align: right; margin: 0">
                 <el-button size="mini" type="text" @click="scope.row.visible = false">取消
@@ -217,13 +216,9 @@ export default {
     },
     // 抽屉的关闭函数
     NoticeHandleClose(done) {
-      this.$confirm('确认关闭？关闭后编辑的内容就消失!')
-        .then(_ => {
-          done();
-          this.content = '';
-        })
-        .catch(_ => {
-        });
+      done();
+      this.content = '';
+      this.getNoticeDate();
     },
     // 抽屉内提交按钮
     saveNotice() {
@@ -236,7 +231,33 @@ export default {
           duration: 2000,
         });
       } else {
-        console.log(this.notice_content)
+        this.$http
+          .post("foundation/notice/", {
+            data: {
+              title: this.notice_title,
+              content: this.notice_content,
+              type: this.notice_type,
+            }
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.$message.success(data.message);
+              data.data.index = 1;
+              this.NoticeListData.unshift(data.data);
+
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.notice_title = '';
+            this.notice_content = '';
+            this.notice_type = 0;
+          });
       }
 
     },
@@ -247,10 +268,9 @@ export default {
     }, // 获得焦点触发事件
     onEditorChange() {
     }, // 内容改变触发事件
-
     // 删除
-     //删除按钮显示小弹框
-     deleteDisplay(row) {
+    //删除按钮显示小弹框
+    deleteDisplay(row) {
       row.visible = true;
     },
     // 删除按钮确认删除
@@ -258,25 +278,25 @@ export default {
       let pk = row.id;
       this.loading = true;
       this.$http
-          .delete("foundation/notice/", {
-            data: {pk: pk},
-          })
-          .then((res) => {
-            let data = res.data;
-            if (data.code === 200) {
-              this.$message.success(data.message);
-              this.getNoticeDate();
-              rows.splice(index, 1);
-            } else {
-              this.$message.error(data.message);
-            }
-          })
-          .catch((error) => {
-            this.$message.error(error.message);
-          })
-          .finally(() => {
-            this.loading = false;
-          });
+        .delete("foundation/notice/", {
+          data: { pk: pk },
+        })
+        .then((res) => {
+          let data = res.data;
+          if (data.code === 200) {
+            this.$message.success(data.message);
+            this.getNoticeDate();
+            rows.splice(index, 1);
+          } else {
+            this.$message.error(data.message);
+          }
+        })
+        .catch((error) => {
+          this.$message.error(error.message);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
   },
 }

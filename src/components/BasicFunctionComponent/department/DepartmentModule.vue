@@ -240,7 +240,6 @@ export default {
                 data.data.index = 1;
                 this.DepartmentData.unshift(data.data);
                 this.$refs[formName].resetFields();
-                this.FirmDataSearch = [];
               } else {
                 this.$message.error(data.message);
               }
