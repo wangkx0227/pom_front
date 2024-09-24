@@ -64,13 +64,13 @@
             </quill-editor>
           </div>
           <div>
-            公告类型（不选择默认是全部）：
-            <el-select v-model="value" placeholder="请选择公告类型">
+            公告类型接受（不选择默认是全部）：
+            <el-select v-model="notice_type" placeholder="请选择公告类型">
               <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
+                  v-for="item in RolesListData"
+                  :key="item.id"
+                  :label="item.role"
+                  :value="item.id">
               </el-option>
             </el-select>
           </div>
@@ -122,35 +122,38 @@ export default {
         },
         placeholder: "输入内容..."
       },
-      // 类型
-      options: [{
-        value: '选项1',
-        label: '黄金糕'
-      }, {
-        value: '选项2',
-        label: '双皮奶'
-      }, {
-        value: '选项3',
-        label: '蚵仔煎'
-      }, {
-        value: '选项4',
-        label: '龙须面'
-      }, {
-        value: '选项5',
-        label: '北京烤鸭'
-      }],
-      value: ''
+      notice_type: '', // 公告类型，按照角色进行区分
+      RolesListData: [], // 角色列表
     };
   },
   created() {
     this.loading = true;
-    this.getFactoryDate();
+    this.getRoleData();
+    this.getNoticeDate();
 
   },
   methods: {
     // 获取数据
-    getFactoryDate() {
+    getNoticeDate() {
       this.loading = false;
+    },
+    // 获取角色，根据角色进去发送公告
+    getRoleData() {
+      this.$http
+          .get("users/roles/?status=all",)
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.RolesListData = data.data;
+            } else {
+              this.RolesListData = [];
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+          });
     },
     // 页码功能
     nextPage(page) {
@@ -158,33 +161,33 @@ export default {
       this.page_status = page;
       this.page = page;
       // 下一页按钮
-      this.getFactoryDate();
+      this.getNoticeDate();
     },
     prevPage(page) {
       this.loading = true;
       this.page_status = page;
       this.page = page;
       // 上一页按钮
-      this.getFactoryDate();
+      this.getNoticeDate();
     },
     currentPage(page) {
       this.loading = true;
       this.page = page;
       // 点击按钮触发
       if (this.page_status === 0) {
-        this.getFactoryDate();
+        this.getNoticeDate();
       }
     },
     // 搜索功能
     searchDate() {
       this.loading = true;
       this.page = 1;
-      this.getFactoryDate();
+      this.getNoticeDate();
     },
     // 重置
     reloadDate() {
       this.page = 1;
-      this.getFactoryDate();
+      this.getNoticeDate();
     },
     // 添加公告
     addNotice() {
