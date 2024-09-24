@@ -70,21 +70,9 @@
               border
               @row-click="getNotice"
               style="width: 100%;margin-top: 5px">
-            <el-table-column label="公告信息" align="center">
-              <el-table-column
-                  prop="create_date"
-                  label="日期"
-                  width="100" align="center">
-              </el-table-column>
               <el-table-column
                   prop="title"
-                  label="标题"
-                  align="center">
-              </el-table-column>
-              <el-table-column
-                  prop="user_name"
-                  label="发布者" width="180" align="center">
-              </el-table-column>
+                >
             </el-table-column>
           </el-table>
         </div>
