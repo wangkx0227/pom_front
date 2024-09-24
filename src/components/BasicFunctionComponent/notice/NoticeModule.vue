@@ -64,7 +64,7 @@
             </quill-editor>
           </div>
           <div>
-            公告类型接受（不选择默认是全部）：
+            公告类型接受：
             <el-select v-model="notice_type" placeholder="请选择公告类型">
               <el-option
                   v-for="item in RolesListData"
@@ -122,7 +122,7 @@ export default {
         },
         placeholder: "输入内容..."
       },
-      notice_type: '', // 公告类型，按照角色进行区分
+      notice_type: 0 , // 公告类型，按照角色进行区分
       RolesListData: [], // 角色列表
     };
   },
@@ -148,6 +148,7 @@ export default {
             } else {
               this.RolesListData = [];
             }
+            this.RolesListData.unshift({id:0,role:'全部'})
           })
           .catch((error) => {
             this.$message.error(error.message);
@@ -211,6 +212,8 @@ export default {
     }, // 获得焦点触发事件
     onEditorChange() {
     }, // 内容改变触发事件
+    // 保存按钮
+
   },
 }
 </script>
