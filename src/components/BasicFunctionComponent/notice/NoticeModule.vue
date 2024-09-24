@@ -22,7 +22,7 @@
         </el-table-column>
         <el-table-column label="操作" align="center" width="180">
           <template v-slot="scope">
-            <el-button size="mini" type="text">编辑
+            <el-button size="mini" type="text" @click="updateNotice(scope.row)">编辑
             </el-button>
             <el-divider direction="vertical"></el-divider>
             <el-popover placement="top" width="160" v-model="scope.row.visible" trigger="manual">
@@ -69,7 +69,7 @@
             </el-select>
           </div>
           <el-divider></el-divider>
-          <el-button type="info" plain @click="saveNotice" style='float: right'>提交</el-button>
+          <el-button type="info" plain @click="saveNotice" style='float: right' :loading="SaveLoading">提交</el-button>
         </div>
 
       </el-drawer>
@@ -96,6 +96,7 @@ export default {
       drawer: false,
       loading: false, // 数据加载样式
       drawer_title: '公告发布',
+      SaveLoading:false, // 抽屉的添加按钮加载变量
       // 分页
       data_total: 0, // 数据总数
       page_status: 0, // 分页状态变量，当上下一页时进行改变，只有是0时点击数字页码会改变
@@ -121,6 +122,8 @@ export default {
       RolesListData: [], // 角色列表
       // 搜索
       search: null,
+      // 修改使用的id
+      pk: null,
     };
   },
   created() {
@@ -144,6 +147,8 @@ export default {
           let data = res.data;
           if (data.code === 200) {
             this.NoticeListData = data.data.data;
+            this.data_total = data.data.data_total;
+            this.method_list = data.data.method_list;
           } else {
             this.NoticeListData = [];
           }
@@ -211,13 +216,16 @@ export default {
     },
     // 添加按钮
     addNotice() {
-      this.drawer_title = '公告编辑'
+      this.drawer_title = '公告添加';
       this.drawer = true;
     },
     // 抽屉的关闭函数
     NoticeHandleClose(done) {
       done();
-      this.content = '';
+      this.pk = null;
+      this.notice_title = '';
+      this.notice_content = '';
+      this.notice_type = 0;
       this.getNoticeDate();
     },
     // 抽屉内提交按钮
@@ -231,8 +239,15 @@ export default {
           duration: 2000,
         });
       } else {
+        this.SaveLoading = true;
+        let get_url;
+        if (this.pk) {
+          get_url = `foundation/notice/?pk=${this.pk}`;
+        } else {
+          get_url = `foundation/notice/`;
+        }
         this.$http
-          .post("foundation/notice/", {
+          .post(get_url, {
             data: {
               title: this.notice_title,
               content: this.notice_content,
@@ -243,9 +258,13 @@ export default {
             let data = res.data;
             if (data.code === 200) {
               this.$message.success(data.message);
-              data.data.index = 1;
-              this.NoticeListData.unshift(data.data);
-
+              if (!this.pk) {
+                data.data.index = 1;
+                this.NoticeListData.unshift(data.data);
+                this.notice_title = '';
+                this.notice_content = '';
+                this.notice_type = 0;
+              }
             } else {
               this.$message.error(data.message);
             }
@@ -254,9 +273,7 @@ export default {
             this.$message.error(error.message);
           })
           .finally(() => {
-            this.notice_title = '';
-            this.notice_content = '';
-            this.notice_type = 0;
+            this.SaveLoading = false;
           });
       }
 
@@ -285,8 +302,14 @@ export default {
           let data = res.data;
           if (data.code === 200) {
             this.$message.success(data.message);
-            this.getNoticeDate();
             rows.splice(index, 1);
+            // 如果删除的时候，页面内的数据已经删除完毕了，通过这层判断进行操作重定向前面的页面（需要在每一个需要进行删除的操作中添加当前判断）
+            if (rows.length === 0) {
+              if (this.page !== 1) {
+                this.page -= 1;
+              }
+            };
+            this.getNoticeDate();
           } else {
             this.$message.error(data.message);
           }
@@ -298,6 +321,15 @@ export default {
           this.loading = false;
         });
     },
+    // 编辑
+    updateNotice(row) {
+      this.drawer_title = '公告编辑';
+      this.drawer = true;
+      this.notice_title = row.title;
+      this.notice_type = row.type;
+      this.notice_content = row.content;
+      this.pk = row.id;
+    }
   },
 }
 </script>
