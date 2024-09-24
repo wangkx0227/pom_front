@@ -12,9 +12,9 @@
     <div class="table_content">
       <el-table  :data='NoticeListData' style="width: 100%" height="610">
         <el-table-column prop="index" label="#" align="center"></el-table-column>
-        <el-table-column label="标题" align="center" prop="factory_name">
+        <el-table-column label="标题" align="center" prop="title">
         </el-table-column>
-        <el-table-column label="公告类型" align="center" prop="factory_code">
+        <el-table-column label="公告接受角色" align="center" prop="type_info">
         </el-table-column>
         <el-table-column label="创建时间" align="center" prop="create_date">
         </el-table-column>
@@ -64,7 +64,7 @@
             </quill-editor>
           </div>
           <div>
-            公告类型接受：
+            公告接受角色：
             <el-select v-model="notice_type" placeholder="请选择公告类型">
               <el-option
                   v-for="item in RolesListData"
@@ -148,7 +148,7 @@ export default {
           .then((res) => {
             let data = res.data;
             if (data.code === 200) {
-              this.NoticeListData = data.data;
+              this.NoticeListData = data.data.data;
             } else {
               this.NoticeListData = [];
             }
