@@ -39,7 +39,6 @@
                 </el-button>
               </template>
             </el-popover>
-            </el-button>
           </template>
         </el-table-column>
       </el-table>
