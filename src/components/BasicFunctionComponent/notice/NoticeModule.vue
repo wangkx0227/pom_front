@@ -2,7 +2,7 @@
   <div class="factory_bind_user" v-loading="loading">
     <div class="head_search_add">
       <el-button type="info" icon="el-icon-circle-plus-outline" plain @click="addNotice">添加公告</el-button>
-      <el-input placeholder="请输入公告标题" clearable class="input_search">
+      <el-input placeholder="请输入公告标题" clearable class="input_search" v-model="search" >
       </el-input>
       <el-button type="primary" icon="el-icon-search" plain @click="searchDate">搜索
       </el-button>
@@ -10,7 +10,7 @@
       </el-button>
     </div>
     <div class="table_content">
-      <el-table  style="width: 100%" height="610">
+      <el-table  :data='NoticeListData' style="width: 100%" height="610">
         <el-table-column prop="index" label="#" align="center"></el-table-column>
         <el-table-column label="标题" align="center" prop="factory_name">
         </el-table-column>
@@ -124,6 +124,8 @@ export default {
       },
       notice_type: 0 , // 公告类型，按照角色进行区分
       RolesListData: [], // 角色列表
+      // 搜索
+      search:'',
     };
   },
   created() {
@@ -135,7 +137,28 @@ export default {
   methods: {
     // 获取数据
     getNoticeDate() {
-      this.loading = false;
+      let get_url;
+      if (this.search) {
+        get_url = `foundation/notice/?page=${this.page}&search=${this.search}`;
+      } else {
+        get_url = `foundation/notice/?page=${this.page}`;
+      }
+      this.$http
+          .get(get_url)
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.NoticeListData = data.data;
+            } else {
+              this.NoticeListData = [];
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.loading = false;
+          });
     },
     // 获取角色，根据角色进去发送公告
     getRoleData() {
@@ -207,7 +230,18 @@ export default {
     },
     // 抽屉内提交按钮
     saveNotice(){
-      console.log(this.notice_content)
+      if(!this.notice_title){
+        this.$notify({
+          title: '提示',
+          message: '标题不能为空！',
+          type: 'warning',
+          offset: 30,
+          duration:2000,
+        });
+      }else {
+        console.log(this.notice_content)
+      }
+
     },
     // 富文本
     onEditorBlur() {
