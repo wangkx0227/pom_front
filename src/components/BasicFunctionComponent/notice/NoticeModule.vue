@@ -10,7 +10,7 @@
       </el-button>
     </div>
     <div class="table_content">
-      <el-table :data="factoryData" style="width: 100%" height="610">
+      <el-table  style="width: 100%" height="610">
         <el-table-column prop="index" label="#" align="center"></el-table-column>
         <el-table-column label="标题" align="center" prop="factory_name">
         </el-table-column>
@@ -75,7 +75,7 @@
             </el-select>
           </div>
           <el-divider></el-divider>
-          <el-button type="info" plain @click="addNotice" style='float: right'>提交</el-button>
+          <el-button type="info" plain @click="saveNotice" style='float: right' >提交</el-button>
         </div>
 
       </el-drawer>
@@ -190,12 +190,12 @@ export default {
       this.page = 1;
       this.getNoticeDate();
     },
-    // 添加公告
+    // 添加按钮
     addNotice() {
       this.drawer_title = '公告编辑'
       this.drawer = true;
     },
-    // 抽屉的函数
+    // 抽屉的关闭函数
     NoticeHandleClose(done) {
       this.$confirm('确认关闭？关闭后编辑的内容就消失!')
           .then(_ => {
@@ -205,6 +205,10 @@ export default {
           .catch(_ => {
           });
     },
+    // 抽屉内提交按钮
+    saveNotice(){
+      console.log(this.notice_content)
+    },
     // 富文本
     onEditorBlur() {
     }, // 失去焦点触发事件
@@ -212,7 +216,7 @@ export default {
     }, // 获得焦点触发事件
     onEditorChange() {
     }, // 内容改变触发事件
-    // 保存按钮
+
 
   },
 }
