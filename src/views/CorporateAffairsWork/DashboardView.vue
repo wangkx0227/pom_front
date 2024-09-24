@@ -68,6 +68,7 @@
               :data="notice_data_list"
               height="330"
               border
+              cell-style="cursor: pointer;"
               @cell-click="getNotice"
               style="width: 100%;margin-top: 5px">
             <el-table-column label="公告" align="center">
@@ -133,11 +134,24 @@
     </el-card>
     <div class="notice_drawer">
       <el-drawer
-          title="我嵌套了表格!"
           :before-close="CloseNotice"
           :visible.sync="NoticeDrawer"
           direction="rtl"
           size="50%">
+        <div class="notice_main">
+          <div class="notice_head">
+            <div class="notice_head_title">
+              <h4>{{ notice_title }}</h4>
+            </div>
+            <div class="notice_head_main">
+              <span>创建时间：{{ notice_create_date }}</span>
+              <span>作者：{{notice_user_name}}</span>
+            </div>
+          </div>
+          <el-divider></el-divider>
+          <div class="notice_content" v-html="notice_content">
+          </div>
+        </div>
       </el-drawer>
     </div>
   </div>
@@ -175,6 +189,11 @@ export default {
       // 公告数据
       NoticeDrawer: false, // 公告的变量
       notice_data_list: [], // 公告数据列表展示
+      // 公告查询
+      notice_title: null,
+      notice_user_name: null,
+      notice_content: null,
+      notice_create_date: null,
     }
   },
   methods: {
@@ -322,7 +341,10 @@ export default {
     // 查看公告信息弹窗
     getNotice(row, column, event) {
       this.NoticeDrawer = true;
-      console.log(row, column, event)
+      this.notice_create_date = row.create_date;
+      this.notice_title = row.title;
+      this.notice_user_name = row.user_name;
+      this.notice_content = row.content;
     },
     // 公告关闭调用函数
     CloseNotice(done) {
@@ -362,6 +384,28 @@ export default {
   padding: 0 10px;
 }
 
+.notice_main {
+  width: 80%;
+  margin: 0 auto;
+}
+
+.notice_head {
+  text-align: center;
+  margin: 0 auto;
+}
+
+.notice_head_title {
+  font-size: 16px;
+}
+
+.notice_head_main {
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.notice_head_main span {
+  margin-left: 10px;
+}
 @media screen and (max-width: 700px) {
   .pie-chart-card {
     width: 94.5% !important;
