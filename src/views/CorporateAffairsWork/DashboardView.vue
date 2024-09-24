@@ -2,7 +2,7 @@
   <div class="dashboard_info" v-loading="loading">
     <el-card class="box-card">
       <div class="container">
-        <div class=" work_container">
+        <div class="work_container">
           <div class="work_block">
             <el-result title="订单事务" :subTitle="`${dashboard_number_data.order_matter_num}`">
               <template slot="icon">
@@ -32,7 +32,7 @@
             </el-result>
           </div>
         </div>
-        <div class=" work_block">
+        <div class="work_block">
           <el-tabs v-model="activeName">
             <el-tab-pane label="近期待完成" name="comprehensive">
               <div style="width: 100%; display: inline-block">
@@ -63,20 +63,28 @@
             </el-tab-pane>
           </el-tabs>
         </div>
-        <div class=" work_block">
+        <div class="work_block">
           <el-table
               :data="notice_data_list"
               height="330"
               border
-              @row-click="getNotice"
+              @cell-click="getNotice"
               style="width: 100%;margin-top: 5px">
+            <el-table-column label="公告" align="center">
               <el-table-column
                   prop="title"
-                >
+                  label="公告标题"
+                  align="center">
+              </el-table-column>
+              <el-table-column
+                  prop="user_name"
+                  label="发布人"
+                  align="center" width="100">
+              </el-table-column>
             </el-table-column>
           </el-table>
         </div>
-        <div class=" work_block">
+        <div class="work_block">
           <el-table
               :data="matter_all_data"
               height="330"
@@ -353,7 +361,6 @@ export default {
   margin: 0 10px 10px 10px;
   padding: 0 10px;
 }
-
 
 @media screen and (max-width: 700px) {
   .pie-chart-card {

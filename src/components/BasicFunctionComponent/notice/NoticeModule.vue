@@ -16,6 +16,8 @@
         </el-table-column>
         <el-table-column label="公告接受角色" align="center" prop="type_info">
         </el-table-column>
+        <el-table-column label="发布用户" align="center" prop="user_name">
+        </el-table-column>
         <el-table-column label="创建时间" align="center" prop="create_date">
         </el-table-column>
         <el-table-column label="更新时间	" align="center" prop="update_date">
