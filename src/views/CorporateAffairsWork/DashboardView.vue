@@ -73,13 +73,19 @@
               style="width: 100%;margin-top: 5px">
             <el-table-column label="最新消息" align="center">
               <el-table-column
+                  prop="index"
+                  label="#"
+                  width="60"
+                  align="center">
+              </el-table-column>
+              <el-table-column
                   prop="title"
                   label="消息标题"
                   align="center">
               </el-table-column>
               <el-table-column
                   prop="user_name"
-                  label="发布人"
+                  label="作者"
                   align="center" width="100">
               </el-table-column>
             </el-table-column>
@@ -95,7 +101,7 @@
               <el-table-column
                   prop="index"
                   label="#"
-                  width="40"
+                  width="60"
                   align="center">
               </el-table-column>
               <el-table-column

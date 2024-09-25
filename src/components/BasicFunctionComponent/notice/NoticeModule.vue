@@ -73,7 +73,8 @@
             </el-select>
           </div>
           <el-divider></el-divider>
-          <el-button type="info" plain @click="saveNotice" style='float: right' :loading="SaveLoading">提交</el-button>
+          <el-button type="primary" plain @click="drawer=false" style='float: right;'>关闭</el-button>
+          <el-button  type="success" plain @click="saveNotice" style='float: right;margin-right: 10px' :loading="SaveLoading">提交</el-button>
         </div>
       </el-drawer>
     </div>
