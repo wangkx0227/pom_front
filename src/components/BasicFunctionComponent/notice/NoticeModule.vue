@@ -1,7 +1,7 @@
 <template>
   <div class="factory_bind_user" v-loading="loading">
     <div class="head_search_add">
-      <el-button type="info" plain @click="addNotice">添加信息</el-button>
+      <el-button type="info" plain @click="addShowDrawer">添加信息</el-button>
       <el-input placeholder="请输入信息标题" clearable class="input_search" v-model="search">
       </el-input>
       <el-button type="primary" icon="el-icon-search" plain @click="searchDate">搜索
@@ -20,7 +20,7 @@
           </template>
         </el-table-column>
         <el-table-column label="发布用户" align="center">
-          <template v-slot="{ row }"  >
+          <template v-slot="{ row }">
             <el-tag effect="plain">{{ row.user_name }}</el-tag>
           </template>
         </el-table-column>
@@ -30,7 +30,7 @@
         </el-table-column>
         <el-table-column label="操作" align="center" width="180">
           <template v-slot="scope">
-            <el-button size="mini" type="text" @click="updateNotice(scope.row)">编辑
+            <el-button size="mini" type="text" @click="updateShowDrawer(scope.row)">编辑
             </el-button>
             <el-divider direction="vertical"></el-divider>
             <el-popover placement="top" width="160" v-model="scope.row.visible" trigger="manual">
@@ -79,8 +79,13 @@
             </el-select>
           </div>
           <el-divider></el-divider>
-          <el-button type="primary" plain @click="drawer=false" style='float: right;'>关闭</el-button>
-          <el-button  type="success" plain @click="saveNotice" style='float: right;margin-right: 10px' :loading="SaveLoading">提交</el-button>
+          <el-button type="primary" plain @click="DrawerClose" style='float: right;'>关闭</el-button>
+          <el-button v-if="!updateButtonValue" type="success" plain @click="saveNotice" style='float: right;margin-right: 10px'
+                     :loading="DrawerLoading">提交
+          </el-button>
+          <el-button v-else type="success" plain @click="updateNotice" style='float: right;margin-right: 10px'
+                     :loading="DrawerLoading">修改
+          </el-button>
         </div>
       </el-drawer>
     </div>
@@ -92,7 +97,8 @@ import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 
-import { quillEditor } from 'vue-quill-editor'
+import {quillEditor} from 'vue-quill-editor'
+
 export default {
   components: {
     quillEditor
@@ -115,7 +121,8 @@ export default {
       drawer: false,
       loading: false, // 数据加载样式
       drawer_title: '公告发布',
-      SaveLoading: false, // 抽屉的添加按钮加载变量
+      DrawerLoading: false, // 抽屉的添加按钮加载变量
+      updateButtonValue: false, // 控制按钮是修改还是新增
       // 分页
       data_total: 0, // 数据总数
       page_status: 0, // 分页状态变量，当上下一页时进行改变，只有是0时点击数字页码会改变
@@ -124,7 +131,7 @@ export default {
       notice_content: '', // 双向数据绑定数据，富文本数据本身
       editorOption: {  //编辑器配置项
         modules: {
-          toolbar:toolbarOptions,
+          toolbar: toolbarOptions,
         },
         placeholder: "输入内容..."
       },
@@ -224,21 +231,30 @@ export default {
       this.search = null;
       this.getNoticeDate();
     },
-    // 添加按钮
-    addNotice() {
+    // 添加按钮,显示抽屉
+    addShowDrawer() {
       this.drawer_title = '公告添加';
       this.drawer = true;
     },
-    // 抽屉的关闭函数
-    NoticeHandleClose(done) {
-      done();
+    // 抽屉关闭函数-公共调用方法
+    Close() {
       this.pk = null;
       this.notice_title = '';
       this.notice_content = '';
       this.notice_type = 0;
       this.getNoticeDate();
     },
-    // 抽屉内提交按钮
+    // 抽屉x按钮的关闭函数
+    NoticeHandleClose(done) {
+      done();
+      this.Close();
+    },
+    // 抽屉的关闭按钮的函数
+    DrawerClose() {
+      this.drawer = false;
+      this.Close();
+    },
+    // 抽屉内新建提交按钮
     saveNotice() {
       if (!this.notice_title) {
         this.$notify({
@@ -249,15 +265,9 @@ export default {
           duration: 2000,
         });
       } else {
-        this.SaveLoading = true;
-        let get_url;
-        if (this.pk) {
-          get_url = `foundation/notice/?pk=${this.pk}`;
-        } else {
-          get_url = `foundation/notice/`;
-        }
+        this.DrawerLoading = true;
         this.$http
-            .post(get_url, {
+            .post('foundation/notice/', {
               data: {
                 title: this.notice_title,
                 content: this.notice_content,
@@ -267,28 +277,43 @@ export default {
             .then((res) => {
               let data = res.data;
               if (data.code === 200) {
-                this.$message.success(data.message);
-                if (!this.pk) {
-                  data.data.index = 1;
-                  this.NoticeListData.unshift(data.data);
-                  this.notice_title = '';
-                  this.notice_content = '';
-                  this.notice_type = 0;
-                }
+                this.$notify({
+                  title: '成功',
+                  message: data.message,
+                  type: 'success',
+                  offset: 30,
+                  duration: 2000,
+                });
+                data.data.index = 1;
+                this.NoticeListData.unshift(data.data);
+                this.notice_title = '';
+                this.notice_content = '';
+                this.notice_type = 0;
               } else {
-                this.$message.error(data.message);
+                this.$notify({
+                  title: '错误',
+                  message: data.message,
+                  type: 'error',
+                  offset: 30,
+                  duration: 2000,
+                });
               }
             })
             .catch((error) => {
-              this.$message.error(error.message);
+              this.$notify({
+                title: '错误',
+                message: error.message,
+                type: 'error',
+                offset: 30,
+                duration: 2000,
+              });
             })
             .finally(() => {
-              this.SaveLoading = false;
+              this.DrawerLoading = false;
             });
       }
 
     },
-    // 删除
     //删除按钮显示小弹框
     deleteDisplay(row) {
       row.visible = true;
@@ -324,8 +349,9 @@ export default {
             this.loading = false;
           });
     },
-    // 编辑
-    updateNotice(row) {
+    // 编辑按钮，显示抽屉
+    updateShowDrawer(row) {
+      this.updateButtonValue = true;
       this.drawer_title = '公告编辑';
       this.drawer = true;
       this.notice_title = row.title;
@@ -333,6 +359,61 @@ export default {
       this.notice_content = row.content;
       this.pk = row.id;
     },
+    // 抽屉内的修改按钮
+    updateNotice(){
+      if (!this.notice_title) {
+        this.$notify({
+          title: '提示',
+          message: '标题不能为空！',
+          type: 'warning',
+          offset: 30,
+          duration: 2000,
+        });
+      } else {
+        this.DrawerLoading = true;
+        this.$http
+            .put('foundation/notice/', {
+              data: {
+                title: this.notice_title,
+                content: this.notice_content,
+                type: this.notice_type,
+                pk:this.pk,
+              }
+            })
+            .then((res) => {
+              let data = res.data;
+              if (data.code === 200) {
+                this.$notify({
+                  title: '成功',
+                  message: data.message,
+                  type: 'success',
+                  offset: 30,
+                  duration: 2000,
+                });
+              } else {
+                this.$notify({
+                  title: '错误',
+                  message: data.message,
+                  type: 'error',
+                  offset: 30,
+                  duration: 2000,
+                });
+              }
+            })
+            .catch((error) => {
+              this.$notify({
+                title: '错误',
+                message: error.message,
+                type: 'error',
+                offset: 30,
+                duration: 2000,
+              });
+            })
+            .finally(() => {
+              this.DrawerLoading = false;
+            });
+      }
+    }
   },
 }
 </script>
