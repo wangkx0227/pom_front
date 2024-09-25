@@ -23,6 +23,7 @@
       <div class="table_content">
         <el-table :data="SuperviseMattersData" style="width: 100%" height="590">
           <el-table-column prop="index" label="#" align="center"></el-table-column>
+          <el-table-column prop="po" label="PO" align="center"></el-table-column>
           <el-table-column label="监督事项详情" align="center" prop="">
             <template v-slot="{ row }">
               <el-button size="mini" type="text" @click="getMatterInfo(row)"> 查看详情 </el-button>
@@ -67,7 +68,7 @@
       <!--  跟进人事务列表的弹窗  -->
       <div class="work_dialog">
         <el-dialog
-            title="事务的详细信息"
+            title="跟进事务的详细信息"
             :visible.sync="dialogVisible"
             width="40%"
             :before-close="dialogTableClose">
