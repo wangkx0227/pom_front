@@ -14,7 +14,7 @@
         <el-table-column prop="index" label="#" align="center"></el-table-column>
         <el-table-column label="标题" align="center" prop="title">
         </el-table-column>
-        <el-table-column label="公告接受角色" align="center" prop="type_info">
+        <el-table-column label="接受角色" align="center" prop="type_info">
         </el-table-column>
         <el-table-column label="发布用户" align="center" prop="user_name">
         </el-table-column>
@@ -66,7 +66,7 @@
             </quill-editor>
           </div>
           <div>
-            公告接受角色：
+            接受角色：
             <el-select v-model="notice_type" placeholder="请选择公告类型">
               <el-option v-for="item in RolesListData" :key="item.id" :label="item.role" :value="item.id">
               </el-option>
