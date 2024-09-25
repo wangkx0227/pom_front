@@ -100,7 +100,7 @@ export default {
       [{'indent': '-1'}, {'indent': '+1'}], // 缩进
       [{'header': [1, 2, 3, 4, 5, 6]}], //几级标题
       ['clean'], //清除字体样式
-      ['video'] //上传图片、上传视频
+      [] //上传图片、上传视频，不进行使用
     ];
     return {
       NoticeListData: [],
