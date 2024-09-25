@@ -85,7 +85,7 @@
               </el-table-column>
               <el-table-column
                   prop="user_name"
-                  label="作者"
+                  label="发布者"
                   align="center" width="100">
               </el-table-column>
             </el-table-column>
