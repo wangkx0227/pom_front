@@ -71,10 +71,10 @@
               :cell-style="cellStyle"
               @cell-click="getNotice"
               style="width: 100%;margin-top: 5px">
-            <el-table-column label="最新公告" align="center">
+            <el-table-column label="最新消息" align="center">
               <el-table-column
                   prop="title"
-                  label="公告标题"
+                  label="消息标题"
                   align="center">
               </el-table-column>
               <el-table-column
