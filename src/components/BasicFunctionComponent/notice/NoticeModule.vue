@@ -51,7 +51,7 @@
       </el-pagination>
     </div>
     <div class="notice_drawer">
-      <el-drawer size="60%" :title="drawer_title" :visible.sync="drawer" direction="rtl"
+      <el-drawer size="60%" :title="drawer_title" :visible.sync="drawer" direction="rtl" :wrapperClosable="false"
                  :before-close="NoticeHandleClose">
         <div style="margin: 0 auto;width: 80%;height: 100%">
           <div class="notice_title" style="margin-bottom: 10px">

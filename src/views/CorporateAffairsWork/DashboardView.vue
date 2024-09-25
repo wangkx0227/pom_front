@@ -137,6 +137,7 @@
           :before-close="CloseNotice"
           :visible.sync="NoticeDrawer"
           direction="rtl"
+          :wrapperClosable="false"
           size="50%">
         <div class="notice_main">
           <div class="notice_head">
