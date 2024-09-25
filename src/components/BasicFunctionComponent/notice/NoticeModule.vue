@@ -46,12 +46,13 @@
     </div>
     <div class="pagination">
       <el-pagination hide-on-single-page @current-change="currentPage" @prev-click="prevPage" @next-click="nextPage"
-        background layout="total,prev, pager, next" :page-size="10" :total="data_total" v-model:current-page="page">
+                     background layout="total,prev, pager, next" :page-size="10" :total="data_total"
+                     v-model:current-page="page">
       </el-pagination>
     </div>
     <div class="notice_drawer">
       <el-drawer size="60%" :title="drawer_title" :visible.sync="drawer" direction="rtl"
-        :before-close="NoticeHandleClose">
+                 :before-close="NoticeHandleClose">
         <div style="margin: 0 auto;width: 80%;height: 100%">
           <div class="notice_title" style="margin-bottom: 10px">
             标题：
@@ -59,8 +60,7 @@
           </div>
           <div class="notice_content" style="margin-bottom: 10px;height: 430px">
             内容：
-            <quill-editor style="height: 350px" v-model="notice_content" ref="myQuillEditor" :options="editorOption"
-              @blur="onEditorBlur($event)" @focus="onEditorFocus($event)" @change="onEditorChange($event)">
+            <quill-editor style="height: 350px" v-model="notice_content" ref="myQuillEditor" :options="editorOption">
             </quill-editor>
           </div>
           <div>
@@ -73,7 +73,6 @@
           <el-divider></el-divider>
           <el-button type="info" plain @click="saveNotice" style='float: right' :loading="SaveLoading">提交</el-button>
         </div>
-
       </el-drawer>
     </div>
   </div>
@@ -85,38 +84,38 @@ import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 
 import { quillEditor } from 'vue-quill-editor'
-
 export default {
   components: {
     quillEditor
   },
   name: "FactoryBindUser",
   data() {
+    // 编辑器的工具栏模块
+    const toolbarOptions = [
+      ['bold', 'italic', 'underline', 'strike'], //加粗，斜体，下划线，删除线
+      [{'list': 'ordered'}], //列表
+      [{'script': 'sub'}, {'script': 'super'}], // 上下标
+      [{'indent': '-1'}, {'indent': '+1'}], // 缩进
+      [{'header': [1, 2, 3, 4, 5, 6]}], //几级标题
+      ['clean'], //清除字体样式
+      ['video'] //上传图片、上传视频
+    ];
     return {
       NoticeListData: [],
       // 抽屉的变量
       drawer: false,
       loading: false, // 数据加载样式
       drawer_title: '公告发布',
-      SaveLoading:false, // 抽屉的添加按钮加载变量
+      SaveLoading: false, // 抽屉的添加按钮加载变量
       // 分页
       data_total: 0, // 数据总数
       page_status: 0, // 分页状态变量，当上下一页时进行改变，只有是0时点击数字页码会改变
       page: 1,
       notice_title: '', // 公告标题
-      // 富文本
       notice_content: '', // 双向数据绑定数据，富文本数据本身
       editorOption: {  //编辑器配置项
         modules: {
-          toolbar: [
-            ['bold', 'italic', 'underline', 'strike'], //加粗，斜体，下划线，删除线
-            [{ 'list': 'ordered' }], //列表
-            [{ 'script': 'sub' }, { 'script': 'super' }], // 上下标
-            [{ 'indent': '-1' }, { 'indent': '+1' }], // 缩进
-            [{ 'header': [1, 2, 3, 4, 5, 6] }], //几级标题
-            ['clean'], //清除字体样式
-            ['image', 'video'] //上传图片、上传视频
-          ]
+          toolbar:toolbarOptions,
         },
         placeholder: "输入内容..."
       },
@@ -144,42 +143,42 @@ export default {
         get_url = `foundation/notice/?page=${this.page}`;
       }
       this.$http
-        .get(get_url)
-        .then((res) => {
-          let data = res.data;
-          if (data.code === 200) {
-            this.NoticeListData = data.data.data;
-            this.data_total = data.data.data_total;
-            this.method_list = data.data.method_list;
-          } else {
-            this.NoticeListData = [];
-          }
-        })
-        .catch((error) => {
-          this.$message.error(error.message);
-        })
-        .finally(() => {
-          this.loading = false;
-        });
+          .get(get_url)
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.NoticeListData = data.data.data;
+              this.data_total = data.data.data_total;
+              this.method_list = data.data.method_list;
+            } else {
+              this.NoticeListData = [];
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.loading = false;
+          });
     },
     // 获取角色，根据角色进去发送公告
     getRoleData() {
       this.$http
-        .get("users/roles/?status=all",)
-        .then((res) => {
-          let data = res.data;
-          if (data.code === 200) {
-            this.RolesListData = data.data;
-          } else {
-            this.RolesListData = [];
-          }
-          this.RolesListData.unshift({ id: 0, role: '全部' })
-        })
-        .catch((error) => {
-          this.$message.error(error.message);
-        })
-        .finally(() => {
-        });
+          .get("users/roles/?status=all",)
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.RolesListData = data.data;
+            } else {
+              this.RolesListData = [];
+            }
+            this.RolesListData.unshift({id: 0, role: '全部'})
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+          });
     },
     // 页码功能
     nextPage(page) {
@@ -249,44 +248,37 @@ export default {
           get_url = `foundation/notice/`;
         }
         this.$http
-          .post(get_url, {
-            data: {
-              title: this.notice_title,
-              content: this.notice_content,
-              type: this.notice_type,
-            }
-          })
-          .then((res) => {
-            let data = res.data;
-            if (data.code === 200) {
-              this.$message.success(data.message);
-              if (!this.pk) {
-                data.data.index = 1;
-                this.NoticeListData.unshift(data.data);
-                this.notice_title = '';
-                this.notice_content = '';
-                this.notice_type = 0;
+            .post(get_url, {
+              data: {
+                title: this.notice_title,
+                content: this.notice_content,
+                type: this.notice_type,
               }
-            } else {
-              this.$message.error(data.message);
-            }
-          })
-          .catch((error) => {
-            this.$message.error(error.message);
-          })
-          .finally(() => {
-            this.SaveLoading = false;
-          });
+            })
+            .then((res) => {
+              let data = res.data;
+              if (data.code === 200) {
+                this.$message.success(data.message);
+                if (!this.pk) {
+                  data.data.index = 1;
+                  this.NoticeListData.unshift(data.data);
+                  this.notice_title = '';
+                  this.notice_content = '';
+                  this.notice_type = 0;
+                }
+              } else {
+                this.$message.error(data.message);
+              }
+            })
+            .catch((error) => {
+              this.$message.error(error.message);
+            })
+            .finally(() => {
+              this.SaveLoading = false;
+            });
       }
 
     },
-    // 富文本
-    onEditorBlur() {
-    }, // 失去焦点触发事件
-    onEditorFocus() {
-    }, // 获得焦点触发事件
-    onEditorChange() {
-    }, // 内容改变触发事件
     // 删除
     //删除按钮显示小弹框
     deleteDisplay(row) {
@@ -297,31 +289,31 @@ export default {
       let pk = row.id;
       this.loading = true;
       this.$http
-        .delete("foundation/notice/", {
-          data: { pk: pk },
-        })
-        .then((res) => {
-          let data = res.data;
-          if (data.code === 200) {
-            this.$message.success(data.message);
-            rows.splice(index, 1);
-            // 如果删除的时候，页面内的数据已经删除完毕了，通过这层判断进行操作重定向前面的页面（需要在每一个需要进行删除的操作中添加当前判断）
-            if (rows.length === 0) {
-              if (this.page !== 1) {
-                this.page -= 1;
+          .delete("foundation/notice/", {
+            data: {pk: pk},
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.$message.success(data.message);
+              rows.splice(index, 1);
+              // 如果删除的时候，页面内的数据已经删除完毕了，通过这层判断进行操作重定向前面的页面（需要在每一个需要进行删除的操作中添加当前判断）
+              if (rows.length === 0) {
+                if (this.page !== 1) {
+                  this.page -= 1;
+                }
               }
+              this.getNoticeDate();
+            } else {
+              this.$message.error(data.message);
             }
-            this.getNoticeDate();
-          } else {
-            this.$message.error(data.message);
-          }
-        })
-        .catch((error) => {
-          this.$message.error(error.message);
-        })
-        .finally(() => {
-          this.loading = false;
-        });
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.loading = false;
+          });
     },
     // 编辑
     updateNotice(row) {
@@ -331,7 +323,7 @@ export default {
       this.notice_type = row.type;
       this.notice_content = row.content;
       this.pk = row.id;
-    }
+    },
   },
 }
 </script>
