@@ -68,7 +68,7 @@
               :data="notice_data_list"
               height="330"
               border
-              cell-style="cursor: pointer;"
+              :cell-style="cellStyle"
               @cell-click="getNotice"
               style="width: 100%;margin-top: 5px">
             <el-table-column label="最新公告" align="center">
@@ -138,6 +138,8 @@
           :visible.sync="NoticeDrawer"
           direction="rtl"
           :wrapperClosable="false"
+          :append-to-body="true"
+          :modal-append-to-body="false"
           size="50%">
         <div class="notice_main">
           <div class="notice_head">
@@ -146,7 +148,7 @@
             </div>
             <div class="notice_head_main">
               <span>创建时间：{{ notice_create_date }}</span>
-              <span>作者：{{notice_user_name}}</span>
+              <span>作者：{{ notice_user_name }}</span>
             </div>
           </div>
           <el-divider></el-divider>
@@ -350,6 +352,12 @@ export default {
     // 公告关闭调用函数
     CloseNotice(done) {
       done();
+    },
+    // 样式
+    cellStyle({row, column, rowIndex, columnIndex}) {
+      if (rowIndex === 0) {
+        return {cursor: 'pointer'}
+      }
     }
   },
   created() {
@@ -407,6 +415,7 @@ export default {
 .notice_head_main span {
   margin-left: 10px;
 }
+
 @media screen and (max-width: 700px) {
   .pie-chart-card {
     width: 94.5% !important;
