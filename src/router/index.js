@@ -86,7 +86,7 @@ const routes = [
         path: "message/", // 用户下来菜单中的访问记录页面
         name: "message",
         component: () => import("@/views/UserDropdown/MessageView"),
-        meta: { title: "个人公告信息" },
+        meta: { title: "个人信息信息" },
       },
     ],
   },
@@ -134,7 +134,7 @@ const routes = [
         path: "notice/", // 公告发布
         name: "notice",
         component: () => import("@/views/BasicFunctionMenu/NoticeView"),
-        meta: { title: "公告发布" },
+        meta: { title: "信息发布" },
       },
     ],
   },

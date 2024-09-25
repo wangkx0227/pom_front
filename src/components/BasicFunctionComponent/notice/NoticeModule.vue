@@ -1,8 +1,8 @@
 <template>
   <div class="factory_bind_user" v-loading="loading">
     <div class="head_search_add">
-      <el-button type="info" plain @click="addNotice">添加公告</el-button>
-      <el-input placeholder="请输入公告标题" clearable class="input_search" v-model="search">
+      <el-button type="info" plain @click="addNotice">添加信息</el-button>
+      <el-input placeholder="请输入信息标题" clearable class="input_search" v-model="search">
       </el-input>
       <el-button type="primary" icon="el-icon-search" plain @click="searchDate">搜索
       </el-button>
@@ -12,15 +12,21 @@
     <div class="table_content">
       <el-table :data='NoticeListData' style="width: 100%" height="610">
         <el-table-column prop="index" label="#" align="center"></el-table-column>
-        <el-table-column label="标题" align="center" prop="title">
+        <el-table-column label="标题" align="center" prop="title" width="400">
         </el-table-column>
-        <el-table-column label="接受角色" align="center" prop="type_info">
+        <el-table-column label="接受角色" align="center">
+          <template v-slot="{ row }">
+            <el-tag>{{ row.type_role_name }}</el-tag>
+          </template>
         </el-table-column>
-        <el-table-column label="发布用户" align="center" prop="user_name">
+        <el-table-column label="发布用户" align="center">
+          <template v-slot="{ row }"  >
+            <el-tag effect="plain">{{ row.user_name }}</el-tag>
+          </template>
         </el-table-column>
-        <el-table-column label="创建时间" align="center" prop="create_date">
+        <el-table-column label="创建时间" align="center" prop="create_date" width="180">
         </el-table-column>
-        <el-table-column label="更新时间	" align="center" prop="update_date">
+        <el-table-column label="更新时间	" align="center" prop="update_date" width="180">
         </el-table-column>
         <el-table-column label="操作" align="center" width="180">
           <template v-slot="scope">

@@ -2,7 +2,7 @@
   <div class="notice">
     <el-card class="box-card">
       <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="公告管理" name="notice">
+        <el-tab-pane label="信息管理" name="notice">
           <component :is="NoticeComponent" v-if="activeName === 'notice'" />
         </el-tab-pane>
       </el-tabs>

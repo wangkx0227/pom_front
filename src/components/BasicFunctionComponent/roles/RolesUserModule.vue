@@ -17,7 +17,7 @@
           <el-form-item label="角色名称" prop="role">
             <el-input v-model="addroleForm.role"></el-input>
           </el-form-item>
-          <el-form-item label="职位描述信息" prop="description">
+          <el-form-item label="角色描述信息" prop="description">
             <el-input type="textarea" v-model="addroleForm.description"></el-input>
           </el-form-item>
         </el-form>
