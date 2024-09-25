@@ -1,7 +1,7 @@
 <template>
   <div class="factory_bind_user" v-loading="loading">
     <div class="head_search_add">
-      <el-button type="info" icon="el-icon-circle-plus-outline" plain @click="addNotice">添加公告</el-button>
+      <el-button type="info" plain @click="addNotice">添加公告</el-button>
       <el-input placeholder="请输入公告标题" clearable class="input_search" v-model="search">
       </el-input>
       <el-button type="primary" icon="el-icon-search" plain @click="searchDate">搜索

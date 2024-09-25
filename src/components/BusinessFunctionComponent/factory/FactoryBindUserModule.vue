@@ -12,7 +12,7 @@
         </el-button>
       </el-popover>
       <el-autocomplete class="inline-input" :fetch-suggestions="querySearch" v-model="search_factory_name"
-                       placeholder="请输入内容" :trigger-on-focus="false" @select="factoryIdSelect"
+                       placeholder="工厂名称" :trigger-on-focus="false" @select="factoryIdSelect"
                        style="margin-right: 5px;"></el-autocomplete>
       <el-button type="primary" icon="el-icon-search" plain @click="searchDate">搜索
       </el-button>

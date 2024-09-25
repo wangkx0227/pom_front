@@ -9,7 +9,7 @@
         </div>
         <el-button slot="reference" icon="el-icon-refresh" plain type="info" >加载菜单</el-button>
       </el-popover>
-      <el-input placeholder="请输入搜索名称" v-model="search" clearable class="input_search">
+      <el-input placeholder="请输入路径名称" v-model="search" clearable class="input_search">
       </el-input>
       <el-button type="primary" icon="el-icon-search" plain @click="searchData">搜索
       </el-button>
@@ -111,7 +111,7 @@
               </template>
             </el-popover>
           </div>
-          <div v-if="method_list.includes('PUT')" style="display: inline-block;"> 
+          <div v-if="method_list.includes('PUT')" style="display: inline-block;">
             <el-button style="margin-left: 0" v-if="scope.row.editable" @click="scope.row.editable = false" size="mini" type="text">取消
             </el-button>
           </div>

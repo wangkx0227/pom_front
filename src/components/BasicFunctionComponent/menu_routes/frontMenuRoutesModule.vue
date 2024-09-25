@@ -9,7 +9,7 @@
         </div>
         <el-button slot="reference" icon="el-icon-refresh" plain type="info">加载菜单</el-button>
       </el-popover>
-      <el-input placeholder="请输入搜索名称" v-model="search" clearable class="input_search">
+      <el-input placeholder="请输入路径名称" v-model="search" clearable class="input_search">
       </el-input>
       <el-button type="primary" icon="el-icon-search" plain @click="searchDate">搜索
       </el-button>

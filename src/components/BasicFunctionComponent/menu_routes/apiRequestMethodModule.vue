@@ -3,7 +3,7 @@
     <div class="head_search_add">
       <el-button type="info" icon="el-icon-circle-plus-outline" plain @click="dialogDisplay">添加
       </el-button>
-      <el-input placeholder="请输入角色名称" v-model="search" clearable class="input_search">
+      <el-input placeholder="请输入访问方式名称" v-model="search" clearable class="input_search">
       </el-input>
       <el-button type="primary" icon="el-icon-search" plain @click="searchDate">搜索
       </el-button>
