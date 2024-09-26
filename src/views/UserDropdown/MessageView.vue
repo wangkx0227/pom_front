@@ -1,15 +1,37 @@
 <template>
   <div class="message">
-    存放审核通过消息，公告消息等等信息
+    <el-card class="box-card">
+      <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="未读消息" name="unread">
+          <component :is="unreadComponent" v-if="activeName === 'unread'"/>
+        </el-tab-pane>
+        <el-tab-pane label="已读消息" name="read">
+          <component :is="readComponent" v-if="activeName === 'read'"/>
+        </el-tab-pane>
+      </el-tabs>
+    </el-card>
   </div>
 </template>
 
 <script>
 export default {
-name: "MessageView"
+  name: "MessageView",
+  data() {
+    return {
+      activeName: "unread",
+      // 使用懒加载形式加载组件
+      unreadComponent: () => import("@/components/DropdownComponent/message/UNReadModule"),
+      readComponent: () => import("@/components/DropdownComponent/message/ReadModule"),
+    };
+  },
+  methods: {
+    handleClick(tab) {
+      this.activeName = tab.name;
+    },
+  },
 }
 </script>
 
 <style scoped>
-
+@import url("@/static/convention.css");
 </style>
