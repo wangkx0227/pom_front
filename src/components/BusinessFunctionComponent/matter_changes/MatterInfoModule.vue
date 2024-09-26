@@ -16,15 +16,15 @@
         <el-table-column label="工厂" align="center" prop="factory_name"></el-table-column>
         <el-table-column label="ITEM列表" align="center">
           <template v-slot="{ row }">
-            <el-button size="mini" type="text" > 查看详情
+            <el-button size="mini" type="text" @click="getOrderRecordItem(row)"> 查看详情
             </el-button>
           </template>
         </el-table-column>
-        <el-table-column label="订单周期" align="center"  prop="end_time_day"></el-table-column>
-        <el-table-column label="订单导入时间" align="center"  prop="create_date"></el-table-column>
+        <el-table-column label="订单周期" align="center" prop="end_time_day"></el-table-column>
+        <el-table-column label="订单导入时间" align="center" prop="create_date"></el-table-column>
         <el-table-column label="操作" align="center">
           <template v-slot="scope">
-            <el-button size="mini" type="text">修改
+            <el-button size="mini" type="text" @click="openDrawer(scope.row)">修改
             </el-button>
           </template>
         </el-table-column>
@@ -36,6 +36,24 @@
                      :total="data_total"
                      v-model:current-page="page">
       </el-pagination>
+    </div>
+    <div class="dialog">
+      <el-dialog title="ITEM详情列表" :visible.sync="dialogTableVisible" :before-close="dialogItemTableClose" width="30%">
+        <el-table :data="item_list" height="200" border v-loading="dialogTableLoading">
+          <el-table-column property="index" label="#" align="center"></el-table-column>
+          <el-table-column property="item" label="ITEM" width="450" align="center"></el-table-column>
+        </el-table>
+      </el-dialog>
+    </div>
+    <div class="drawer">
+      <el-drawer
+          title="当前订单事务"
+          size="50%"
+          :wrapperClosable="false"
+          :show-close="true"
+          :visible.sync="DrawerVisible">
+        <span>我来啦!</span>
+      </el-drawer>
     </div>
   </div>
 </template>
@@ -52,7 +70,12 @@ export default {
       data_total: 0, // 数据总数
       page_status: 0, // 分页状态变量，当上下一页时进行改变，只有是0时点击数字页码会改变
       page: 1,
-
+      // item列表
+      item_list: [],
+      dialogTableVisible: false,
+      dialogTableLoading: false,
+      // 抽屉变量
+      DrawerVisible: false,
     };
   },
   created() {
@@ -123,6 +146,36 @@ export default {
       this.page = 1;
       this.search = null;
       this.getMatterInfoData();
+    },
+    // 作为item 弹窗的关闭窗口调用函数
+    dialogItemTableClose(done) {
+      done(); // 关闭窗口
+    },
+    // item列表查看
+    getOrderRecordItem(row) {
+      this.dialogTableVisible = true;
+      this.dialogTableLoading = true;
+      const order_record_id = row.id;
+      this.$http
+          .get(`business_function/order_record_info/?query=item&order_record_id=${order_record_id}`)
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.item_list = data.data;
+            } else {
+              this.item_list = [];
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.dialogTableLoading = false;
+          });
+    },
+    // 修改按钮，抽屉
+    openDrawer(row){
+      this.DrawerVisible = true;
     },
   },
 }
