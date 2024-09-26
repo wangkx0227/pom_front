@@ -173,6 +173,13 @@ const routes = [
             import("@/views/BusinessFunctionMenu/EmailView"),
         meta: { title: "邮箱功能" },
       },
+      {
+        path: "matter_changes/", //
+        name: "matter_changes",
+        component: () =>
+            import("@/views/BusinessFunctionMenu/MatterChanges"),
+        meta: { title: "事务变更" },
+      },
     ],
   },
 ];

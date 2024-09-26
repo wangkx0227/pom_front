@@ -56,10 +56,10 @@
       </template>
       <el-menu-item index="/business_function/order_matter/">订单</el-menu-item>
       <el-menu-item index="/business_function/no_order_matter/">非订单</el-menu-item>
-      <el-menu-item index="7-4">事务变更</el-menu-item>
+      <el-menu-item index="/business_function/matter_changes/">事务变更</el-menu-item>
+      <el-menu-item index="7-8">事务查询</el-menu-item>
       <el-menu-item index="/business_function/factory_info/">工厂绑定</el-menu-item>
       <el-menu-item index="/business_function/email/">邮件功能</el-menu-item>
-      <el-menu-item index="7-8">事务查询</el-menu-item>
     </el-submenu>
   </el-menu>
 </template>
