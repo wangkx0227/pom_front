@@ -4,7 +4,7 @@
       <h5 class="title-h5">POM管理系统</h5>
       <div style="margin-right: 15px">
         <el-badge is-dot class="item" style="margin-right: 15px">
-          <el-button class="share-button" icon="el-icon-bell" type="info" size="mini" @click="messageInfo"></el-button>
+          <el-button class="share-button" icon="el-icon-bell" type="primary" size="mini" @click="messageInfo"></el-button>
         </el-badge>
         <span class="tag-group__title gradient-text">登录用户：</span>
         <el-dropdown @command="changeDropdown" trigger="click">
