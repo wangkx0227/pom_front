@@ -24,7 +24,7 @@
         <el-table-column label="订单导入时间" align="center" prop="create_date"></el-table-column>
         <el-table-column label="操作" align="center">
           <template v-slot="scope">
-            <el-button size="mini" type="text" @click="openDrawer(scope.row)">修改
+            <el-button size="mini" type="text" @click="openDrawer(scope.row)">变更修改
             </el-button>
           </template>
         </el-table-column>
@@ -47,12 +47,104 @@
     </div>
     <div class="drawer">
       <el-drawer
-          title="当前订单事务"
+          :title="drawer_title"
           size="50%"
           :wrapperClosable="false"
           :show-close="true"
           :visible.sync="DrawerVisible">
-        <span>我来啦!</span>
+        <div class="content">
+          <div class="follow">
+            <el-table
+                :data="tableData"
+                border
+                height="400"
+                style="width: 100%">
+              <el-table-column
+                  prop="date"
+                  label="跟进事务信息"
+                  align="center"
+              >
+                <el-table-column
+                    prop="date"
+                    label="事务名称"
+                    width="180"
+                    align="center"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="name"
+                    label="跟进人"
+                    width="180"
+                    align="center"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="address"
+                    label="应完成时间"
+                    align="center"
+                    width="180"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="address"
+                    label="完成状态"
+                    align="center"
+                    width="180"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="address"
+                    label="实际完成时间"
+                    align="center"
+                    width="180"
+                >
+                </el-table-column>
+                <el-table-column label="操作" align="center">
+                  <template v-slot="scope">
+                    <el-button size="mini" type="text" width="180" >修改
+                    </el-button>
+
+                  </template>
+                </el-table-column>
+              </el-table-column>
+
+            </el-table>
+          </div>
+          <div class="supervise">
+            <el-table
+                :data="tableData"
+                border
+                height="400"
+                style="width: 100%">
+              <el-table-column
+                  prop="date"
+                  label="监督事务信息"
+                  align="center"
+              >
+                <el-table-column
+                    prop="date"
+                    label="日期"
+                    width="180"
+                    align="center"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="name"
+                    label="姓名"
+                    width="180"
+                    align="center"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="address"
+                    label="地址"
+                    align="center"
+                >
+                </el-table-column>
+              </el-table-column>
+            </el-table>
+          </div>
+        </div>
       </el-drawer>
     </div>
   </div>
@@ -76,6 +168,13 @@ export default {
       dialogTableLoading: false,
       // 抽屉变量
       DrawerVisible: false,
+      drawer_title: null,
+      // 数据
+      tableData: [{
+        date: '2016-05-02',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      },]
     };
   },
   created() {
@@ -174,11 +273,20 @@ export default {
           });
     },
     // 修改按钮，抽屉
-    openDrawer(row){
+    openDrawer(row) {
+      this.drawer_title = `${row.po}订单事务信息`
       this.DrawerVisible = true;
     },
   },
 }
 </script>
-<style>
+<style scoped>
+.content {
+  width: 90%;
+  margin: 0 auto;
+}
+
+.supervise {
+  margin-top: 10px;
+}
 </style>
