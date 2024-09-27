@@ -24,7 +24,7 @@
         <el-table-column label="订单导入时间" align="center" prop="create_date"></el-table-column>
         <el-table-column label="操作" align="center">
           <template v-slot="scope">
-            <el-button size="mini" type="text" @click="openDrawer(scope.row)">变更修改
+            <el-button size="mini" type="text" @click="openUpdateDrawer(scope.row)">变更修改
             </el-button>
           </template>
         </el-table-column>
@@ -52,10 +52,10 @@
           :wrapperClosable="false"
           :show-close="true"
           :visible.sync="DrawerVisible">
-        <div class="content">
+        <div class="content"  :v-loading="drawerLoading">
           <div class="follow">
             <el-table
-                :data="tableData"
+                :data="follow_data_list"
                 border
                 height="400"
                 style="width: 100%">
@@ -65,45 +65,50 @@
                   align="center"
               >
                 <el-table-column
-                    prop="date"
+                    prop="matter_name"
                     label="事务名称"
-                    width="180"
+                    width="450"
                     align="center"
                 >
                 </el-table-column>
                 <el-table-column
-                    prop="name"
+                    prop="user_name"
                     label="跟进人"
-                    width="180"
+                    width="120"
                     align="center"
                 >
                 </el-table-column>
                 <el-table-column
-                    prop="address"
+                    prop="expected_completion_time"
                     label="应完成时间"
                     align="center"
-                    width="180"
+                    width="120"
                 >
                 </el-table-column>
                 <el-table-column
-                    prop="address"
                     label="完成状态"
                     align="center"
-                    width="180"
+                    width="120"
                 >
+                  <template v-slot="{ row }">
+                    <el-tag v-if="row.complete_status === 1" effect="plain">已完成</el-tag>
+                    <el-tag type="info" effect="plain" v-else>未完成</el-tag>
+                  </template>
                 </el-table-column>
                 <el-table-column
-                    prop="address"
+                    prop="complete_time"
                     label="实际完成时间"
                     align="center"
-                    width="180"
+                    width="120"
                 >
                 </el-table-column>
-                <el-table-column label="操作" align="center">
+                <el-table-column label="操作" align="center" width="120">
                   <template v-slot="scope">
-                    <el-button size="mini" type="text" width="180" >修改
+                    <el-button size="mini" type="text" width="180" :disabled="buttonChanges(scope.row)">修改
                     </el-button>
-
+                    <el-divider direction="vertical"></el-divider>
+                    <el-button size="mini" type="text" width="180" :disabled="buttonChanges(scope.row)">删除
+                    </el-button>
                   </template>
                 </el-table-column>
               </el-table-column>
@@ -112,7 +117,7 @@
           </div>
           <div class="supervise">
             <el-table
-                :data="tableData"
+                :data="supervise_data_list"
                 border
                 height="400"
                 style="width: 100%">
@@ -122,24 +127,51 @@
                   align="center"
               >
                 <el-table-column
-                    prop="date"
-                    label="日期"
-                    width="180"
+                    prop="matter_name"
+                    label="监督事务名称"
+                    width="450"
                     align="center"
                 >
                 </el-table-column>
                 <el-table-column
-                    prop="name"
-                    label="姓名"
-                    width="180"
+                    prop="user_name"
+                    label="监督人"
+                    width="120"
                     align="center"
                 >
                 </el-table-column>
                 <el-table-column
-                    prop="address"
-                    label="地址"
+                    prop="expected_completion_time"
+                    label="应完成时间"
                     align="center"
+                    width="120"
                 >
+                </el-table-column>
+                <el-table-column
+                    label="完成状态"
+                    align="center"
+                    width="120"
+                >
+                  <template v-slot="{ row }">
+                    <el-tag v-if="row.complete_status === 1" effect="plain">已完成</el-tag>
+                    <el-tag type="info" effect="plain" v-else>未完成</el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                    prop="complete_time"
+                    label="实际完成时间"
+                    align="center"
+                    width="120"
+                >
+                </el-table-column>
+                <el-table-column label="操作" align="center" width="120">
+                  <template v-slot="scope">
+                    <el-button size="mini" type="text" width="180" :disabled="buttonChanges(scope.row)">修改
+                    </el-button>
+                    <el-divider direction="vertical"></el-divider>
+                    <el-button size="mini" type="text" width="180" :disabled="buttonChanges(scope.row)">删除
+                    </el-button>
+                  </template>
                 </el-table-column>
               </el-table-column>
             </el-table>
@@ -169,12 +201,10 @@ export default {
       // 抽屉变量
       DrawerVisible: false,
       drawer_title: null,
-      // 数据
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      },]
+      drawerLoading:false,
+      // 修改-抽屉样式内的数据
+      follow_data_list: [],
+      supervise_data_list: [],
     };
   },
   created() {
@@ -273,11 +303,35 @@ export default {
           });
     },
     // 修改按钮，抽屉
-    openDrawer(row) {
+    openUpdateDrawer(row) {
+      this.drawerLoading = true;
       this.drawer_title = `${row.po}订单事务信息`
       this.DrawerVisible = true;
+      this.$http
+          .post('business_function/matter_changes/', {
+            pk: row.id
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              console.log(data)
+              this.follow_data_list = data.data.follow_data_list;
+              this.supervise_data_list = data.data.supervise_data_list;
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.drawerLoading = false;
+          });
+    },
+    // 计算按钮是否可以点击
+    buttonChanges(row) {
+      return !!row.complete_status
     },
   },
+
 }
 </script>
 <style scoped>
