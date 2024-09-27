@@ -48,11 +48,11 @@
     <div class="drawer">
       <el-drawer
           :title="drawer_title"
-          size="50%"
+          size="60%"
           :wrapperClosable="false"
           :show-close="true"
           :visible.sync="DrawerVisible">
-        <div class="content"  :v-loading="drawerLoading">
+        <div class="content" :v-loading="drawerLoading">
           <div class="follow">
             <el-table
                 :data="follow_data_list"
@@ -72,18 +72,50 @@
                 >
                 </el-table-column>
                 <el-table-column
-                    prop="user_name"
                     label="跟进人"
-                    width="120"
+                    width="230"
                     align="center"
                 >
+                  <template v-slot="{ row }">
+                    <span v-if="!row.editable">{{ row.user_name }}</span>
+                    <el-cascader
+                        v-else
+                        clearable
+                        collapse-tags
+                        :options="user_data_list"
+                        v-model="row.user_info_id_list"
+                        :show-all-levels="false">
+                      <template slot-scope="{ node, data }">
+                        <span>{{ data.label }}</span>
+                        <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
+                      </template>
+                    </el-cascader>
+                  </template>
                 </el-table-column>
                 <el-table-column
-                    prop="expected_completion_time"
-                    label="应完成时间"
+                    label="事务状态"
                     align="center"
                     width="120"
                 >
+                  <template v-slot="{ row }">
+                    <el-tag v-if="row.is_show === 0" effect="plain">正常</el-tag>
+                    <el-tag type="info" effect="plain" v-else>停止</el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                    label="应完成时间"
+                    align="center"
+                    width="250"
+                >
+                  <template v-slot="{ row }">
+                    <span v-if="!row.editable">{{ row.expected_completion_time }}</span>
+                    <el-date-picker
+                        v-model="row.expected_completion_time"
+                        type="date"
+                        v-else
+                        placeholder="选择日期">
+                    </el-date-picker>
+                  </template>
                 </el-table-column>
                 <el-table-column
                     label="完成状态"
@@ -99,20 +131,28 @@
                     prop="complete_time"
                     label="实际完成时间"
                     align="center"
-                    width="120"
+                    width="250"
                 >
                 </el-table-column>
                 <el-table-column label="操作" align="center" width="120">
                   <template v-slot="scope">
-                    <el-button size="mini" type="text" width="180" :disabled="buttonChanges(scope.row)">修改
+                    <el-button v-if="!scope.row.editable" size="mini" type="text" width="180"
+                               :disabled="ButtonStatusChanges(scope.row)"
+                               @click="editRow(scope.row)">修改
+                    </el-button>
+                    <el-button v-else size="mini" type="text" width="180" :disabled="ButtonStatusChanges(scope.row)"
+                               @click="updateMatter(scope.row)">保存
                     </el-button>
                     <el-divider direction="vertical"></el-divider>
-                    <el-button size="mini" type="text" width="180" :disabled="buttonChanges(scope.row)">删除
+                    <el-button v-if="scope.row.editable" size="mini" type="text" width="180"
+                               @click="scope.row.editable = false">取消
+                    </el-button>
+                    <el-button v-else size="mini" type="text" width="180" :disabled="ButtonStatusChanges(scope.row)"
+                               @click="stopMatter(scope.row)">终止
                     </el-button>
                   </template>
                 </el-table-column>
               </el-table-column>
-
             </el-table>
           </div>
           <div class="supervise">
@@ -134,18 +174,50 @@
                 >
                 </el-table-column>
                 <el-table-column
-                    prop="user_name"
                     label="监督人"
-                    width="120"
+                    width="230"
                     align="center"
                 >
+                  <template v-slot="{ row }">
+                    <span v-if="!row.editable">{{ row.user_name }}</span>
+                    <el-cascader
+                        v-else
+                        clearable
+                        collapse-tags
+                        :options="user_data_list"
+                        v-model="row.user_info_id_list"
+                        :show-all-levels="false">
+                      <template slot-scope="{ node, data }">
+                        <span>{{ data.label }}</span>
+                        <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
+                      </template>
+                    </el-cascader>
+                  </template>
                 </el-table-column>
                 <el-table-column
-                    prop="expected_completion_time"
-                    label="应完成时间"
+                    label="事务状态"
                     align="center"
                     width="120"
                 >
+                  <template v-slot="{ row }">
+                    <el-tag v-if="row.is_show === 0" effect="plain">正常</el-tag>
+                    <el-tag type="info" effect="plain" v-else>停止</el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                    label="应完成时间"
+                    align="center"
+                    width="250"
+                >
+                  <template v-slot="{ row }">
+                    <span v-if="!row.editable">{{ row.expected_completion_time }}</span>
+                    <el-date-picker
+                        v-model="row.expected_completion_time"
+                        type="date"
+                        v-else
+                        placeholder="选择日期">
+                    </el-date-picker>
+                  </template>
                 </el-table-column>
                 <el-table-column
                     label="完成状态"
@@ -161,15 +233,24 @@
                     prop="complete_time"
                     label="实际完成时间"
                     align="center"
-                    width="120"
+                    width="250"
                 >
                 </el-table-column>
                 <el-table-column label="操作" align="center" width="120">
                   <template v-slot="scope">
-                    <el-button size="mini" type="text" width="180" :disabled="buttonChanges(scope.row)">修改
+                    <el-button v-if="!scope.row.editable" size="mini" type="text" width="180"
+                               :disabled="ButtonStatusChanges(scope.row)"
+                               @click="editRow(scope.row)">修改
+                    </el-button>
+                    <el-button v-else size="mini" type="text" width="180" :disabled="ButtonStatusChanges(scope.row)"
+                               @click="updateMatter(scope.row)">保存
                     </el-button>
                     <el-divider direction="vertical"></el-divider>
-                    <el-button size="mini" type="text" width="180" :disabled="buttonChanges(scope.row)">删除
+                    <el-button v-if="scope.row.editable" size="mini" type="text" width="180"
+                               @click="scope.row.editable = false">取消
+                    </el-button>
+                    <el-button v-else size="mini" type="text" width="180" :disabled="ButtonStatusChanges(scope.row)"
+                               @click="stopMatter(scope.row)">终止
                     </el-button>
                   </template>
                 </el-table-column>
@@ -201,19 +282,22 @@ export default {
       // 抽屉变量
       DrawerVisible: false,
       drawer_title: null,
-      drawerLoading:false,
+      drawerLoading: false,
       // 修改-抽屉样式内的数据
       follow_data_list: [],
       supervise_data_list: [],
+      // 用户信息列表
+      user_data_list: [], // 循环的全部用户列表
     };
   },
   created() {
     this.loading = true;
-    this.getMatterInfoData();
+    this.getUsers();
+    this.getOrderInfoData();
   },
   methods: {
     // 获取数据
-    getMatterInfoData() {
+    getOrderInfoData() {
       let get_url;
       if (!this.search) {
         get_url = `business_function/matter_changes/?page=${this.page}`;
@@ -240,47 +324,65 @@ export default {
             this.loading = false;
           });
     },
+    getUsers() {
+      this.$http
+          .get("users/info/?status=classification")
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.user_data_list = data.data;
+            } else {
+              this.user_data_list = [];
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            // this.loading = false;
+          });
+    },
     // 页码功能
     nextPage(page) {
       this.loading = true;
       this.page_status = page;
       this.page = page;
       // 下一页按钮
-      this.getMatterInfoData();
+      this.getOrderInfoData();
     },
     prevPage(page) {
       this.loading = true;
       this.page_status = page;
       this.page = page;
       // 上一页按钮
-      this.getMatterInfoData();
+      this.getOrderInfoData();
     },
     currentPage(page) {
       this.loading = true;
       this.page = page;
       // 点击按钮触发
       if (this.page_status === 0) {
-        this.getMatterInfoData();
+        this.getOrderInfoData();
       }
     },
     // 搜索功能
     searchData() {
       this.loading = true;
       this.page = 1;
-      this.getMatterInfoData();
+      this.getOrderInfoData();
     },
     // 重置
     reloadData() {
       this.loading = true;
       this.page = 1;
       this.search = null;
-      this.getMatterInfoData();
+      this.getOrderInfoData();
     },
     // 作为item 弹窗的关闭窗口调用函数
     dialogItemTableClose(done) {
       done(); // 关闭窗口
     },
-    // item列表查看
+    // item列表查看，调用post方法查看
     getOrderRecordItem(row) {
       this.dialogTableVisible = true;
       this.dialogTableLoading = true;
@@ -302,19 +404,22 @@ export default {
             this.dialogTableLoading = false;
           });
     },
-    // 修改按钮，抽屉
+    // 页面的修改按钮函数-展示当前订单内的产生的事务
     openUpdateDrawer(row) {
+      this.DrawerVisible = true;
       this.drawerLoading = true;
       this.drawer_title = `${row.po}订单事务信息`
-      this.DrawerVisible = true;
+      this.getMatterInfoData(row.id);
+    },
+    // 获取订单下的事务信息
+    getMatterInfoData(pk) {
       this.$http
           .post('business_function/matter_changes/', {
-            pk: row.id
+            pk: pk
           })
           .then((res) => {
             let data = res.data;
             if (data.code === 200) {
-              console.log(data)
               this.follow_data_list = data.data.follow_data_list;
               this.supervise_data_list = data.data.supervise_data_list;
             }
@@ -326,17 +431,99 @@ export default {
             this.drawerLoading = false;
           });
     },
-    // 计算按钮是否可以点击
-    buttonChanges(row) {
-      return !!row.complete_status
+    // 计算按钮是否停止和修改可以点击
+    ButtonStatusChanges(row) {
+      return row.complete_status === 1 || row.is_show === 1;
     },
+    // 修改按钮，修改row.editable值 让这条可以进行修改
+    editRow(row) {
+      row.editable = true;
+    },
+    // 事务的停止操作 - 调用put接口
+    stopMatter(row) {
+      const attribute = 'stop'
+      this.drawerLoading = true;
+      this.$http
+          .put(`business_function/matter_changes/?attribute=${attribute}`, {
+            data: row
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.$notify({
+                title: '成功',
+                message: data.message,
+                type: 'success',
+                offset: 30,
+                duration: 2000,
+              });
+              // 调用函数刷新数据
+              this.getMatterInfoData(data.order_id);
+            } else {
+              this.$notify({
+                title: '错误',
+                message: data.message,
+                type: 'error',
+                offset: 30,
+                duration: 2000,
+              });
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.drawerLoading = false;
+          });
+    },
+    // 事务的修改操作 - 调用put接口
+    updateMatter(row) {
+      this.drawerLoading = true;
+      const attribute = 'update'
+      const user_id = row.user_info_id_list.slice().pop()
+      let date = new Date(row.expected_completion_time);
+      row.user_id = user_id
+      row.expected_completion_time = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
+      this.$http
+          .put(`business_function/matter_changes/?attribute=${attribute}`, {
+            data: row
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.$notify({
+                title: '成功',
+                message: data.message,
+                type: 'success',
+                offset: 30,
+                duration: 2000,
+              });
+              this.getMatterInfoData(data.order_id);
+            } else {
+              this.$notify({
+                title: '错误',
+                message: data.message,
+                type: 'error',
+                offset: 30,
+                duration: 2000,
+              });
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            row.editable = false;
+            this.drawerLoading = false;
+          });
+    }
   },
 
 }
 </script>
 <style scoped>
 .content {
-  width: 90%;
+  width: 95%;
   margin: 0 auto;
 }
 
