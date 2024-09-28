@@ -5,7 +5,7 @@
         <el-tab-pane label="事项信息" name="MatterInfo">
           <component :is="MatterInfo" v-if="activeName === 'MatterInfo'"/>
         </el-tab-pane>
-        <el-tab-pane label="修改记录" name="MatterRecord">
+        <el-tab-pane label="变更记录" name="MatterRecord">
           <component :is="MatterRecord" v-if="activeName === 'MatterRecord'"/>
         </el-tab-pane>
       </el-tabs>
