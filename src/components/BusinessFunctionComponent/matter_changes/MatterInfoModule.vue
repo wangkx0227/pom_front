@@ -98,7 +98,7 @@
                     width="120"
                 >
                   <template v-slot="{ row }">
-                    <el-tag v-if="row.is_show === 0" effect="plain">正常</el-tag>
+                    <el-tag v-if="row.is_show === 1" effect="plain">正常</el-tag>
                     <el-tag type="info" effect="plain" v-else>停止</el-tag>
                   </template>
                 </el-table-column>
@@ -200,7 +200,7 @@
                     width="120"
                 >
                   <template v-slot="{ row }">
-                    <el-tag v-if="row.is_show === 0" effect="plain">正常</el-tag>
+                    <el-tag v-if="row.is_show === 1" effect="plain">正常</el-tag>
                     <el-tag type="info" effect="plain" v-else>停止</el-tag>
                   </template>
                 </el-table-column>
@@ -433,7 +433,7 @@ export default {
     },
     // 计算按钮是否停止和修改可以点击
     ButtonStatusChanges(row) {
-      return row.complete_status === 1 || row.is_show === 1;
+      return row.complete_status === 1 || row.is_show === 0;
     },
     // 修改按钮，修改row.editable值 让这条可以进行修改
     editRow(row) {
