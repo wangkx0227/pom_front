@@ -25,7 +25,7 @@
             <el-tag type="info" effect="plain" v-else>监督</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="生成时间" align="center" width="180" prop="create_date">
+        <el-table-column label="变更时间" align="center" width="180" prop="create_date">
         </el-table-column>
         <el-table-column label="事务名称" align="center" width="500" prop="matter_name">
         </el-table-column>

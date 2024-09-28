@@ -6,7 +6,7 @@
           <component :is="MatterInfo" v-if="activeName === 'MatterInfo'"/>
         </el-tab-pane>
         <el-tab-pane label="变更记录" name="MatterRecord">
-          <component :is="MatterChangeRecord" v-if="activeName === 'MatterRecord'"/>
+          <component :is="MatterChangeRecordLog" v-if="activeName === 'MatterRecord'"/>
         </el-tab-pane>
       </el-tabs>
     </el-card>
@@ -21,7 +21,7 @@ name: "MatterChanges",
       activeName: "MatterInfo",
       // 使用懒加载形式加载组件
       MatterInfo: () => import("@/components/BusinessFunctionComponent/matter_changes/MatterInfoModule"),
-      MatterChangeRecord: () => import("@/components/BusinessFunctionComponent/matter_changes/MatterChangeRecordModule"),
+      MatterChangeRecordLog: () => import("@/components/BusinessFunctionComponent/matter_changes/MatterChangeRecordLogModule"),
     };
   },
   methods: {
