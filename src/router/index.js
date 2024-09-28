@@ -174,11 +174,18 @@ const routes = [
         meta: { title: "邮箱功能" },
       },
       {
-        path: "matter_changes/", //
+        path: "matter_changes/", // 事务变更
         name: "matter_changes",
         component: () =>
             import("@/views/BusinessFunctionMenu/MatterChanges"),
         meta: { title: "事务变更" },
+      },
+      {
+        path: "matter_query/", // 事务查询
+        name: "matter_query",
+        component: () =>
+            import("@/views/BusinessFunctionMenu/MatterQuery"),
+        meta: { title: "事务查询" },
       },
     ],
   },
