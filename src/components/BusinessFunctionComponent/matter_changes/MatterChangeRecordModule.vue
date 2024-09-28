@@ -11,98 +11,25 @@
     <div class="table_content">
       <el-table :data="MatterChangeRecord" style="width: 100%" height="610">
         <el-table-column prop="index" label="#" align="center"></el-table-column>
-        <el-table-column label="PO" align="center" width="180">
+        <el-table-column label="PO" align="center" width="120" prop="po">
+        </el-table-column>
+        <el-table-column label="ITEM列表" align="center" width="120">
           <template v-slot="{ row }">
-            <span v-if="!row.editable">{{ row.matter_name }}</span>
-            <el-input v-model="row.matter_name" v-else></el-input>
+            <el-button size="mini" type="text" @click="getOrderRecordItem(row)"> 查看详情
+            </el-button>
           </template>
         </el-table-column>
-        <el-table-column label="ITEM列表" align="center" width="180">
+        <el-table-column label="类型" align="center" width="120">
           <template v-slot="{ row }">
-            <el-switch
-                v-if="!row.editable"
-                v-model="row.switch_value"
-                active-color="#13ce66"
-                inactive-color="#ff4949"
-                disabled
-                active-text="开"
-                inactive-text="关"
-            >
-            </el-switch>
-            <el-switch
-                v-else
-                v-model="row.switch_value"
-                @change="changeSwitch($event,row)"
-                active-color="#13ce66"
-                inactive-color="#ff4949"
-                active-text="开"
-                inactive-text="关"
-            >
-            </el-switch>
+            <el-tag v-if="row.type === 'matter'" effect="plain">跟进</el-tag>
+            <el-tag type="info" effect="plain" v-else>监督</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="工厂" align="center" width="300">
-          <template v-slot="{ row }">
-            <span  v-if="!row.editable">
-              <el-tag v-if="row.is_file === 0">否</el-tag>
-              <el-tag v-else type="info">是</el-tag>
-            </span>
-            <el-select v-else v-model="row.is_file" collapse-tags clearable placeholder="请输选择">
-              <el-option v-for="item in is_file_list" :key="item.value" :label="item.label" :value="item.value">
-              </el-option>
-            </el-select>
-          </template>
+        <el-table-column label="生成时间" align="center" width="180" prop="create_date">
         </el-table-column>
-        <el-table-column label="类型" align="center" width="180">
-          <template v-slot="{ row }">
-            <el-tooltip v-if="!row.editable" class="item" effect="dark" :content="row.user_name" placement="bottom">
-              <span v-if="row.user_name">{{ row.user_name.substring(0, 10) }}
-              <span v-if="row.user_name && row.user_name.length >= 10">...</span></span>
-            </el-tooltip>
-            <el-cascader
-                clearable v-else
-                collapse-tags
-                :props="{ multiple: true }"
-                :options="user_data_list"
-                v-model="row.user_id_list"
-                :show-all-levels="false">
-              <template slot-scope="{ node, data }">
-                <span>{{ data.label }}</span>
-                <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
-              </template>
-            </el-cascader>
-          </template>
+        <el-table-column label="事务名称" align="center" width="500" prop="matter_name">
         </el-table-column>
-        <el-table-column label="生成时间" align="center" width="180">
-          <template v-slot="{ row }">
-            <el-tooltip v-if="!row.editable" class="item" effect="dark" :content="row.user_name" placement="bottom">
-              <span v-if="row.user_name">{{ row.user_name.substring(0, 10) }}
-              <span v-if="row.user_name && row.user_name.length >= 10">...</span></span>
-            </el-tooltip>
-            <el-cascader
-                clearable v-else
-                collapse-tags
-                :props="{ multiple: true }"
-                :options="user_data_list"
-                v-model="row.user_id_list"
-                :show-all-levels="false">
-              <template slot-scope="{ node, data }">
-                <span>{{ data.label }}</span>
-                <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
-              </template>
-            </el-cascader>
-          </template>
-        </el-table-column>
-        <el-table-column label="事务名称" align="center" width="400">
-          <template v-slot="{ row }">
-            <span v-if="!row.editable">{{ row.rule_name }}</span>
-            <el-select v-else v-model="row.no_order_matter_rule_id" collapse-tags clearable placeholder="请输选择">
-              <el-option v-for="item in rule_data_list" :key="item.value" :label="item.label" :value="item.value">
-              </el-option>
-            </el-select>
-          </template>
-        </el-table-column>
-        <el-table-column label="变更内容" align="center" width="180" prop="create_date">
+        <el-table-column label="变更内容" align="center" width="500" prop="description">
         </el-table-column>
       </el-table>
     </div>
@@ -111,6 +38,14 @@
                      background layout="total,prev, pager, next" :page-size="10" :total="data_total"
                      v-model:current-page="page">
       </el-pagination>
+    </div>
+    <div class="dialog">
+      <el-dialog title="ITEM详情列表" :visible.sync="dialogTableVisible" :before-close="dialogItemTableClose" width="30%">
+        <el-table :data="item_list" height="200" border v-loading="dialogTableLoading">
+          <el-table-column property="index" label="#" align="center"></el-table-column>
+          <el-table-column property="item" label="ITEM" width="450" align="center"></el-table-column>
+        </el-table>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -129,6 +64,10 @@ export default {
       page: 1,
       // 可访问权限列表
       method_list: [],
+      // item列表
+      item_list: [],
+      dialogTableVisible: false,
+      dialogTableLoading: false,
     };
   },
   created() {
@@ -140,16 +79,16 @@ export default {
     getMatterChangeRecordData() {
       let get_url;
       if (this.search) {
-        get_url = `business_function/no_order_matter/?page=${this.page}&search=${this.search}`;
+        get_url = `business_function/matter_changes_record_log/?page=${this.page}&search=${this.search}`;
       } else {
-        get_url = `business_function/no_order_matter/?page=${this.page}`;
+        get_url = `business_function/matter_changes_record_log/?page=${this.page}`;
       }
       this.$http
           .get(get_url)
           .then((res) => {
             let data = res.data;
             if (data.code === 200) {
-              this.MatterChangeRecord = data.data.data;
+              this.MatterChangeRecord = data.data.matter_info_data_list;
               this.data_total = data.data.data_total;
               this.method_list = data.data.method_list;
             } else {
@@ -201,6 +140,32 @@ export default {
     reloadData() {
       this.search = "";
       this.getMatterChangeRecordData();
+    },
+    // 查看item列表
+    getOrderRecordItem(row) {
+      this.dialogTableVisible = true;
+      this.dialogTableLoading = true;
+      const order_record_id = row.order_record_info_id;
+      this.$http
+          .get(`business_function/order_record_info/?query=item&order_record_id=${order_record_id}`)
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.item_list = data.data;
+            } else {
+              this.item_list = [];
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.dialogTableLoading = false;
+          });
+    },
+    // 作为item 弹窗的关闭窗口调用函数
+    dialogItemTableClose(done) {
+      done(); // 关闭窗口
     },
   },
 };
