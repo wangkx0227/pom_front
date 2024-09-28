@@ -46,6 +46,12 @@
         </el-table-column>
         <el-table-column label="事务负责人" align="center" prop="user_name">
         </el-table-column>
+        <el-table-column label="事务状态" align="center" >
+          <template v-slot="{ row }">
+            <el-tag v-if="row.is_show === 1" effect="plain">正常</el-tag>
+            <el-tag v-else type="danger" effect="plain">停止</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column label="应完成时间" align="center" width="180" prop="expected_completion_time">
         </el-table-column>
         <el-table-column label="事务类型" align="center">
@@ -94,10 +100,10 @@
               <el-descriptions-item label="PO">{{ matter_info.po }}</el-descriptions-item>
               <el-descriptions-item label="ITEM信息" :span="2">
                 <span v-if="!matter_info.order_record_id">无</span>
-                <el-button 
-                  size="mini" 
-                  type="text" 
-                  @click="getMatterItemInfo(matter_info.order_record_id)" 
+                <el-button
+                  size="mini"
+                  type="text"
+                  @click="getMatterItemInfo(matter_info.order_record_id)"
                   v-if="order_record_info_method_list.includes('GET') && matter_info.order_record_id">
                   查看ITEM列表
                 </el-button>
@@ -236,7 +242,7 @@ export default {
               this.method_list = data.data.method_list;
               this.order_record_info_method_list = data.data.order_record_info_method_list;
               this.download_file_method_list = data.data.download_file_method_list;
-              
+
             } else {
               this.department_matter_list = [];
             }
