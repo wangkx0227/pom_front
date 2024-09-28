@@ -53,6 +53,26 @@
             </el-select>
           </template>
         </el-table-column>
+        <el-table-column label="类型" align="center" width="180">
+          <template v-slot="{ row }">
+            <el-tooltip v-if="!row.editable" class="item" effect="dark" :content="row.user_name" placement="bottom">
+              <span v-if="row.user_name">{{ row.user_name.substring(0, 10) }}
+              <span v-if="row.user_name && row.user_name.length >= 10">...</span></span>
+            </el-tooltip>
+            <el-cascader
+                clearable v-else
+                collapse-tags
+                :props="{ multiple: true }"
+                :options="user_data_list"
+                v-model="row.user_id_list"
+                :show-all-levels="false">
+              <template slot-scope="{ node, data }">
+                <span>{{ data.label }}</span>
+                <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
+              </template>
+            </el-cascader>
+          </template>
+        </el-table-column>
         <el-table-column label="生成时间" align="center" width="180">
           <template v-slot="{ row }">
             <el-tooltip v-if="!row.editable" class="item" effect="dark" :content="row.user_name" placement="bottom">
@@ -114,7 +134,6 @@ export default {
   created() {
     this.loading = true;
     this.getMatterChangeRecordData();
-
   },
   methods: {
     // 获取数据
