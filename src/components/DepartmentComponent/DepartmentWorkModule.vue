@@ -54,7 +54,7 @@
         </el-table-column>
         <el-table-column label="应完成时间" align="center" width="180" prop="expected_completion_time">
         </el-table-column>
-        <el-table-column label="事务类型" align="center">
+        <el-table-column label="事务类型" align="center" width="180">
           <template v-slot="{ row }">
             <el-tag v-if="row.type === 'order_matter'" type="success">订单：跟进类型</el-tag>
             <el-tag  v-else-if="row.type === 'no_order_matter'" type="info">非订单：常规类型</el-tag>
@@ -328,7 +328,7 @@ export default {
       done();
       this.matter_info = {};
       this.DelayData = [];
-      this.fileData = [];
+      this.FileData = [];
       this.type = null;
     },
     // 附件下载
