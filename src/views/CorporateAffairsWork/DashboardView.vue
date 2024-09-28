@@ -34,7 +34,7 @@
         </div>
         <div class="work_block">
           <el-tabs v-model="activeName">
-            <el-tab-pane label="近期待完成" name="comprehensive">
+            <el-tab-pane label="近期" name="comprehensive">
               <div style="width: 100%; display: inline-block">
                 <div
                     ref="lineChart"
@@ -43,7 +43,7 @@
                 ></div>
               </div>
             </el-tab-pane>
-            <el-tab-pane label="全部待完成" name="pancake">
+            <el-tab-pane label="未完成" name="pancake">
               <div style="width: 100%; display: inline-block">
                 <div
                     ref="pieChart"
@@ -52,7 +52,7 @@
                 ></div>
               </div>
             </el-tab-pane>
-            <el-tab-pane label="全部" name="column">
+            <el-tab-pane label="总计" name="column">
               <div style="width: 100%; display: inline-block">
                 <div
                     ref="columnar"
@@ -186,9 +186,9 @@ export default {
       pieChartData: [
         // 饼状图数据
         {name: "订单事务", value: 0},
-        {name: "非订单事务", value: 0},
-        {name: "特殊事务", value: 0},
         {name: "监督事项", value: 0},
+        {name: "特殊事务", value: 0},
+        {name: "非订单事务", value: 0},
       ],
       // 柱状图标题
       columnarDate: [0, 0, 0, 0, 0, 0], // 柱状图展示数据
@@ -211,7 +211,7 @@ export default {
       const pie_Chart = init(this.$refs.pieChart);
       pie_Chart.setOption({
         title: {
-          text: "待完成",
+          text: "全部未完成（包含近期）",
           left: "center",
         },
         toolbox: {
@@ -248,7 +248,7 @@ export default {
       const pie_Columnar = init(this.$refs.columnar);
       pie_Columnar.setOption({
         title: {
-          text: "展示全部的事务分类（包含已完成）",
+          text: "全部的事务（包含已完成/未完成）",
           left: "center",
         },
         toolbox: {
@@ -267,9 +267,9 @@ export default {
           data: [
             "事项总数",
             "订单事务",
-            "非订单事务",
-            "特殊事务",
             "监督事项",
+            "特殊事务",
+            "非订单事务",
           ],
         },
         yAxis: {},
@@ -287,7 +287,7 @@ export default {
       const line_Chart = init(this.$refs.lineChart);
       line_Chart.setOption({
         title: {
-          text: '待完成'
+          text: '待完成（近期计算后5天）'
         },
         tooltip: {
           trigger: 'axis'
