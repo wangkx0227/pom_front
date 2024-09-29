@@ -2,16 +2,26 @@
   <div class="index">
     <div class="header">
       <h5 class="title-h5">POM管理系统</h5>
-      <div style="margin-right: 15px">
-        <el-badge is-dot class="item" style="margin-right: 15px">
-          <el-button class="share-button" icon="el-icon-bell" type="primary" size="mini" @click="messageInfo"></el-button>
+      <div style="margin-right: 15px;display: flex;align-items: center">
+        <div style="margin-right: 15px">
+          <el-tooltip class="item" effect="light" content="刷新" placement="top-start">
+            <el-button icon="el-icon-refresh-right" circle size="small" type="primary" @click="refreshPage"></el-button>
+          </el-tooltip>
+        </div>
+        <el-badge is-dot class="item" style="margin-right: 10px">
+          <el-tooltip class="item" effect="light" content="消息" placement="top-start">
+            <el-button class="share-button" icon="el-icon-bell" type="info" size="mini"
+                       @click="messageInfo"></el-button>
+          </el-tooltip>
         </el-badge>
         <span class="tag-group__title gradient-text">登录用户：</span>
         <el-dropdown @command="changeDropdown" trigger="click">
-          <el-button type="success" class="userTag" size="mini">
-            <i class="el-icon-user"></i>
-            {{ user_name }}
-          </el-button>
+          <el-tooltip class="item" effect="light" content="个人账户功能" placement="top-start">
+            <el-button type="success" class="userTag" size="mini">
+              <i class="el-icon-user"></i>
+              {{ user_name }}
+            </el-button>
+          </el-tooltip>
           <template v-slot:dropdown>
             <el-dropdown-menu>
               <el-dropdown-item command="access">访问记录</el-dropdown-item>
@@ -145,6 +155,9 @@ export default {
         localStorage.setItem("tip", "1");
       }
     },
+    refreshPage() {
+      window.location.reload();
+    }
   },
 };
 </script>
@@ -162,6 +175,7 @@ export default {
 .title-h5 {
   margin-left: 10px;
   margin-bottom: 0;
+  font-size: 20px;
 }
 
 .header {
@@ -202,7 +216,7 @@ export default {
   }
 
   .gradient-text {
-    font-size: 12px;
+    font-size: 14px;
   }
 
   .title-h5 {
