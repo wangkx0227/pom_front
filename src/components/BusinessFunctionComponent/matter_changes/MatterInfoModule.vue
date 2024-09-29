@@ -16,7 +16,7 @@
         <el-table-column label="工厂" align="center" prop="factory_name"></el-table-column>
         <el-table-column label="ITEM列表" align="center">
           <template v-slot="{ row }">
-            <el-button size="mini" type="text" @click="getOrderRecordItem(row)"> 查看详情
+            <el-button size="mini" type="text" @click="getOrderRecordItem(row)" v-if="order_record_info_method.includes('GET')"> 查看详情
             </el-button>
           </template>
         </el-table-column>
@@ -24,7 +24,8 @@
         <el-table-column label="订单导入时间" align="center" prop="create_date"></el-table-column>
         <el-table-column label="操作" align="center">
           <template v-slot="scope">
-            <el-button size="mini" type="text" @click="openUpdateDrawer(scope.row)">变更修改
+            <el-button size="mini" type="text" @click="openUpdateDrawer(scope.row)" v-if="method_list.includes('POST')">
+              变更修改
             </el-button>
           </template>
         </el-table-column>
@@ -136,20 +137,22 @@
                 </el-table-column>
                 <el-table-column label="操作" align="center" width="120">
                   <template v-slot="scope">
-                    <el-button v-if="!scope.row.editable" size="mini" type="text" width="180"
-                               :disabled="ButtonStatusChanges(scope.row)"
-                               @click="editRow(scope.row)">修改
-                    </el-button>
-                    <el-button v-else size="mini" type="text" width="180" :disabled="ButtonStatusChanges(scope.row)"
-                               @click="updateMatter(scope.row)">保存
-                    </el-button>
-                    <el-divider direction="vertical"></el-divider>
-                    <el-button v-if="scope.row.editable" size="mini" type="text" width="180"
-                               @click="scope.row.editable = false">取消
-                    </el-button>
-                    <el-button v-else size="mini" type="text" width="180" :disabled="ButtonStatusChanges(scope.row)"
-                               @click="stopMatter(scope.row)">终止
-                    </el-button>
+                    <div v-if="method_list.includes('PUT')">
+                      <el-button v-if="!scope.row.editable" size="mini" type="text" width="180"
+                                 :disabled="ButtonStatusChanges(scope.row)"
+                                 @click="editRow(scope.row)">修改
+                      </el-button>
+                      <el-button v-else size="mini" type="text" width="180" :disabled="ButtonStatusChanges(scope.row)"
+                                 @click="updateMatter(scope.row)">保存
+                      </el-button>
+                      <el-divider direction="vertical"></el-divider>
+                      <el-button v-if="scope.row.editable" size="mini" type="text" width="180"
+                                 @click="scope.row.editable = false">取消
+                      </el-button>
+                      <el-button v-else size="mini" type="text" width="180" :disabled="ButtonStatusChanges(scope.row)"
+                                 @click="stopMatter(scope.row)">终止
+                      </el-button>
+                    </div>
                   </template>
                 </el-table-column>
               </el-table-column>
@@ -238,20 +241,22 @@
                 </el-table-column>
                 <el-table-column label="操作" align="center" width="120">
                   <template v-slot="scope">
-                    <el-button v-if="!scope.row.editable" size="mini" type="text" width="180"
-                               :disabled="ButtonStatusChanges(scope.row)"
-                               @click="editRow(scope.row)">修改
-                    </el-button>
-                    <el-button v-else size="mini" type="text" width="180" :disabled="ButtonStatusChanges(scope.row)"
-                               @click="updateMatter(scope.row)">保存
-                    </el-button>
-                    <el-divider direction="vertical"></el-divider>
-                    <el-button v-if="scope.row.editable" size="mini" type="text" width="180"
-                               @click="scope.row.editable = false">取消
-                    </el-button>
-                    <el-button v-else size="mini" type="text" width="180" :disabled="ButtonStatusChanges(scope.row)"
-                               @click="stopMatter(scope.row)">终止
-                    </el-button>
+                    <div v-if="method_list.includes('PUT')">
+                      <el-button v-if="!scope.row.editable" size="mini" type="text" width="180"
+                                 :disabled="ButtonStatusChanges(scope.row)"
+                                 @click="editRow(scope.row)">修改
+                      </el-button>
+                      <el-button v-else size="mini" type="text" width="180" :disabled="ButtonStatusChanges(scope.row)"
+                                 @click="updateMatter(scope.row)">保存
+                      </el-button>
+                      <el-divider direction="vertical"></el-divider>
+                      <el-button v-if="scope.row.editable" size="mini" type="text" width="180"
+                                 @click="scope.row.editable = false">取消
+                      </el-button>
+                      <el-button v-else size="mini" type="text" width="180" :disabled="ButtonStatusChanges(scope.row)"
+                                 @click="stopMatter(scope.row)">终止
+                      </el-button>
+                    </div>
                   </template>
                 </el-table-column>
               </el-table-column>
@@ -271,6 +276,7 @@ export default {
       MatterInfoData: [], // 数据
       search: null, // 搜索内容
       method_list: [], // 权限
+      order_record_info_method: [], // 权限
       // 分页
       data_total: 0, // 数据总数
       page_status: 0, // 分页状态变量，当上下一页时进行改变，只有是0时点击数字页码会改变
@@ -312,6 +318,7 @@ export default {
               this.MatterInfoData = data.data.matter_info_data_list;
               this.data_total = data.data.data_total;
               this.method_list = data.data.method_list;
+              this.order_record_info_method = data.data.order_record_info_method;
             } else {
               this.MatterInfoData = [];
             }

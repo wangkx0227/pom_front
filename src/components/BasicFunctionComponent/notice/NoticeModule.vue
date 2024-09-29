@@ -1,7 +1,7 @@
 <template>
   <div class="factory_bind_user" v-loading="loading">
     <div class="head_search_add">
-      <el-button type="info" plain @click="addShowDrawer">添加信息</el-button>
+      <el-button type="info" plain @click="addShowDrawer" v-if="method_list.includes('POST')">添加信息</el-button>
       <el-input placeholder="请输入信息标题" clearable class="input_search" v-model="search">
       </el-input>
       <el-button type="primary" icon="el-icon-search" plain @click="searchDate">搜索
@@ -30,10 +30,10 @@
         </el-table-column>
         <el-table-column label="操作" align="center" width="180">
           <template v-slot="scope">
-            <el-button size="mini" type="text" @click="updateShowDrawer(scope.row)">编辑
+            <el-button size="mini" type="text" @click="updateShowDrawer(scope.row)" v-if="method_list.includes('PUT')">编辑
             </el-button>
-            <el-divider direction="vertical"></el-divider>
-            <el-popover placement="top" width="160" v-model="scope.row.visible" trigger="manual">
+            <el-divider direction="vertical" v-if="method_list.includes('PUT') && method_list.includes('DELETE')"></el-divider>
+            <el-popover placement="top" width="160" v-model="scope.row.visible" trigger="manual" v-if="method_list.includes('DELETE')">
               <p>删除后无恢复，请问确定删除吗？</p>
               <div style="text-align: right; margin: 0">
                 <el-button size="mini" type="text" @click="scope.row.visible = false">取消
@@ -141,6 +141,8 @@ export default {
       search: null,
       // 修改使用的id
       pk: null,
+      // 权限
+      method_list:[],
     };
   },
   created() {

@@ -15,7 +15,7 @@
         </el-table-column>
         <el-table-column label="ITEM列表" align="center" width="120">
           <template v-slot="{ row }">
-            <el-button size="mini" type="text" @click="getOrderRecordItem(row)"> 查看详情
+            <el-button size="mini" type="text" @click="getOrderRecordItem(row)" v-if="order_record_info_method.includes('GET')"> 查看详情
             </el-button>
           </template>
         </el-table-column>
@@ -64,6 +64,7 @@ export default {
       page: 1,
       // 可访问权限列表
       method_list: [],
+      order_record_info_method: [],
       // item列表
       item_list: [],
       dialogTableVisible: false,
@@ -91,6 +92,7 @@ export default {
               this.MatterChangeRecord = data.data.matter_info_data_list;
               this.data_total = data.data.data_total;
               this.method_list = data.data.method_list;
+              this.order_record_info_method = data.data.order_record_info_method;
             } else {
               this.MatterChangeRecord = [];
             }
