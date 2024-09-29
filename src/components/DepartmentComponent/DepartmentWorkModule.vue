@@ -174,7 +174,6 @@
 </template>
 
 <script>
-// 按钮权限还没有进行设置
 export default {
   name: "DepartmentWorkModule",
   data() {
@@ -243,6 +242,8 @@ export default {
 
             } else {
               this.department_matter_list = [];
+              this.method_list = [];
+              this.order_record_info_method_list = [];
             }
           })
           .catch((error) => {
