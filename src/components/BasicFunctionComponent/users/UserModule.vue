@@ -91,7 +91,7 @@
         </el-table-column>
         <el-table-column label="密码" align="center" prop="passwd" width="180">
         </el-table-column>
-        <el-table-column label="邮箱" align="center" width="180">
+        <el-table-column label="邮箱" align="center" width="250">
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.email }}</span>
             <el-input v-model="row.email" v-else></el-input>
@@ -111,19 +111,9 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="创建日期" align="center" width="180">
-          <template v-slot="{ row }">
-            <el-tooltip class="item" effect="dark" :content="row.create_date" placement="bottom">
-              <div class="cell ellipsis">{{ row.create_date }}</div>
-            </el-tooltip>
-          </template>
+        <el-table-column label="创建日期" align="center" width="180" prop="create_date">
         </el-table-column>
-        <el-table-column label="修改日期" align="center" width="180">
-          <template v-slot="{ row }">
-            <el-tooltip class="item" effect="dark" :content="row.update_date" placement="bottom">
-              <div class="cell ellipsis">{{ row.update_date }}</div>
-            </el-tooltip>
-          </template>
+        <el-table-column label="修改日期" align="center" width="180" prop="update_date">
         </el-table-column>
         <el-table-column label="归属部门" align="center" width="180">
           <template v-slot="{ row }">
