@@ -146,8 +146,7 @@
                 </el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                   <template v-slot="{ row }">
-                    <el-button size="mini" type="text" @click="DownloadAnnexFile(row)" :loading="Downloading"
-                               v-if="download_file_method_list.includes('GET')">
+                    <el-button size="mini" type="text" @click="DownloadAnnexFile(row)" :loading="Downloading">
                       下载
                     </el-button>
                   </template>
@@ -244,7 +243,6 @@ export default {
               this.method_list = data.data.method_list;
               this.order_record_info_method_list = data.data.order_record_info_method_list;
               this.download_file_method_list = data.data.download_file_method_list;
-
             } else {
               this.matter_query_list = [];
             }

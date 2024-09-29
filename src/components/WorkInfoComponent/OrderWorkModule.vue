@@ -141,13 +141,12 @@
               <el-button
                   size="mini"
                   type="text"
-                  v-if="download_method_list.includes('GET')"
                   @click="DownloadAnnexFile(scope.row)"
               >下载
               </el-button>
               <div
                   style="display: inline;"
-                  v-if="download_method_list.includes('GET') && annex_method_list.includes('DELETE')">
+                  v-if=" annex_method_list.includes('DELETE')">
                 <el-divider direction="vertical"></el-divider>
               </div>
               <el-button
@@ -320,7 +319,6 @@ export default {
         'X-User-Id': localStorage.getItem("user_id"),
       },
       annex_method_list: [], // 附件可使用功能权限
-      download_method_list: [], // 附件可下载权限
       // 延期列表
       DelayVisible: false,
       DelayTableLoading: false,
@@ -365,7 +363,6 @@ export default {
               this.method_list = data.data.method_list;
               this.delay_method_list = data.data.delay_method_list;
               this.annex_method_list = data.data.annex_method_list;
-              this.download_method_list = data.data.download_method_list;
             } else {
               this.no_order_matter_list = [];
             }
