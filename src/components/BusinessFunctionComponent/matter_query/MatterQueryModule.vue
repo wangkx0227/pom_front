@@ -38,14 +38,15 @@
     <div class="table_content">
       <el-table :data="matter_query_list" style="width: 100%" height="548">
         <el-table-column prop="index" label="#" align="center"></el-table-column>
+        <el-table-column prop="po" label="PO" align="center" width="180"></el-table-column>
         <el-table-column label="事项名称" align="center" prop="matter_name" width="500">
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.matter_name }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="事务负责人" align="center" prop="user_name">
+        <el-table-column label="事务负责人" align="center" prop="user_name" width="180">
         </el-table-column>
-        <el-table-column label="事务状态" align="center">
+        <el-table-column label="事务状态" align="center" width="120">
           <template v-slot="{ row }">
             <el-tag v-if="row.is_show === 1" effect="plain">正常</el-tag>
             <el-tag v-else type="danger" effect="plain">停止</el-tag>
@@ -61,7 +62,7 @@
             <el-tag v-else-if="row.type === 'supervise'">订单：监督类型</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="完成状态" align="center">
+        <el-table-column label="完成状态" align="center" width="120">
           <template v-slot="{ row }">
             <el-tag v-if="row.complete_status === 1" effect="plain">完成</el-tag>
             <el-tag v-else type="danger" effect="plain">未完成</el-tag>
@@ -69,9 +70,9 @@
         </el-table-column>
         <el-table-column label="实际完成时间" align="center" prop="complete_time" width="180">
         </el-table-column>
-        <el-table-column label="操作" align="center" width="180">
+        <el-table-column label="操作" align="center" width="120" fixed="right">
           <template v-slot="scope">
-            <el-button size="mini" type="text" @click="getModuleInfo(scope.row)" v-if="method_list.includes('POST')">
+            <el-button size="mini" type="text" @click="getModuleInfo(scope.row)" v-if="method_list.includes('GET')">
               查看事务详情
             </el-button>
           </template>
