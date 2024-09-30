@@ -34,7 +34,6 @@
         <el-button type="warning" icon="el-icon-refresh-right" plain @click="reloadData">重置
         </el-button>
       </div>
-
     </div>
     <div class="table_content">
       <el-table :data="department_matter_list" style="width: 100%" height="548">

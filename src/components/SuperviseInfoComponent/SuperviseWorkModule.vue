@@ -35,6 +35,7 @@
         <el-table :data="SuperviseMattersData" style="width: 100%" height="590">
           <el-table-column prop="index" label="#" align="center"></el-table-column>
           <el-table-column prop="po" label="PO" align="center"></el-table-column>
+          <el-table-column prop="po" label="事项名称" align="center"></el-table-column>
           <el-table-column label="监督事项详情" align="center" prop="">
             <template v-slot="{ row }">
               <el-button size="mini" type="text" @click="getMatterInfo(row)"> 查看详情 </el-button>
