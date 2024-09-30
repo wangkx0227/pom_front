@@ -7,19 +7,35 @@
         <el-radio-button label="not_finish">未完成</el-radio-button>
       </el-radio-group>
     </div>
-    <div class="head_search">
-      <el-date-picker
-          v-model="time_frame_list"
-          type="daterange"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          style="margin-right: 5px;">
-      </el-date-picker>
-      <el-button type="primary" icon="el-icon-search" plain @click="searchData">搜索
-      </el-button>
-      <el-button type="warning" icon="el-icon-refresh-right" plain @click="reloadData">重置
-      </el-button>
+    <div class="head_search" style="display: flex">
+      <div class="select_filter_po">
+        <el-select v-model="user_id" placeholder="根据PO晒选">
+          <el-option v-for="item in user_info_list" :key="item.value" :label="item.label" :value="item.value">
+          </el-option>
+        </el-select>
+      </div>
+      <div class="select_filter_factory" style="margin-left:5px">
+        <el-select v-model="user_id" placeholder="根据工厂晒选">
+          <el-option v-for="item in user_info_list" :key="item.value" :label="item.label" :value="item.value">
+          </el-option>
+        </el-select>
+      </div>
+      <div class="data_filter" style="margin-left:5px">
+        <el-date-picker
+            v-model="time_frame_list"
+            type="daterange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            style="margin-right: 5px;">
+        </el-date-picker>
+      </div>
+      <div class="filter_button">
+        <el-button type="primary" icon="el-icon-search" plain @click="searchData">搜索
+        </el-button>
+        <el-button type="warning" icon="el-icon-refresh-right" plain @click="reloadData">重置
+        </el-button>
+      </div>
     </div>
     <div class="table_content">
       <el-table :data="order_matter_list" style="width: 100%" height="590">
