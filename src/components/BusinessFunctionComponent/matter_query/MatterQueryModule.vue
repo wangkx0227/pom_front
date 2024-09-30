@@ -226,14 +226,25 @@ export default {
   methods: {
     // 获取数据
     getALLWorkListData() {
-      let get_url;
-      if (!this.search_start_time) {
-        get_url = `business_function/matter_query/?page=${this.page}`;
-      } else {
-        get_url = `business_function/matter_query/?page=${this.page}&end_time=${this.search_end_time}&start_time=${this.search_start_time}`;
+      let url = `business_function/matter_query/?page=${this.page}`
+      // 条件1: status_radio
+      if (this.status_radio) {
+        url += `&status=${this.status_radio}`;
+      }
+      // 条件2: type_radio
+      if (this.type_radio) {
+        url += `&type=${this.type_radio}`;
+      }
+      // 条件3: user_id
+      if (this.user_id) {
+        url += `&user_id=${this.user_id}`;
+      }
+      // 条件4：时间范围
+      if (this.user_id) {
+        url += `&start_time=${this.search_start_time}&end_time=${this.search_end_time}`;
       }
       this.$http
-          .get(get_url)
+          .get(url)
           .then((res) => {
             let data = res.data;
             if (data.code === 200) {
@@ -295,6 +306,7 @@ export default {
       this.search_end_time = '';
       this.status_radio = 'all';
       this.type_radio = 'all';
+      this.user_id = null;
       this.getALLWorkListData();
     },
     // 查看事务
