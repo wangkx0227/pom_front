@@ -44,16 +44,7 @@
           <el-table-column label="操作" align="center" prop="">
             <template v-slot="scope">
               <div v-if="scope.row.complete_status === 0 && method_list.includes('PUT')">
-                <el-popover placement="top" width="160" v-model="scope.row.visible">
-                  <p>完成事项后，按照当前的时间记录，请问是要完成码？</p>
-                  <div style="text-align: right; margin: 0">
-                    <el-button size="mini" type="text" @click="scope.row.visible = false">否</el-button>
-                    <el-button type="primary" size="mini" @click="completeSuperviseMatter(scope.row)">是</el-button>
-                  </div>
-                  <template v-slot:reference>
-                    <el-button size="mini" type="text">完成事务</el-button>
-                  </template>
-                </el-popover>
+                <el-button size="mini" type="text"  @click="openCompleteMessageBox(scope.row)">完成事务</el-button>
               </div>
             </template>
           </el-table-column>
@@ -222,6 +213,16 @@ export default {
       this.search_start_time = '';
       this.search_end_time = '';
       this.getSuperviseMatters();
+    },
+    openCompleteMessageBox(row) {
+      this.$confirm('请检查跟进人完成情况！完成事项后，按照当前的时间记录，请问是要完成码？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.completeSuperviseMatter(row);
+      }).catch(() => {
+      });
     },
     // 完成事项
     completeSuperviseMatter(row) {

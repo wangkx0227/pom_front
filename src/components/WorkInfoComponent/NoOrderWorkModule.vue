@@ -386,7 +386,7 @@ export default {
     },
     // 完成事项按钮 - 不需要上传附件弹窗
     openCompleteMessageBox(row) {
-      this.$confirm('完成事项后，按照当前的时间记录，请问是要完成码?', '提示', {
+      this.$confirm('完成事项后，按照当前的时间记录，请问是要完成码？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
