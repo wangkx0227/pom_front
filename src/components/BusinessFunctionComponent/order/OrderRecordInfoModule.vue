@@ -119,7 +119,7 @@
             <el-tag v-else>否</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="200">
+        <el-table-column label="操作" align="center" width="200"  fixed="right">
           <template v-slot="scope">
             <div v-if="scope.row.is_exceptional && exceptional_method_list.includes('POST')"  style="display: inline-block;">
               <el-button  size="mini" type="text" @click="OrderRepair(scope.row)">事项修复</el-button>
