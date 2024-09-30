@@ -24,14 +24,14 @@
     <div class="table_content">
       <el-table :data="order_matter_list" style="width: 100%"  height="590">
         <el-table-column prop="index" label="#" align="center"></el-table-column>
+        <el-table-column label="PO" align="center" width="180" prop="po">
+        </el-table-column>
         <el-table-column label="事项名称" align="center" prop="matter_name" width="500">
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.matter_name }}</span>
           </template>
         </el-table-column>
         <el-table-column label="工厂名称" align="center" width="180" prop="factory_name">
-        </el-table-column>
-        <el-table-column label="PO" align="center" width="180" prop="po">
         </el-table-column>
         <el-table-column label="ITEM列表" align="center" width="180">
           <template v-slot="{ row }">
@@ -74,7 +74,7 @@
             <span v-if="row.complete_status === 1">{{ row.complete_time }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="280">
+        <el-table-column label="操作" align="center" width="180" fixed="right">
           <template v-slot="scope">
             <!-- 完成后，隐藏申请延期按钮 -->
             <div v-if="method_list.includes('PUT') && !scope.row.complete_status" style="display: inline-block;">
@@ -184,7 +184,7 @@
             <template v-slot="scope">
               <el-button size="mini"
                          type="text"
-                         v-if="delay_method_list.includes('DELETE1')"
+                         v-if="delay_method_list.includes('DELETE')"
                          @click="delDelayData(scope.$index, delay_data, scope.row)">删除
               </el-button>
             </template>
