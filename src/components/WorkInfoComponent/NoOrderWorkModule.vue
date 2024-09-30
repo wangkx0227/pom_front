@@ -65,23 +65,14 @@
             <span v-if="row.complete_status === 1">{{ row.complete_time }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="280">
+        <el-table-column label="操作" align="center" width="140" fixed="right">
           <template v-slot="scope">
             <!-- 完成后，隐藏申请延期按钮 -->
             <div v-if="method_list.includes('PUT') && !scope.row.complete_status" style="display: inline-block;">
               <el-button v-if="scope.row.is_file" size="mini" type="text" @click="OpenNoOrderWorkDialog(scope.row)">
                 事务完成
               </el-button>
-              <el-popover v-else placement="top" width="160" v-model="scope.row.visible">
-                <p>完成事项后，按照当前的时间记录，请问是要完成码？</p>
-                <div style="text-align: right; margin: 0">
-                  <el-button size="mini" type="text" @click="scope.row.visible = false">否</el-button>
-                  <el-button type="primary" size="mini" @click="completeNoOrderWork(scope.row)">是</el-button>
-                </div>
-                <template v-slot:reference>
-                  <el-button size="mini" type="text">完成事务</el-button>
-                </template>
-              </el-popover>
+              <el-button size="mini" type="text" v-else @click="openCompleteMessageBox(scope.row)">完成事务</el-button>
             </div>
             <div v-if="method_list.includes('PUT') && method_list.includes('POST') && !scope.row.complete_status "
                  style="display: inline;">
@@ -319,12 +310,12 @@ export default {
     };
   },
   created() {
+    this.loading = true;
     this.getNoOrderWorkListData()
   },
   methods: {
     // 获取数据
     getNoOrderWorkListData() {
-      this.loading = true;
       let get_url;
       if (!this.search_start_time) {
         get_url = `work/no_order_matter_list/?page=${this.page}`;
@@ -392,6 +383,17 @@ export default {
       this.search_start_time = '';
       this.search_end_time = '';
       this.getNoOrderWorkListData();
+    },
+    // 完成事项按钮 - 不需要上传附件弹窗
+    openCompleteMessageBox(row) {
+      this.$confirm('完成事项后，按照当前的时间记录，请问是要完成码?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.completeNoOrderWork(row);
+      }).catch(() => {
+      });
     },
     // 完成事务按钮 - 不需要上传附件
     completeNoOrderWork(row) {

@@ -62,20 +62,11 @@
         </el-table-column>
         <el-table-column label="实际完成时间" align="center" width="180" prop="complete_time">
         </el-table-column>
-        <el-table-column label="操作" align="center" width="180">
+        <el-table-column label="操作" align="center" width="90" fixed="right">
           <template v-slot="scope">
             <!-- 完成后，隐藏申请延期按钮 -->
             <div v-if="method_list.includes('PUT') && scope.row.complete_status === 0">
-              <el-popover placement="top" width="160" v-model="scope.row.visible">
-                <p>完成事项后，按照当前的时间记录，请问是要完成码？</p>
-                <div style="text-align: right; margin: 0">
-                  <el-button size="mini" type="text" @click="scope.row.visible = false">否</el-button>
-                  <el-button type="primary" size="mini" @click="completeSpecialMatter(scope.row)">是</el-button>
-                </div>
-                <template v-slot:reference>
-                  <el-button size="mini" type="text">完成事务</el-button>
-                </template>
-              </el-popover>
+              <el-button size="mini" type="text"  @click="openCompleteMessageBox(scope.row)">完成事务</el-button>
             </div>
           </template>
         </el-table-column>
@@ -196,6 +187,17 @@ export default {
       this.search_start_time = '';
       this.search_end_time = '';
       this.getSpecialMatterListData();
+    },
+    // 完成事项按钮 - 不需要上传附件弹窗
+    openCompleteMessageBox(row) {
+      this.$confirm('完成事项后，按照当前的时间记录，请问是要完成码?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.completeSpecialMatter(row);
+      }).catch(() => {
+      });
     },
     // 完成事项函数
     completeSpecialMatter(row) {

@@ -25,7 +25,7 @@ export default {
       // 使用懒加载形式加载组件
       OrderWorkComponent: () => import("@/components/WorkInfoComponent/OrderWorkModule"),
       NoOrderWorkComponent: () => import("@/components/WorkInfoComponent/NoOrderWorkModule"),
-      QcWorkComponent: () => import("@/components/WorkInfoComponent/QcWorkModule"),
+      QcWorkComponent: () => import("@/components/WorkInfoComponent/SpecialWorkModule"),
     };
   },
   methods: {
