@@ -9,8 +9,12 @@
     </div>
     <div class="head_search" style="display: flex">
       <div class="select_filter_factory" style="margin-left:5px">
-        <el-select v-model="user_id" placeholder="根据工厂晒选">
-          <el-option v-for="item in user_info_list" :key="item.value" :label="item.label" :value="item.value">
+        <el-select v-model="matter_id" placeholder="根据事项名称筛选">
+          <el-option
+              v-for="item in matter_name_list"
+              :key="item.id"
+              :label="item.matter_name"
+              :value="item.id">
           </el-option>
         </el-select>
       </div>
@@ -282,8 +286,8 @@ export default {
       method_list: [],
       // 按照时间搜索变量
       time_frame_list: [],
-      search_start_time: "",
-      search_end_time: "",
+      search_start_time: null,
+      search_end_time: null,
       // 完成事项的弹窗控制变量
       NoOrderWorkDialogVisible: false, // 控制弹窗
       // 弹窗传入的row变量
@@ -317,6 +321,9 @@ export default {
       },
       open_delay_row_data: null,
       DelayApplyForTableLoading: false,
+      // 查询条件
+      matter_name_list: [],
+      matter_id: null,
     };
   },
   created() {
@@ -326,14 +333,21 @@ export default {
   methods: {
     // 获取数据
     getNoOrderWorkListData() {
-      let get_url;
-      if (!this.search_start_time) {
-        get_url = `work/no_order_matter_list/?page=${this.page}`;
-      } else {
-        get_url = `work/no_order_matter_list/?page=${this.page}&end_time=${this.search_end_time}&start_time=${this.search_start_time}`;
+      let url = `work/no_order_matter_list/?page=${this.page}`
+      // 条件1: radio_criteria
+      if (this.radio_criteria && this.radio_criteria !== 'all') {
+        url += `&status=${this.radio_criteria}`;
+      }
+      // 条件2: matter_id
+      if (this.matter_id) {
+        url += `&matter_id=${this.matter_id}`;
+      }
+      // 条件4：时间范围
+      if (this.search_start_time) {
+        url += `&start_time=${this.search_start_time}&end_time=${this.search_end_time}`;
       }
       this.$http
-          .get(get_url)
+          .get(url)
           .then((res) => {
             let data = res.data;
             if (data.code === 200) {
@@ -342,6 +356,7 @@ export default {
               this.method_list = data.data.method_list;
               this.delay_method_list = data.data.delay_method_list;
               this.annex_method_list = data.data.annex_method_list;
+              this.matter_name_list = data.data.matter_name_list;
             } else {
               this.no_order_matter_list = [];
             }
@@ -390,8 +405,10 @@ export default {
     // 重置
     reloadData() {
       this.time_frame_list = [];
-      this.search_start_time = '';
-      this.search_end_time = '';
+      this.search_start_time = null;
+      this.search_end_time = null;
+      this.matter_id = null;
+      this.radio_criteria = 'all';
       this.getNoOrderWorkListData();
     },
     // 完成事项按钮 - 不需要上传附件弹窗

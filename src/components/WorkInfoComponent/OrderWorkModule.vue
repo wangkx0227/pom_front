@@ -397,7 +397,6 @@ export default {
               this.annex_method_list = data.data.annex_method_list;
               this.order_record_info_list = data.data.order_record_info_list;
               this.factory_info_list = data.data.factory_info_list;
-              console.log(this.order_id)
             } else {
               this.no_order_matter_list = [];
             }
