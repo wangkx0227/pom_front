@@ -186,8 +186,8 @@ export default {
       type_radio: 'all', // 查询类型条件
       user_info_list: [], // 当前管理的部门下的用户id列表
       time_frame_list: [], // 按照时间搜索变量
-      search_start_time: "",
-      search_end_time: "",
+      search_start_time: null,
+      search_end_time: null,
       // 查询数据列表
       matter_query_list: [],
       loading: false, // 数据加载样式
@@ -241,7 +241,7 @@ export default {
         url += `&user_id=${this.user_id}`;
       }
       // 条件4：时间范围
-      if (this.user_id) {
+      if (this.search_start_time) {
         url += `&start_time=${this.search_start_time}&end_time=${this.search_end_time}`;
       }
       this.$http
