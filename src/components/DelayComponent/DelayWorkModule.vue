@@ -3,8 +3,8 @@
     <div class="head_filter_criteria">
       <el-radio-group v-model="type_radio" size="small">
         <el-radio-button label="all">全部</el-radio-button>
-        <el-radio-button label="order_matter">未审核</el-radio-button>
-        <el-radio-button label="supervise">已审核</el-radio-button>
+        <el-radio-button label="on_examine">未审核</el-radio-button>
+        <el-radio-button label="examine">已审核</el-radio-button>
       </el-radio-group>
     </div>
     <div class="head_search" style="display: flex;">
@@ -15,8 +15,8 @@
         </el-select>
       </div>
       <div class="data_filter" style="margin-left:5px">
-        <el-date-picker v-model="time_frame_list" type="daterange" range-separator="至" start-placeholder="开始日期"
-                        end-placeholder="结束日期" style="margin-right: 5px;">
+        <el-date-picker v-model="time_frame_list" type="daterange" range-separator="至" start-placeholder="旧日期起"
+                        end-placeholder="旧日期始" style="margin-right: 5px;">
         </el-date-picker>
       </div>
       <div class="filter_button">
@@ -159,14 +159,22 @@ export default {
   methods: {
     // 获取数据
     getDelayWorkListData() {
-      let get_url;
-      if (!this.search_start_time) {
-        get_url = `work/delay_matter_list/?page=${this.page}`;
-      } else {
-        get_url = `work/delay_matter_list/?page=${this.page}&end_time=${this.search_end_time}&start_time=${this.search_start_time}`;
+      let url = `work/delay_matter_list/?page=${this.page}`
+      // 条件1: status_radio
+      if (this.type_radio && this.type_radio !== 'all') {
+        url += `&status=${this.type_radio}`;
       }
+      // 条件2: user_id
+      if (this.user_id) {
+        url += `&user_id=${this.user_id}`;
+      }
+      // 条件3：时间范围
+      if (this.search_start_time) {
+        url += `&start_time=${this.search_start_time}&end_time=${this.search_end_time}`;
+      }
+
       this.$http
-          .get(get_url)
+          .get(url)
           .then((res) => {
             let data = res.data;
             if (data.code === 200) {
@@ -223,9 +231,10 @@ export default {
     // 重置
     reloadData() {
       this.time_frame_list = [];
-      this.search_start_time = '';
-      this.search_end_time = '';
+      this.search_start_time = null;
+      this.search_end_time = null;
       this.type_radio = 'all';
+      this.user_id = null;
       this.getDelayWorkListData();
     },
     getMatterItemInfo(order_record_id) {
