@@ -1,16 +1,31 @@
 <template>
   <div class="supervision_matters" v-loading="loading">
-      <div class="head_filter_criteria">
-        <el-radio-group v-model="radio_criteria" size="small">
-          <el-radio-button label="all">全部</el-radio-button>
-          <el-radio-button label="finish">完成</el-radio-button>
-          <el-radio-button label="not_finish">未完成</el-radio-button>
-        </el-radio-group>
-      </div>
+    <div class="head_filter_criteria">
+      <el-radio-group v-model="radio_criteria" size="small">
+        <el-radio-button label="all">全部</el-radio-button>
+        <el-radio-button label="finish">完成</el-radio-button>
+        <el-radio-button label="not_finish">未完成</el-radio-button>
+      </el-radio-group>
+    </div>
     <div class="head_search" style="display: flex">
       <div class="select_filter_po">
-        <el-select v-model="user_id" placeholder="根据PO晒选">
-          <el-option v-for="item in user_info_list" :key="item.value" :label="item.label" :value="item.value">
+        <el-select v-model="order_id" filterable placeholder="根据PO晒选">
+          <el-option
+              v-for="item in order_record_info_list"
+              :key="item.order_id"
+              :label="item.po"
+              :value="item.order_id">
+            <span style="float: left">{{ item.po }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.create_date }}</span>
+          </el-option>
+        </el-select>
+      </div>
+      <div class="select_filter_factory" style="margin-left:5px">
+        <el-select v-model="matter_name_id" filterable placeholder="根据事项名晒选">
+          <el-option v-for="item in matter_name_list"
+                     :key="item.order_matter_id"
+                     :label="item.matter_name"
+                     :value="item.order_matter_id">
           </el-option>
         </el-select>
       </div>
@@ -31,95 +46,95 @@
         </el-button>
       </div>
     </div>
-      <div class="table_content">
-        <el-table :data="SuperviseMattersData" style="width: 100%" height="590">
-          <el-table-column prop="index" label="#" align="center"></el-table-column>
-          <el-table-column prop="po" label="PO" align="center"></el-table-column>
-          <el-table-column prop="po" label="事项名称" align="center"></el-table-column>
-          <el-table-column label="监督事项详情" align="center" prop="">
-            <template v-slot="{ row }">
-              <el-button size="mini" type="text" @click="getMatterInfo(row)"> 查看详情 </el-button>
-            </template>
-          </el-table-column>
-          <el-table-column label="监督人" align="center" prop="user_name">
-          </el-table-column>
-          <el-table-column label="应完成时间" align="center" width="180" prop="expected_completion_time">
-          </el-table-column>
-          <el-table-column label="完成状态" align="center" width="180">
-            <template v-slot="{ row }">
-              <el-tag  effect="plain" v-if="row.complete_status === 1">已完成</el-tag>
-              <el-tag type="info" effect="plain" v-else>未完成</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column label="实际完成时间" align="center" width="180" prop="complete_time">
-          </el-table-column>
-          <el-table-column label="操作" align="center" prop="">
-            <template v-slot="scope">
-              <div v-if="scope.row.complete_status === 0 && method_list.includes('PUT')">
-                <el-button size="mini" type="text"  @click="openCompleteMessageBox(scope.row)">完成事务</el-button>
-              </div>
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
-      <div class="pagination">
-        <el-pagination hide-on-single-page @current-change="currentPage" @prev-click="prevPage" @next-click="nextPage"
-                       background layout="total,prev, pager, next" :page-size="10" :total="data_total"
-                       v-model:current-page="page">
-        </el-pagination>
-      </div>
-      <!--  跟进人事务列表的弹窗  -->
-      <div class="work_dialog">
-        <el-dialog
-            title="跟进事务的详细信息"
-            :visible.sync="dialogVisible"
-            width="40%"
-            :before-close="dialogTableClose">
-          <div>
-            <el-descriptions direction="vertical" :column="4" border>
-              <el-descriptions-item label="跟进人" :span="1">{{ follow_matter_info_data.user_name }}</el-descriptions-item>
-              <el-descriptions-item label="工厂名称" :span="3">{{
-                  follow_matter_info_data.factory_name
-                }}
-              </el-descriptions-item>
-              <el-descriptions-item label="PO" :span="1">{{ follow_matter_info_data.po }}</el-descriptions-item>
-              <el-descriptions-item label="完成状态" :span="1">
-                <el-tag v-if="follow_matter_info_data.complete_status">完成</el-tag>
-                <el-tag v-else type="warning">未完成</el-tag>
-              </el-descriptions-item>
-              <el-descriptions-item label="是否上传附件" :span="1">
-                <el-tag v-if="follow_matter_info_data.is_file">有</el-tag>
-                <el-tag v-else type="warning">无</el-tag>
-              </el-descriptions-item>
-              <el-descriptions-item label="完成时间" :span="3">{{
-                  follow_matter_info_data.complete_time
-                }}
-              </el-descriptions-item>
-              <el-descriptions-item label="事务名称">{{ follow_matter_info_data.matter_name }}</el-descriptions-item>
-            </el-descriptions>
-          </div>
-          <div style="margin-top: 5px" v-show="follow_matter_info_data.is_file">
-            <el-table :data="annex_data_list" height="300" border v-loading="AnnexFileLoading">
-              <el-table-column label="附件列表" align="center">
-                <el-table-column property="index" label="#" align="center"></el-table-column>
-                <el-table-column property="file_name" label="文件名称" width="350" align="center"></el-table-column>
-                <el-table-column property="create_date" label="上传时间" width="180" align="center"></el-table-column>
-                <el-table-column label="操作" width="180" align="center">
-                  <template v-slot="scope">
-                    <el-button
-                        size="mini"
-                        type="text"
-                        @click="DownloadAnnexFile(scope.row)"
-                        v-if="download_file_method_list.includes('GET')"
-                    >下载
-                    </el-button>
-                  </template>
-                </el-table-column>
+    <div class="table_content">
+      <el-table :data="SuperviseMattersData" style="width: 100%" height="590">
+        <el-table-column prop="index" label="#" align="center"></el-table-column>
+        <el-table-column prop="po" label="PO" align="center"></el-table-column>
+        <el-table-column prop="matter_name" label="事项名称" width="500" align="center"></el-table-column>
+        <el-table-column label="监督事项详情" align="center" prop="">
+          <template v-slot="{ row }">
+            <el-button size="mini" type="text" @click="getMatterInfo(row)"> 查看详情</el-button>
+          </template>
+        </el-table-column>
+        <el-table-column label="监督人" align="center" prop="user_name">
+        </el-table-column>
+        <el-table-column label="应完成时间" align="center" width="180" prop="expected_completion_time">
+        </el-table-column>
+        <el-table-column label="完成状态" align="center" width="180">
+          <template v-slot="{ row }">
+            <el-tag effect="plain" v-if="row.complete_status === 1">已完成</el-tag>
+            <el-tag type="info" effect="plain" v-else>未完成</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="实际完成时间" align="center" width="180" prop="complete_time">
+        </el-table-column>
+        <el-table-column label="操作" align="center" prop="">
+          <template v-slot="scope">
+            <div v-if="scope.row.complete_status === 0 && method_list.includes('PUT')">
+              <el-button size="mini" type="text" @click="openCompleteMessageBox(scope.row)">完成事务</el-button>
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+    <div class="pagination">
+      <el-pagination hide-on-single-page @current-change="currentPage" @prev-click="prevPage" @next-click="nextPage"
+                     background layout="total,prev, pager, next" :page-size="10" :total="data_total"
+                     v-model:current-page="page">
+      </el-pagination>
+    </div>
+    <!--  跟进人事务列表的弹窗  -->
+    <div class="work_dialog">
+      <el-dialog
+          title="跟进事务的详细信息"
+          :visible.sync="dialogVisible"
+          width="40%"
+          :before-close="dialogTableClose">
+        <div>
+          <el-descriptions direction="vertical" :column="4" border>
+            <el-descriptions-item label="跟进人" :span="1">{{ follow_matter_info_data.user_name }}</el-descriptions-item>
+            <el-descriptions-item label="工厂名称" :span="3">{{
+                follow_matter_info_data.factory_name
+              }}
+            </el-descriptions-item>
+            <el-descriptions-item label="PO" :span="1">{{ follow_matter_info_data.po }}</el-descriptions-item>
+            <el-descriptions-item label="完成状态" :span="1">
+              <el-tag v-if="follow_matter_info_data.complete_status">完成</el-tag>
+              <el-tag v-else type="warning">未完成</el-tag>
+            </el-descriptions-item>
+            <el-descriptions-item label="是否上传附件" :span="1">
+              <el-tag v-if="follow_matter_info_data.is_file">有</el-tag>
+              <el-tag v-else type="warning">无</el-tag>
+            </el-descriptions-item>
+            <el-descriptions-item label="完成时间" :span="3">{{
+                follow_matter_info_data.complete_time
+              }}
+            </el-descriptions-item>
+            <el-descriptions-item label="事务名称">{{ follow_matter_info_data.matter_name }}</el-descriptions-item>
+          </el-descriptions>
+        </div>
+        <div style="margin-top: 5px" v-show="follow_matter_info_data.is_file">
+          <el-table :data="annex_data_list" height="300" border v-loading="AnnexFileLoading">
+            <el-table-column label="附件列表" align="center">
+              <el-table-column property="index" label="#" align="center"></el-table-column>
+              <el-table-column property="file_name" label="文件名称" width="350" align="center"></el-table-column>
+              <el-table-column property="create_date" label="上传时间" width="180" align="center"></el-table-column>
+              <el-table-column label="操作" width="180" align="center">
+                <template v-slot="scope">
+                  <el-button
+                      size="mini"
+                      type="text"
+                      @click="DownloadAnnexFile(scope.row)"
+                      v-if="download_file_method_list.includes('GET')"
+                  >下载
+                  </el-button>
+                </template>
               </el-table-column>
-            </el-table>
-          </div>
-        </el-dialog>
-      </div>
+            </el-table-column>
+          </el-table>
+        </div>
+      </el-dialog>
+    </div>
   </div>
 </template>
 
@@ -147,6 +162,11 @@ export default {
       follow_matter_info_data: {},
       annex_data_list: [],
       download_file_method_list: [],
+      // 查询条件
+      order_record_info_list: [],
+      matter_name_list: [],
+      order_id: null, // 查询的订单id
+      matter_name_id: null, // 查询的工厂id
     };
   },
   created() {
@@ -170,6 +190,8 @@ export default {
               this.SuperviseMattersData = data.data.data;
               this.data_total = data.data.data_total;
               this.method_list = data.data.method_list;
+              this.order_record_info_list = data.data.order_record_info_list;
+              this.matter_name_list = data.data.matter_name_list;
             } else {
               this.SuperviseMattersData = [];
             }
