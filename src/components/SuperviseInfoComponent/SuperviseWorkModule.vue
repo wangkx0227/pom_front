@@ -144,8 +144,8 @@ export default {
   data() {
     return {
       time_frame_list: [],
-      search_start_time: "",
-      search_end_time: "",
+      search_start_time: null,
+      search_end_time: null,
       loading: false, // 数据加载样式
       SuperviseMattersData: [],
       // 分页
@@ -166,7 +166,7 @@ export default {
       order_record_info_list: [],
       matter_name_list: [],
       order_id: null, // 查询的订单id
-      matter_name_id: null, // 查询的工厂id
+      matter_name_id: null, // 时间名称id
     };
   },
   created() {
@@ -176,14 +176,25 @@ export default {
   methods: {
     // 获取数据
     getSuperviseMatters() {
-      let get_url;
+      let url = `work/supervise_matter_list/?page=${this.page}`
+      // 条件1: radio_criteria
+      if (this.radio_criteria && this.radio_criteria !== 'all') {
+        url += `&status=${this.radio_criteria}`;
+      }
+      // 条件2: order_id
+      if (this.order_id) {
+        url += `&order_id=${this.order_id}`;
+      }
+      // 条件3: factory_id
+      if (this.matter_name_id) {
+        url += `&matter_name_id=${this.matter_name_id}`;
+      }
+      // 条件4：时间范围
       if (this.search_start_time) {
-        get_url = `work/supervise_matter_list/?page=${this.page}&end_time=${this.search_end_time}&start_time=${this.search_start_time}`;
-      } else {
-        get_url = `work/supervise_matter_list/?page=${this.page}`;
+        url += `&start_time=${this.search_start_time}&end_time=${this.search_end_time}`;
       }
       this.$http
-          .get(get_url)
+          .get(url)
           .then((res) => {
             let data = res.data;
             if (data.code === 200) {
@@ -228,7 +239,7 @@ export default {
       }
     },
     // 搜索功能
-    searchDate() {
+    searchData() {
       this.loading = true;
       if (this.time_frame_list.length > 0) {
         this.page = 1;
@@ -240,12 +251,13 @@ export default {
       }
     },
     // 重置
-    reloadDate() {
-      this.search_user_name = "";
-      this.search_user_id = '';
+    reloadData() {
+      this.order_id = null; // 查询的订单id
+      this.matter_name_id = null; // 查询的工厂id
       this.time_frame_list = [];
-      this.search_start_time = '';
-      this.search_end_time = '';
+      this.search_start_time = null;
+      this.search_end_time = null;
+      this.radio_criteria = 'all';
       this.getSuperviseMatters();
     },
     openCompleteMessageBox(row) {
