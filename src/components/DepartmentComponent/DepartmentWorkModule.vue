@@ -182,8 +182,8 @@ export default {
       type_radio: 'all', // 查询类型条件
       user_info_list: [], // 当前管理的部门下的用户id列表
       time_frame_list: [], // 按照时间搜索变量
-      search_start_time: "",
-      search_end_time: "",
+      search_start_time: null,
+      search_end_time: null,
       // 查询数据列表
       department_matter_list: [],
       loading: false, // 数据加载样式
@@ -213,6 +213,7 @@ export default {
       ItemTableLoading: false,
       // item列表
       item_list: [],
+
     };
   },
   created() {
@@ -222,14 +223,25 @@ export default {
   methods: {
     // 获取数据
     getDepartmentWorkListData() {
-      let get_url;
-      if (!this.search_start_time) {
-        get_url = `work/departmental_matter_list/?page=${this.page}`;
-      } else {
-        get_url = `work/departmental_matter_list/?page=${this.page}&end_time=${this.search_end_time}&start_time=${this.search_start_time}`;
+      let url = `work/departmental_matter_list/?page=${this.page}`
+      // 条件1: status_radio
+      if (this.status_radio && this.status_radio !== 'all') {
+        url += `&status=${this.status_radio}`;
+      }
+      // 条件2: type_radio
+      if (this.type_radio && this.type_radio !== 'all') {
+        url += `&type=${this.type_radio}`;
+      }
+      // 条件3: user_id
+      if (this.user_id) {
+        url += `&user_id=${this.user_id}`;
+      }
+      // 条件4：时间范围
+      if (this.search_start_time) {
+        url += `&start_time=${this.search_start_time}&end_time=${this.search_end_time}`;
       }
       this.$http
-          .get(get_url)
+          .get(url)
           .then((res) => {
             let data = res.data;
             if (data.code === 200) {
@@ -289,10 +301,11 @@ export default {
     // 重置
     reloadData() {
       this.time_frame_list = [];
-      this.search_start_time = '';
-      this.search_end_time = '';
+      this.search_start_time = null;
+      this.search_end_time = null;
       this.status_radio = 'all';
       this.type_radio = 'all';
+      this.user_id = null;
       this.getDepartmentWorkListData();
     },
     // 查看事务
