@@ -1,10 +1,17 @@
 <template>
   <div class="delay_work" v-loading="loading">
     <div class="head_filter_criteria">
-      <el-radio-group v-model="type_radio" size="small">
+      <el-radio-group v-model="status_radio" size="small">
         <el-radio-button label="all">全部</el-radio-button>
         <el-radio-button label="on_examine">未审核</el-radio-button>
         <el-radio-button label="examine">已审核</el-radio-button>
+      </el-radio-group>
+    </div>
+    <div class="head_filter_criteria">
+      <el-radio-group v-model="type_radio" size="small">
+        <el-radio-button label="all">全部</el-radio-button>
+        <el-radio-button label="order_matter_delay">订单事项</el-radio-button>
+        <el-radio-button label="no_order_matter_delay">非订单事项</el-radio-button>
       </el-radio-group>
     </div>
     <div class="head_search" style="display: flex;">
@@ -28,7 +35,7 @@
 
     </div>
     <div class="table_content">
-      <el-table :data="get_delay_data_list" style="width: 100%" height="590">
+      <el-table :data="get_delay_data_list" style="width: 100%" height="548">
         <el-table-column prop="index" label="#" align="center"></el-table-column>
         <el-table-column label="事项名称" align="center" prop="matter_name" width="500">
           <template v-slot="{ row }">
@@ -132,6 +139,7 @@ export default {
     return {
       user_id: null, // 用户的id
       type_radio: 'all', // 查询类型条件
+      status_radio: 'all', // 查询类型条件
       user_info_list: [], // 当前管理的部门下的用户id列表
       time_frame_list: [], // 按照时间搜索变量
       search_start_time: "",
@@ -161,8 +169,12 @@ export default {
     getDelayWorkListData() {
       let url = `work/delay_matter_list/?page=${this.page}`
       // 条件1: status_radio
+      if (this.status_radio && this.status_radio !== 'all') {
+        url += `&status=${this.status_radio}`;
+      }
+      // 条件1: status_radio
       if (this.type_radio && this.type_radio !== 'all') {
-        url += `&status=${this.type_radio}`;
+        url += `&type_status=${this.type_radio}`;
       }
       // 条件2: user_id
       if (this.user_id) {
