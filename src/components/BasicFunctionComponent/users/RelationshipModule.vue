@@ -11,7 +11,7 @@
             label="#" align="center">
         </el-table-column>
         <el-table-column
-            label="姓名" align="center">
+            label="姓名" align="center" width="180">
           <template v-slot="{ row }">
             <el-button
                 type="text"
@@ -22,14 +22,16 @@
         </el-table-column>
         <el-table-column
             prop="department"
-            label="部门" align="center">
+            label="部门" align="center" width="180">
         </el-table-column>
       </el-table>
     </div>
     <div style="width: 32%;text-align: center;">
       <h3>组长</h3>
-      <div v-if="leader_selected_status" style="display: inline;position: absolute;top: 0;right: 34%">
-        <el-button size="mini" type="primary" @click="SaveRelationshipData" plain>确定</el-button>
+      <div style="display: inline;position: absolute;top: 0;right: 34%">
+        <el-button size="mini" type="primary" @click="SaveRelationshipData" plain :disabled="!leader_selected_status">
+          确定
+        </el-button>
       </div>
       <el-divider>组长</el-divider>
       <el-table
@@ -37,30 +39,32 @@
           @selection-change="SelectionChangeUserBind"
           :data="user_data_group_leader_list"
           tooltip-effect="dark"
-          style="width: 100%">
+          style="width: 100%" height="600">
         <el-table-column
-            type="selection" align="center" v-if="leader_selected_status">
+            type="selection" align="center" width="50">
         </el-table-column>
         <el-table-column
             prop="index"
             label="#" align="center">
         </el-table-column>
         <el-table-column
-            label="姓名" align="center">
+            label="姓名" align="center" width="180">
           <template v-slot="{ row }">
             <el-button type="text" @click="getPositionRelationshipData(row,'member')">{{ row.user_name }}</el-button>
           </template>
         </el-table-column>
         <el-table-column
             prop="department"
-            label="部门" align="center">
+            label="部门" align="center" width="180">
         </el-table-column>
       </el-table>
     </div>
     <div style="width: 32%;text-align: center">
       <h3>组员</h3>
-      <div v-if="member_selected_status" style="display: inline;position: absolute;top: 0;right: 0">
-        <el-button size="mini" type="primary" @click="SaveRelationshipData" plain>确定</el-button>
+      <div style="display: inline;position: absolute;top: 0;right: 0">
+        <el-button size="mini" type="primary" @click="SaveRelationshipData" plain :disabled="!member_selected_status">
+          确定
+        </el-button>
       </div>
       <el-divider>组员</el-divider>
       <el-table
@@ -68,11 +72,11 @@
           @selection-change="SelectionChangeUserBind"
           :data="user_data_member_list"
           tooltip-effect="dark"
-          style="width: 100%">
+          style="width: 100%" height="600">
         <el-table-column
             type="selection"
             align="center"
-            v-if="member_selected_status"
+            width="50"
         >
         </el-table-column>
         <el-table-column
@@ -80,14 +84,14 @@
             label="#" align="center">
         </el-table-column>
         <el-table-column
-            label="姓名" align="center">
+            label="姓名" align="center" width="180">
           <template v-slot="{ row }">
             <el-button type="text">{{ row.user_name }}</el-button>
           </template>
         </el-table-column>
         <el-table-column
             prop="department"
-            label="部门" align="center">
+            label="部门" align="center" width="180">
         </el-table-column>
       </el-table>
     </div>
@@ -139,6 +143,8 @@ export default {
     },
     // 默认选中函数 - 经理-组长 组长-组员
     RelationshipSelection(rows, type) {
+      this.$refs.multipleTableLeader.clearSelection();
+      this.$refs.multipleTableMember.clearSelection();
       // rows，默认选中的用户的列表
       if (rows.length > 0) {
         if (type === 'leader') {
@@ -151,16 +157,9 @@ export default {
             this.$refs.multipleTableMember.toggleRowSelection(row);
           });
         }
-      } else {
-        // 清除关系
-        if (type === 'leader') {
-          this.$refs.multipleTableLeader.clearSelection();
-        } else {
-          this.$refs.multipleTableMember.clearSelection();
-        }
       }
     },
-    // 获取经理职务，管理的组长信息,存在问题~~~~~~~~
+    // 获取经理职务，管理的组长信息
     getPositionRelationshipData(row, type) {
       // 点击第二次不触发事件
       if (this.selected_user_id !== row.user_id) {
@@ -199,7 +198,9 @@ export default {
                 }
                 // 页面元素加载完毕后调用，有问题，让添加完毕关系后，在点击无法默认选中
                 this.$nextTick(() => {
-                  this.RelationshipSelection(relationship_list, type);
+                  setTimeout(() => {
+                    this.RelationshipSelection(relationship_list, type);
+                  }, 0);
                 });
               } else {
                 this.$message.error(data.message);
