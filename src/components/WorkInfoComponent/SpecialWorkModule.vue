@@ -8,9 +8,24 @@
       </el-radio-group>
     </div>
     <div class="head_search" style="display: flex">
+      <div class="select_filter_po">
+        <el-select v-model="order_id" filterable placeholder="根据PO晒选">
+          <el-option
+              v-for="item in order_record_info_list"
+              :key="item.order_id"
+              :label="item.po"
+              :value="item.order_id">
+            <span style="float: left">{{ item.po }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.create_date }}</span>
+          </el-option>
+        </el-select>
+      </div>
       <div class="select_filter_factory" style="margin-left:5px">
-        <el-select v-model="user_id" placeholder="根据工厂晒选">
-          <el-option v-for="item in user_info_list" :key="item.value" :label="item.label" :value="item.value">
+        <el-select v-model="factory_id" filterable placeholder="根据工厂晒选">
+          <el-option v-for="item in factory_info_list"
+                     :key="item.factory_id"
+                     :label="item.factory_name"
+                     :value="item.factory_id">
           </el-option>
         </el-select>
       </div>
@@ -117,35 +132,55 @@ export default {
       method_list: [],
       // 搜索变量
       time_frame_list: [],
-      search_start_time: "",
-      search_end_time: "",
+      search_start_time: null,
+      search_end_time: null,
       // item列表
       item_list: [],
       dialogTableVisible: false,
       dialogTableLoading: false,
+      // 查询的基本信息
+      order_record_info_list: [],
+      factory_info_list: [],
+      order_id: null, // 查询的订单id
+      factory_id: null, // 查询的工厂id
     };
   },
   created() {
+    this.loading = true;
     this.getSpecialMatterListData();
   },
   methods: {
     // 获取数据
     getSpecialMatterListData() {
-      this.loading = true;
-      let get_url;
-      if (!this.search_start_time) {
-        get_url = `work/special_matter_list/?page=${this.page}`;
-      } else {
-        get_url = `work/special_matter_list/?page=${this.page}&end_time=${this.search_end_time}&start_time=${this.search_start_time}`;
+      let url = `work/special_matter_list/?page=${this.page}`
+      // 条件1: radio_criteria
+      if (this.radio_criteria && this.radio_criteria !== 'all') {
+        url += `&status=${this.radio_criteria}`;
+      }
+      // 条件2: order_id
+      if (this.order_id) {
+        url += `&order_id=${this.order_id}`;
+      }
+      // 条件3: factory_id
+      if (this.factory_id) {
+        url += `&factory_id=${this.factory_id}`;
+      }
+      // 条件4：时间范围
+      if (this.search_start_time) {
+        url += `&start_time=${this.search_start_time}&end_time=${this.search_end_time}`;
       }
       this.$http
-          .get(get_url)
+          .get(url)
           .then((res) => {
             let data = res.data;
             if (data.code === 200) {
               this.special_matter_list = data.data.data;
               this.data_total = data.data.data_total;
               this.method_list = data.data.method_list;
+              this.delay_method_list = data.data.delay_method_list;
+              this.annex_method_list = data.data.annex_method_list;
+              this.order_record_info_list = data.data.order_record_info_list;
+              this.factory_info_list = data.data.factory_info_list;
             } else {
               this.no_order_matter_list = [];
             }
@@ -194,8 +229,11 @@ export default {
     // 重置
     reloadData() {
       this.time_frame_list = [];
-      this.search_start_time = '';
-      this.search_end_time = '';
+      this.search_start_time = null;
+      this.search_end_time = null;
+      this.order_id = null;
+      this.factory_id = null;
+      this.radio_criteria = 'all';
       this.getSpecialMatterListData();
     },
     // 完成事项按钮 - 不需要上传附件弹窗
