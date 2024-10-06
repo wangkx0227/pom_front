@@ -49,7 +49,7 @@
     <div class="table_content">
       <el-table :data="SuperviseMattersData" style="width: 100%" height="590">
         <el-table-column prop="index" label="#" align="center"></el-table-column>
-        <el-table-column prop="po" label="PO" align="center"></el-table-column>
+        <el-table-column prop="po" label="PO" align="center" width="180"></el-table-column>
         <el-table-column prop="matter_name" label="事项名称" width="500" align="center"></el-table-column>
         <el-table-column label="监督事项详情" align="center" prop="">
           <template v-slot="{ row }">
