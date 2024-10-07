@@ -196,8 +196,6 @@ export default {
 
 .index .content {
   margin-left: 200px;
-  overflow-y: scroll;
-  max-height: 92vh;
 }
 
 .header-button {

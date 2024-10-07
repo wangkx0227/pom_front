@@ -423,28 +423,8 @@ export default {
 }
 
 @media screen and (max-width: 700px) {
-  .pie-chart-card {
-    width: 94.5% !important;
-  }
-
-  .columnar-card {
-    width: 94.5% !important;
-    margin-bottom: 60px;
-  }
-
-  .pieChart {
-    width: 100% !important;
-    height: 300px !important;
-  }
-
-  .columnar {
-    width: 100% !important;
-    height: 300px !important;
-  }
-
   .dashboard_info {
-    max-height: 83vh;
-    overflow-y: scroll;
+    max-height: 73vh;
   }
 }
 </style>
