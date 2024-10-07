@@ -3,25 +3,21 @@
     <div class="header">
       <h5 class="title-h5">POM管理系统</h5>
       <div style="margin-right: 15px;display: flex;align-items: center">
-        <div style="margin-right: 15px">
-          <el-tooltip class="item" effect="light" content="刷新" placement="top-start">
-            <el-button icon="el-icon-refresh-right" circle size="small" type="primary" @click="refreshPage"></el-button>
-          </el-tooltip>
+        <div class="header-button">
+          <el-button icon="el-icon-refresh-right" circle size="small" type="primary" @click="refreshPage"></el-button>
         </div>
-        <el-badge is-dot class="item" style="margin-right: 10px">
-          <el-tooltip class="item" effect="light" content="消息" placement="top-start">
+        <div class="header-button">
+          <el-badge is-dot class="item">
             <el-button class="share-button" icon="el-icon-bell" type="info" size="mini"
                        @click="messageInfo"></el-button>
-          </el-tooltip>
-        </el-badge>
+          </el-badge>
+        </div>
         <span class="tag-group__title gradient-text">登录用户：</span>
         <el-dropdown @command="changeDropdown" trigger="click">
-          <el-tooltip class="item" effect="light" content="个人账户功能" placement="top-start">
-            <el-button type="success" class="userTag" size="mini">
-              <i class="el-icon-user"></i>
-              {{ user_name }}
-            </el-button>
-          </el-tooltip>
+          <el-button type="success" class="userTag" size="mini">
+            <i class="el-icon-user"></i>
+            {{ user_name }}
+          </el-button>
           <template v-slot:dropdown>
             <el-dropdown-menu>
               <el-dropdown-item command="access">访问记录</el-dropdown-item>
@@ -204,14 +200,30 @@ export default {
   max-height: 92vh;
 }
 
+.header-button {
+  margin-right: 15px;
+}
+
 @media screen and (max-width: 700px) {
   .userTag {
     font-size: 10px;
   }
 
+  /* 头部按钮 */
+  .header-button {
+    margin-right: 10px;
+  }
+
+  .el-button--small.is-circle {
+    padding: 7px;
+  }
+  .el-button--mini, .el-button--mini.is-round{
+    padding: 5px 12px;
+  }
+
   .el-dropdown .el-button--mini,
   .el-button--mini.is-round {
-    padding: 4px 10px;
+    padding: 5px 12px;
   }
 
   .gradient-text {
@@ -234,12 +246,10 @@ export default {
 
   ul {
     display: flex;
-
     border-top: solid 1px #e6e6e6;
     border-left: none;
   }
 
-  /*sdasa有问题*/
   .sidebar {
     overflow: initial;
   }
@@ -255,7 +265,7 @@ export default {
 
   ul li span {
     /*display: none;*/
-    font-size: 10px;
+    font-size: 12px;
   }
 
   ul li i {
@@ -269,7 +279,7 @@ export default {
   }
 
   .header {
-    height: 50px;
+    height: 60px;
   }
 
   .el-dropdown-menu {
