@@ -81,7 +81,7 @@
               <el-table-column
                   prop="title"
                   label="消息标题"
-                  align="center">
+                  align="center" width="350">
               </el-table-column>
               <el-table-column
                   prop="user_name"
@@ -117,7 +117,7 @@
               <el-table-column
                   prop="expected_completion_time"
                   label="应完成日期"
-                  align="center">
+                  align="center"  width="180">
               </el-table-column>
               <el-table-column
                   prop="matter_name"
@@ -373,7 +373,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 @import url("@/static/convention.css");
 /* 将内容分为4份*/
 .container {
@@ -423,8 +423,39 @@ export default {
 }
 
 @media screen and (max-width: 700px) {
-  .dashboard_info {
-    max-height: 73vh;
+  .dashboard_info .box-card{
+    height: 73vh;
+  }
+  .el-card__body, .el-main {
+    padding: 5px 5px !important;
+  }
+  .container {
+    display: grid !important;
+    grid-template-rows: none; /* 或者使用 unset */
+    grid-template-columns: none; /*或者使用 unset */
+    height: unset; /* 或者使用 unset */
+  }
+
+  .work_container {
+    width: 40%;
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
+    height: unset;
+  }
+  .work_container .work_block {
+    width: 77%;
+
+  }
+  .work_block {
+    width: 34.5%;
+    margin: 2px 5px 5px 2px;
+  }
+  .work_block .el-result {
+    padding: 18px 10px;
+  }
+  .el-drawer__container .el-drawer{
+    width: 100% !important;
   }
 }
 </style>
