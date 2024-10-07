@@ -188,7 +188,6 @@ export default {
 }
 
 .sidebar {
-  width: 20%;
   margin: 0;
   padding: 0;
   width: 200px;
