@@ -32,6 +32,19 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 @import url("@/static/convention.css");
+.table_content_button{
+  float: right;
+  margin-right: 45px;
+}
+@media screen and (max-width: 700px) {
+  .table_content_button{
+    float: right;
+    margin-right: 0;
+  }
+  .message .box-card{
+    height: 73vh;
+  }
+}
 </style>

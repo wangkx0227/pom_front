@@ -1,17 +1,17 @@
 <template>
   <div class="read" v-loading="loading">
     <div class="table_content">
-      <div style="float: right;margin-right: 45px">
+      <div class="table_content_button">
         <el-button plain icon="el-icon-delete" size="small" :disabled="readButtonStatus" @click="DeleteReadData">批量删除
         </el-button>
       </div>
       <el-table :data="ReadData" style="width: 100%" height="650" @selection-change="TableSelectionChange">
         <el-table-column
             type="selection"
-            width="55">
+            width="80">
         </el-table-column>
-        <el-table-column prop="index" label="#" align="center" width="100"></el-table-column>
-        <el-table-column label="标题" align="left" prop="title">
+        <el-table-column prop="index" label="#" align="center"></el-table-column>
+        <el-table-column label="标题" align="left" width="450" prop="title">
         </el-table-column>
         <el-table-column label="创建日期" align="center" width="180" prop="create_date">
         </el-table-column>

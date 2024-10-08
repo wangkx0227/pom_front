@@ -329,38 +329,20 @@ export default {
 @import url("@/static/convention.css");
 
 @media screen and (max-width: 700px) {
-
-  .userinfo .el-button--mini {
-    font-size: 9px;
-    padding: 5px 8px;
+  .userinfo .box-card{
+    height: 73vh;
   }
-
-  .userinfo .el-descriptions-row .el-descriptions-item__cell {
-    font-size: 9px !important;
+  .el-descriptions {
+    font-size: 10px;
   }
-
-  .userinfo .el-tag,
-  .el-tag--small {
-    height: 20px;
-    padding: 0px 5px;
-    line-height: 20px;
-    font-size: 9px;
+  .el-descriptions--medium.is-bordered .el-descriptions-item__cell {
+    padding: 5px;
   }
-
-  .userinfo .el-input {
-    font-size: 9px !important;
-
+  td .el-button--mini {
+    font-size: 8px;
   }
-
-  .userinfo .el-input__inner {
-    height: 30px;
-    line-height: 30px;
-    outline: 0;
-    padding: 0 4px;
-  }
-
-  .userinfo .el-form-item__error {
-    font-size: 9px !important;
+  .el-switch__label * {
+    font-size: 8px;
   }
 }
 </style>

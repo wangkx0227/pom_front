@@ -203,6 +203,9 @@ export default {
 }
 /*侧边栏与头部内容*/
 @media screen and (max-width: 700px) {
+  .el-card__body, .el-main {
+    padding: 5px 5px !important;
+  }
   .userTag {
     font-size: 10px;
   }
@@ -242,7 +245,7 @@ export default {
     margin-left: 0;
   }
 
-  ul {
+  .sidebar ul {
     display: flex;
     border-top: solid 1px #e6e6e6;
     border-left: none;

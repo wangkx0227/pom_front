@@ -3,7 +3,7 @@
     <el-card class="box-card">
       <div class="head_search_add">
         <el-date-picker v-model="time_frame_list" type="datetimerange" range-separator="至" start-placeholder="开始日期"
-          end-placeholder="结束日期" style="margin-right: 5px;">
+          end-placeholder="结束日期" style="margin-right: 5px">
         </el-date-picker>
         <el-button type="primary" icon="el-icon-search" plain @click="searchDate">搜索
         </el-button>
@@ -20,14 +20,14 @@
           <el-table-column prop="index" label="#" align="center"></el-table-column>
           <el-table-column label="用户名称" align="center" prop="user_name">
           </el-table-column>
-          <el-table-column label="用户访问路径" align="center" prop="api_url_name">
+          <el-table-column label="用户访问路径" align="center" prop="api_url_name" width="450">
             <template v-slot="{ row }">
               <span>{{ row.menu1 }} / {{ row.menu2 }} / {{ row.api_url_name }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="用户访问的类型" align="center" prop="method_name">
+          <el-table-column label="类型" align="center" prop="method_name">
           </el-table-column>
-          <el-table-column label="访问时间日期" align="center" prop="create_date">
+          <el-table-column label="访问时间日期" align="center" prop="create_date" width="200">
           </el-table-column>
         </el-table>
       </div>
@@ -137,51 +137,91 @@ export default {
 }
 </script>
 
-<style>
+<style >
 @import url("@/static/convention.css");
 @media screen and (max-width: 700px) {
-  .personal_access .el-tag {
-    font-size: 9px;
-    padding: 1px 4px;
-    height: 16px;
-    line-height: 13px;
-    border-radius: 1px;
-    margin: 2px 0 2px 2px;
+  .head_search_add{
+    display: flex;
   }
-
-  .el-select-dropdown__wrap ul {
-    flex-direction: column !important;
+  .head_search_add .personal_access .el-card__body {
+    padding: 0;
   }
-
-  .el-select-dropdown__wrap .el-select-dropdown__item {
-    height: 20px !important;
-    line-height: 20px !important;
-    font-size: 9px !important;
-    margin: 0 auto !important;
-    padding: 0 13px !important;
-    width: 90%;
+  .personal_access .box-card{
+    height: 73vh;
   }
-
-  .el-select-dropdown__wrap .el-select-dropdown__item span {
-    font-size: 9px !important;
+  .head_search_add .el-date-editor--datetimerange {
+    width: 77%;
+    height: 30px;
   }
-
-  .el-select-dropdown.is-multiple .el-select-dropdown__item.selected::after {
-    right: 11px !important;
-    font-size: 9px !important;
+  .head_search_add .el-date-editor .el-range-separator,.el-range__icon,.el-range__close-icon {
+    line-height: 24px !important;
+    font-size: 8px !important;
   }
-
-  .el-select-dropdown__empty {
-    font-size: 7px !important;
+  .head_search_add .el-date-editor .el-range-input {
+    font-size: 8px;
   }
-
-  .el-select-dropdown__wrap ul {
-    flex-direction: column !important;
+  .head_search_add .el-range-editor.el-input__inner {
+    padding: 2px 4px;
   }
-
-  .el-form-item__content .el-select .el-select__tags .el-select__input {
-    font-size: 9px;
+  .head_search_add .el-button {
+    padding: 8px 8px;
+    font-size: 10px;
+  }
+   .el-button+.el-button, .el-checkbox.is-bordered+.el-checkbox.is-bordered {
     margin-left: 5px;
+  }
+  .el-picker-panel {
+    width: 92.6% !important;
+    left: 8px !important;
+  }
+  .el-date-range-picker__content {
+    float: left;
+    width: 32%;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 8px;
+  }
+  .el-date-range-picker__content .el-date-range-picker__header div {
+    margin-left: 34px;
+    margin-right: 34px;
+  }
+  .el-date-range-picker__header div {
+    font-size: 12px;
+    font-weight: 500;
+    margin-right: 40px;
+  }
+  .el-date-table {
+    font-size: 10px;
+  }
+  .el-date-table th {
+    padding: 2px;
+  }
+  .el-date-table td {
+    padding: 0;
+  }
+  .el-date-range-picker__time-header {
+    font-size: 10px;
+    padding:2px;
+    width: 64%;
+  }
+  .el-input--small .el-input__inner {
+    height: 20px;
+    line-height: 20px;
+    font-size: 8px;
+  }
+  .el-date-range-picker__time-header>.el-icon-arrow-right {
+    font-size: 12px;
+  }
+  .el-date-range-picker__header {
+    height: 20px;
+  }
+  .el-date-range-picker__editor .el-input__inner {
+    padding: 0 12px;
+  }
+  .el-date-table td span {
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
   }
 }
 </style>

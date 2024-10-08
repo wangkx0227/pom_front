@@ -425,9 +425,6 @@ export default {
   .dashboard_info .box-card{
     height: 73vh;
   }
-  .el-card__body, .el-main {
-    padding: 5px 5px !important;
-  }
   .container {
     display: grid !important;
     grid-template-rows: none; /* 或者使用 unset */

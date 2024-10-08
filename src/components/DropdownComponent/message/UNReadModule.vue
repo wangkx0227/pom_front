@@ -1,16 +1,16 @@
 <template>
   <div class="unread" v-loading="loading">
     <div class="table_content">
-      <div style="float: right;margin-right: 45px">
+      <div class="table_content_button">
         <el-button plain icon="el-icon-message" size="small" :disabled="readButtonStatus" @click="SaveReadData">标记已读</el-button>
       </div>
       <el-table :data="UNReadData" style="width: 100%" height="650" @selection-change="TableSelectionChange">
         <el-table-column
             type="selection"
-            width="55">
+            width="80">
         </el-table-column>
-        <el-table-column prop="index" label="#" align="center" width="100"></el-table-column>
-        <el-table-column label="标题" align="left" prop="title">
+        <el-table-column prop="index" label="#" align="center"></el-table-column>
+        <el-table-column label="标题" align="left" prop="title" width="450">
         </el-table-column>
         <el-table-column label="创建日期" align="center" width="180" prop="create_date">
         </el-table-column>
