@@ -412,7 +412,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .el-input.is-disabled .el-input__inner {
   color: black !important;
 }
@@ -426,5 +426,63 @@ export default {
   max-height: 80px;
   min-height: 80px;
   overflow: scroll;
+}
+@media screen and (max-width: 700px) {
+  .el-radio-button--small .el-radio-button__inner {
+    padding: 7px 12px;
+    font-size: 10px;
+    border-radius: 0;
+  }
+  .work .head_search .el-input__inner {
+    height: 30px;
+    line-height: 30px;
+    padding: 0 15px;
+    font-size: 10px;
+    width: 120px;
+  }
+  .work .head_search .el-input__icon {
+    line-height: 30px;
+  }
+  .work .head_search{
+    flex-wrap: wrap;
+  }
+  .work .head_search div {
+    margin-right: 2px;
+  }
+  .work .data_filter{
+    margin-left: 0 !important;
+  }
+  .work .data_filter .el-range-editor{
+    width: 170px;
+  }
+  .work .data_filter .el-date-editor .el-range-separator {
+    line-height: 25px;
+    font-size: 10px;
+  }
+  .work .data_filter .el-date-editor .el-range__icon {
+    font-size: 10px;
+    line-height: 25px;
+  }
+  .work .el-date-editor .el-range-input {
+    font-size: 8px;
+  }
+  .work .el-date-editor .el-range__close-icon {
+    font-size: 10px;
+    width: 10px;
+    line-height: 25px;
+  }
+  .work .head_search .filter_button{
+    margin-top: 2px;
+  }
+  .work .head_search .filter_button .el-button {
+    padding: 9px 12px;
+    font-size: 10px;
+  }
+  .work .head_filter_criteria, .head_search {
+    margin-bottom: 4px;
+  }
+  .el-drawer {
+    width: 100% !important;
+  }
 }
 </style>

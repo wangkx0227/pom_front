@@ -361,5 +361,62 @@ export default {
 </script>
 
 <style scoped>
-
+@media screen and (max-width: 700px) {
+  .el-radio-button--small .el-radio-button__inner {
+    padding: 7px 12px;
+    font-size: 10px;
+    border-radius: 0;
+  }
+  .supervision_matters .head_search .el-input__inner {
+    height: 30px;
+    line-height: 30px;
+    padding: 0 15px;
+    font-size: 10px;
+    width: 120px;
+  }
+  .supervision_matters .head_search .el-input__icon {
+    line-height: 30px;
+  }
+  .supervision_matters .head_search{
+    flex-wrap: wrap;
+  }
+  .supervision_matters .head_search div {
+    margin-right: 2px;
+  }
+  .supervision_matters .data_filter{
+    margin-left: 0 !important;
+  }
+  .supervision_matters .data_filter .el-range-editor{
+    width: 170px;
+  }
+  .supervision_matters .data_filter .el-date-editor .el-range-separator {
+    line-height: 25px;
+    font-size: 10px;
+  }
+  .supervision_matters .data_filter .el-date-editor .el-range__icon {
+    font-size: 10px;
+    line-height: 25px;
+  }
+  .supervision_matters .el-date-editor .el-range-input {
+    font-size: 8px;
+  }
+  .supervision_matters .el-date-editor .el-range__close-icon {
+    font-size: 10px;
+    width: 10px;
+    line-height: 25px;
+  }
+  .supervision_matters .head_search .filter_button{
+    margin-top: 2px;
+  }
+  .supervision_matters .head_search .filter_button .el-button {
+    padding: 9px 12px;
+    font-size: 10px;
+  }
+  .supervision_matters .head_filter_criteria, .head_search {
+    margin-bottom: 4px;
+  }
+  .el-drawer {
+    width: 100% !important;
+  }
+}
 </style>
