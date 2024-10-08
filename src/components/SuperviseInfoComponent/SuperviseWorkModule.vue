@@ -361,6 +361,7 @@ export default {
 </script>
 
 <style scoped>
+/*还没有调整完成*/
 @media screen and (max-width: 700px) {
   .el-radio-button--small .el-radio-button__inner {
     padding: 7px 12px;
