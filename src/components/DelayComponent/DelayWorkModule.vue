@@ -326,8 +326,8 @@ export default {
 }
 
 @media screen and (max-width: 700px) {
-  .delay_work .head_search .el-radio-button--small .el-radio-button__inner {
-    padding: 7px 9px;
+  .el-radio-button--small .el-radio-button__inner {
+    padding: 7px 12px;
     font-size: 10px;
     border-radius: 0;
   }

@@ -168,13 +168,13 @@ export default {
   /* 将文字颜色设置为透明 */
 }
 
-.title-h5 {
+.index .title-h5 {
   margin-left: 10px;
   margin-bottom: 0;
   font-size: 20px;
 }
 
-.header {
+.index .header {
   background-color: #303133;
   height: 60px;
   display: flex;
@@ -209,7 +209,6 @@ export default {
   .userTag {
     font-size: 10px;
   }
-
   /* 头部按钮 */
   .header-button {
     margin-right: 10px;
@@ -231,30 +230,30 @@ export default {
     font-size: 14px;
   }
 
-  .title-h5 {
+  .index .title-h5 {
     font-size: 14px;
   }
-
-  .sidebar {
-    width: 100%;
-    height: auto;
-    bottom: 0;
-  }
-
   .index .content {
     margin-left: 0;
   }
   .sidebar {
-    overflow: initial;
-    position: absolute;
+    overflow: unset;
+    width: 100%;
+    height: auto;
+    bottom: 0;
+    position: fixed;
+
+  }
+  .sidebar div {
+    margin: 10px 0; /* 适当的边距 */
+    padding: 10px; /* 适当的内边距 */
+    border: 1px solid #ccc; /* 可选的边框 */
   }
   .sidebar ul {
     display: flex;
     border-top: solid 1px #e6e6e6;
     border-left: none;
   }
-
-
 
   .el-menu {
     border-right: none;
@@ -279,8 +278,11 @@ export default {
     display: none;
   }
 
-  .header {
+  .index .header {
     height: 60px;
+    z-index: 2006 !important;
+    position: relative;
+
   }
 
   .el-dropdown-menu {

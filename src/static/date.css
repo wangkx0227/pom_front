@@ -1,4 +1,7 @@
 @media screen and (max-width: 700px) {
+    .el-date-range-picker .el-picker-panel__body {
+        display: table-footer-group;
+    }
     .el-popper[x-placement^=bottom] {
         margin-top: 7px;
     }
@@ -9,10 +12,6 @@
     }
 
     .el-date-range-picker__content {
-        float: left;
-        width: 32%;
-        box-sizing: border-box;
-        margin: 0;
         padding: 8px;
     }
 
@@ -42,7 +41,7 @@
     .el-date-range-picker__time-header {
         font-size: 10px;
         padding: 2px;
-        width: 64%;
+        width: 100%;
     }
 
     .el-input--small .el-input__inner {
