@@ -139,6 +139,7 @@ export default {
 
 <style >
 @import url("@/static/convention.css");
+@import url("@/static/date.css");
 @media screen and (max-width: 700px) {
   .head_search_add{
     display: flex;
@@ -167,61 +168,9 @@ export default {
     padding: 8px 8px;
     font-size: 10px;
   }
-   .el-button+.el-button, .el-checkbox.is-bordered+.el-checkbox.is-bordered {
+  .head_search_add .el-button+.el-button, .el-checkbox.is-bordered+.el-checkbox.is-bordered {
     margin-left: 5px;
   }
-  .el-picker-panel {
-    width: 92.6% !important;
-    left: 8px !important;
-  }
-  .el-date-range-picker__content {
-    float: left;
-    width: 32%;
-    box-sizing: border-box;
-    margin: 0;
-    padding: 8px;
-  }
-  .el-date-range-picker__content .el-date-range-picker__header div {
-    margin-left: 34px;
-    margin-right: 34px;
-  }
-  .el-date-range-picker__header div {
-    font-size: 12px;
-    font-weight: 500;
-    margin-right: 40px;
-  }
-  .el-date-table {
-    font-size: 10px;
-  }
-  .el-date-table th {
-    padding: 2px;
-  }
-  .el-date-table td {
-    padding: 0;
-  }
-  .el-date-range-picker__time-header {
-    font-size: 10px;
-    padding:2px;
-    width: 64%;
-  }
-  .el-input--small .el-input__inner {
-    height: 20px;
-    line-height: 20px;
-    font-size: 8px;
-  }
-  .el-date-range-picker__time-header>.el-icon-arrow-right {
-    font-size: 12px;
-  }
-  .el-date-range-picker__header {
-    height: 20px;
-  }
-  .el-date-range-picker__editor .el-input__inner {
-    padding: 0 12px;
-  }
-  .el-date-table td span {
-    width: 20px;
-    height: 20px;
-    line-height: 20px;
-  }
+
 }
 </style>

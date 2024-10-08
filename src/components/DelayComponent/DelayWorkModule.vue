@@ -324,6 +324,7 @@ export default {
 .delay_work .head_search {
   display: flex;
 }
+
 @media screen and (max-width: 700px) {
   .delay_work .head_search .el-radio-button--small .el-radio-button__inner {
     padding: 7px 9px;
@@ -378,6 +379,5 @@ export default {
   .delay_work .head_filter_criteria, .head_search {
     margin-bottom: 4px;
   }
-
 }
 </style>

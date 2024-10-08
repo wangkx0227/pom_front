@@ -253,6 +253,7 @@ export default {
 
   .sidebar {
     overflow: initial;
+    position: absolute;
   }
 
   .el-menu {
