@@ -244,17 +244,17 @@ export default {
   .index .content {
     margin-left: 0;
   }
-
+  .sidebar {
+    overflow: initial;
+    position: absolute;
+  }
   .sidebar ul {
     display: flex;
     border-top: solid 1px #e6e6e6;
     border-left: none;
   }
 
-  .sidebar {
-    overflow: initial;
-    position: absolute;
-  }
+
 
   .el-menu {
     border-right: none;
@@ -266,14 +266,13 @@ export default {
   }
 
   ul li span {
-    /*display: none;*/
     font-size: 12px;
   }
 
   ul li i {
     width: 15px !important;
     font-size: 10px !important;
-    margin-right: 0px !important;
+    margin-right: 0 !important;
   }
 
   .el-submenu {
