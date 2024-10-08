@@ -79,7 +79,7 @@
             <span v-if="row.complete_status === 1">{{ row.complete_time }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="140" fixed="right">
+        <el-table-column label="操作" align="center" width="140">
           <template v-slot="scope">
             <!-- 完成后，隐藏申请延期按钮 -->
             <div v-if="method_list.includes('PUT') && !scope.row.complete_status" style="display: inline-block;">

@@ -87,7 +87,7 @@
         </el-table-column>
         <el-table-column label="实际完成时间" align="center" width="180" prop="complete_time">
         </el-table-column>
-        <el-table-column label="操作" align="center" width="90" fixed="right">
+        <el-table-column label="操作" align="center" width="90">
           <template v-slot="scope">
             <!-- 完成后，隐藏申请延期按钮 -->
             <div v-if="method_list.includes('PUT') && scope.row.complete_status === 0">
