@@ -14,7 +14,7 @@
         <el-radio-button label="no_order_matter_delay">非订单事项</el-radio-button>
       </el-radio-group>
     </div>
-    <div class="head_search" style="display: flex;">
+    <div class="head_search">
       <div class="select_filter">
         <el-select v-model="user_id" placeholder="请根据用户筛选">
           <el-option v-for="item in user_info_list" :key="item.value" :label="item.label" :value="item.value">
@@ -32,7 +32,6 @@
         <el-button type="warning" icon="el-icon-refresh-right" plain @click="reloadData">重置
         </el-button>
       </div>
-
     </div>
     <div class="table_content">
       <el-table :data="get_delay_data_list" style="width: 100%" height="548">
@@ -246,6 +245,7 @@ export default {
       this.search_start_time = null;
       this.search_end_time = null;
       this.type_radio = 'all';
+      this.status_radio = 'all';
       this.user_id = null;
       this.getDelayWorkListData();
     },
@@ -305,7 +305,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .el-input.is-disabled .el-input__inner {
   color: black !important;
 }
@@ -319,5 +319,65 @@ export default {
   max-height: 80px;
   min-height: 80px;
   overflow: scroll;
+}
+
+.delay_work .head_search {
+  display: flex;
+}
+@media screen and (max-width: 700px) {
+  .delay_work .head_search .el-radio-button--small .el-radio-button__inner {
+    padding: 7px 9px;
+    font-size: 10px;
+    border-radius: 0;
+  }
+  .delay_work .head_search .el-input__inner {
+    height: 30px;
+    line-height: 30px;
+    padding: 0 15px;
+    font-size: 10px;
+    width: 120px;
+  }
+  .delay_work .head_search .el-input__icon {
+    line-height: 30px;
+  }
+  .delay_work .head_search{
+    flex-wrap: wrap;
+  }
+  .delay_work .head_search div {
+    margin-right: 2px;
+  }
+  .delay_work .data_filter{
+    margin-left: 0 !important;
+  }
+  .delay_work .data_filter .el-range-editor{
+    width: 170px;
+  }
+  .delay_work .data_filter .el-date-editor .el-range-separator {
+    line-height: 25px;
+    font-size: 10px;
+  }
+  .delay_work .data_filter .el-date-editor .el-range__icon {
+    font-size: 10px;
+    line-height: 25px;
+  }
+  .delay_work .el-date-editor .el-range-input {
+    font-size: 8px;
+  }
+  .delay_work .el-date-editor .el-range__close-icon {
+    font-size: 10px;
+    width: 10px;
+    line-height: 25px;
+  }
+  .delay_work .head_search .filter_button{
+    margin-top: 2px;
+  }
+  .delay_work .head_search .filter_button .el-button {
+    padding: 9px 12px;
+    font-size: 10px;
+  }
+  .delay_work .head_filter_criteria, .head_search {
+    margin-bottom: 4px;
+  }
+
 }
 </style>
