@@ -425,29 +425,29 @@ export default {
   .dashboard_info .box-card{
     height: 73vh;
   }
-  .container {
+  .dashboard_info .container {
     display: grid !important;
     grid-template-rows: none; /* 或者使用 unset */
     grid-template-columns: none; /*或者使用 unset */
     height: unset; /* 或者使用 unset */
   }
 
-  .work_container {
+  .dashboard_info .work_container {
     width: 40%;
     display: grid;
     grid-template-rows: 1fr 1fr;
     grid-template-columns: 1fr 1fr;
     height: unset;
   }
-  .work_container .work_block {
+  .dashboard_info .work_container .work_block {
     width: 77%;
 
   }
-  .work_block {
+  .dashboard_info .work_block {
     width: 34.5%;
     margin: 2px 5px 5px 2px;
   }
-  .work_block .el-result {
+  .dashboard_info .work_block .el-result {
     padding: 18px 10px;
   }
   .el-drawer__container .el-drawer{
