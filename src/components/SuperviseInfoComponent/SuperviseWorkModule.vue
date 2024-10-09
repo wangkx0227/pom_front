@@ -20,7 +20,7 @@
           </el-option>
         </el-select>
       </div>
-      <div class="select_filter_factory" style="margin-left:5px">
+      <div class="select_filter_matter_name" style="margin-left:5px">
         <el-select v-model="matter_name_id" filterable placeholder="根据事项名晒选">
           <el-option v-for="item in matter_name_list"
                      :key="item.order_matter_id"
@@ -363,6 +363,13 @@ export default {
 <style>
 /*还没有调整完成*/
 @media screen and (max-width: 700px) {
+  .supervision_matters .head_search .el-input__inner {
+    height: 30px;
+    line-height: 30px;
+    padding: 0 8px;
+    font-size: 10px;
+    width: 158px;
+  }
   .supervision_matters .head_search .el-input__icon {
     line-height: 30px;
     font-size: 10px;
@@ -384,7 +391,6 @@ export default {
   .supervision_matters .data_filter .el-range-editor {
     width: 180px;
   }
-
 
   /*样式按钮*/
   .supervision_matters .head_search .filter_button .el-button {
