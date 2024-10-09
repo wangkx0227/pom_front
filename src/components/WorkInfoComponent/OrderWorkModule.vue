@@ -99,7 +99,7 @@
             <span v-if="row.complete_status === 1">{{ row.complete_time }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="140">
+        <el-table-column label="操作" align="center" width="140" class-name="operation">
           <template v-slot="scope">
             <!-- 完成后，隐藏申请延期按钮 -->
             <div v-if="method_list.includes('PUT') && !scope.row.complete_status" style="display: inline-block;">
@@ -839,6 +839,7 @@ export default {
   min-height: 80px;
   overflow: scroll;
 }
+
 @media screen and (max-width: 700px) {
 
   /*搜索按钮*/
@@ -878,6 +879,7 @@ export default {
   .order_work .data_filter .el-range-editor {
     width: 180px;
   }
+
   /*样式按钮*/
   .order_work .head_search .filter_button .el-button {
     padding: 9px 12px;
@@ -886,6 +888,17 @@ export default {
 
   .order_work .head_filter_criteria, .head_search {
     margin-bottom: 4px;
+  }
+
+  .order_work .el-date-editor.el-input, .el-date-editor.el-input__inner {
+    width: 150px;
+  }
+
+  .order_work .el-button--text {
+    padding: 1px !important;
+  }
+  .order_work .operation .cell {
+    display: flex;
   }
 }
 </style>

@@ -484,5 +484,8 @@ export default {
   .el-divider--horizontal {
     margin: 10px 0;
   }
+  .work .matter_item_dialog .el-dialog__wrapper {
+    z-index: 2007 !important;
+  }
 }
 </style>

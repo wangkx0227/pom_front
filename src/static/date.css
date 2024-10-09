@@ -115,7 +115,7 @@
     .el-message-box {
         width: 340px !important;
     }
-
+    /*液态框*/
     .el-dialog {
         margin-top: 0 !important;
         width: 100% !important;

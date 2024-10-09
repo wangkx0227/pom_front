@@ -79,7 +79,7 @@
             <span v-if="row.complete_status === 1">{{ row.complete_time }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="140">
+        <el-table-column label="操作" align="center" width="140" class-name="operation">
           <template v-slot="scope">
             <!-- 完成后，隐藏申请延期按钮 -->
             <div v-if="method_list.includes('PUT') && !scope.row.complete_status" style="display: inline-block;">
@@ -821,6 +821,14 @@ export default {
     margin-bottom: 4px;
   }
 
-
+  .no_work .el-date-editor.el-input, .el-date-editor.el-input__inner {
+    width: 150px;
+  }
+  .no_work .el-button--text {
+    padding: 1px !important;
+  }
+  .no_work .operation .cell {
+    display: flex;
+  }
 }
 </style>
