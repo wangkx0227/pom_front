@@ -244,7 +244,6 @@ export default {
   /*主体内容*/
   .index .content {
     margin-left: -3px;
-    margin-right: 0px;
   }
   /*侧边栏菜单*/
   .sidebar {
@@ -282,7 +281,6 @@ export default {
     font-size: 10px !important;
     margin-right: 0 !important;
   }
-
   .el-submenu {
     display: none;
   }
