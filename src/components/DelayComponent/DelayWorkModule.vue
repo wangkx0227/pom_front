@@ -354,25 +354,11 @@ export default {
   .delay_work .data_filter .el-range-editor{
     width: 170px;
   }
-  .delay_work .data_filter .el-date-editor .el-range-separator {
-    line-height: 25px;
-    font-size: 10px;
-  }
-  .delay_work .data_filter .el-date-editor .el-range__icon {
-    font-size: 10px;
-    line-height: 25px;
-  }
-  .delay_work .el-date-editor .el-range-input {
-    font-size: 10px;
-  }
-  .delay_work .el-date-editor .el-range__close-icon {
-    font-size: 10px;
-    width: 10px;
-    line-height: 25px;
-  }
+  /*日期选择框*/
   .delay_work .head_search .filter_button{
     margin-top: 2px;
   }
+  /*按钮*/
   .delay_work .head_search .filter_button .el-button {
     padding: 9px 12px;
     font-size: 10px;

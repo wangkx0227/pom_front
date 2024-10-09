@@ -45,7 +45,7 @@
         </el-table-column>
         <el-table-column label="事务负责人" align="center" prop="user_name">
         </el-table-column>
-        <el-table-column label="事务状态" align="center" >
+        <el-table-column label="事务状态" align="center">
           <template v-slot="{ row }">
             <el-tag v-if="row.is_show === 1" effect="plain">正常</el-tag>
             <el-tag v-else type="danger" effect="plain">停止</el-tag>
@@ -56,9 +56,9 @@
         <el-table-column label="事务类型" align="center" width="180">
           <template v-slot="{ row }">
             <el-tag v-if="row.type === 'order_matter'" type="success">订单：跟进类型</el-tag>
-            <el-tag  v-else-if="row.type === 'no_order_matter'" type="info">非订单：常规类型</el-tag>
-            <el-tag  v-else-if="row.type === 'special'">非订单：特殊类型</el-tag>
-            <el-tag  v-else-if="row.type === 'supervise'">订单：监督类型</el-tag>
+            <el-tag v-else-if="row.type === 'no_order_matter'" type="info">非订单：常规类型</el-tag>
+            <el-tag v-else-if="row.type === 'special'">非订单：特殊类型</el-tag>
+            <el-tag v-else-if="row.type === 'supervise'">订单：监督类型</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="完成状态" align="center">
@@ -100,10 +100,10 @@
               <el-descriptions-item label="ITEM信息" :span="2">
                 <span v-if="!matter_info.order_record_id">无</span>
                 <el-button
-                  size="mini"
-                  type="text"
-                  @click="getMatterItemInfo(matter_info.order_record_id)"
-                  v-if="order_record_info_method_list.includes('GET') && matter_info.order_record_id">
+                    size="mini"
+                    type="text"
+                    @click="getMatterItemInfo(matter_info.order_record_id)"
+                    v-if="order_record_info_method_list.includes('GET') && matter_info.order_record_id">
                   查看ITEM列表
                 </el-button>
               </el-descriptions-item>
@@ -158,12 +158,12 @@
     </div>
     <div class="matter_item_dialog">
       <el-dialog
-            title="ITEM信息详情"
+          title="ITEM信息详情"
           :visible.sync="ItemDialogVisible"
           :before-close="dialogItemTableClose"
           width="30%"
       >
-        <el-table :data="item_list" height="200" border v-loading="ItemTableLoading" >
+        <el-table :data="item_list" height="200" border v-loading="ItemTableLoading">
           <el-table-column property="index" label="#" align="center"></el-table-column>
           <el-table-column property="item" label="ITEM" width="450" align="center"></el-table-column>
         </el-table>
@@ -427,12 +427,14 @@ export default {
   min-height: 80px;
   overflow: scroll;
 }
+
 @media screen and (max-width: 700px) {
   .el-radio-button--small .el-radio-button__inner {
     padding: 7px 12px;
     font-size: 10px;
     border-radius: 0;
   }
+
   .work .head_search .el-input__inner {
     height: 30px;
     line-height: 30px;
@@ -440,54 +442,51 @@ export default {
     font-size: 10px;
     width: 120px;
   }
+
   .work .head_search .el-input__icon {
     line-height: 30px;
     font-size: 10px;
   }
-  .work .head_search{
+
+  .work .head_search {
     flex-wrap: wrap;
   }
+
   .work .head_search div {
     margin-right: 2px;
   }
-  .work .data_filter{
+
+  .work .data_filter {
     margin-left: 0 !important;
   }
-  .work .data_filter .el-range-editor{
+
+  /*日期选择框*/
+  .work .data_filter .el-range-editor {
     width: 170px;
   }
-  .work .data_filter .el-date-editor .el-range-separator {
-    line-height: 25px;
-    font-size: 10px;
-  }
-  .work .data_filter .el-date-editor .el-range__icon {
-    font-size: 10px;
-    line-height: 25px;
-  }
-  .work .el-date-editor .el-range-input {
-    font-size: 10px;
-  }
-  .work .el-date-editor .el-range__close-icon {
-    font-size: 10px;
-    width: 10px;
-    line-height: 25px;
-  }
-  .work .head_search .filter_button{
+
+  /*按钮*/
+  .work .head_search .filter_button {
     margin-top: 2px;
   }
+
   .work .head_search .filter_button .el-button {
     padding: 9px 12px;
     font-size: 10px;
   }
+
   .work .head_filter_criteria, .head_search {
     margin-bottom: 4px;
   }
+
   .el-drawer {
     width: 100% !important;
   }
-  .el-drawer__wrapper{
+
+  .el-drawer__wrapper {
     z-index: 2006 !important;
   }
+
   .el-divider--horizontal {
     margin: 10px 0;
   }

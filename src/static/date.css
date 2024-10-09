@@ -2,6 +2,7 @@
     .el-date-range-picker .el-picker-panel__body {
         display: table-footer-group;
     }
+
     .el-popper[x-placement^=bottom] {
         margin-top: 7px;
     }
@@ -66,5 +67,25 @@
         width: 20px;
         height: 20px;
         line-height: 20px;
+    }
+
+    .el-date-editor .el-range-separator {
+        line-height: 30px;
+        font-size: 10px;
+        padding: 0 7px;
+    }
+
+    .el-date-editor .el-range__icon {
+        font-size: 10px;
+        line-height: 30px;
+    }
+
+    .el-date-editor .el-range__close-icon {
+        font-size: 10px;
+        width: 10px;
+        line-height: 30px;
+    }
+     .el-date-editor .el-range-input {
+        font-size: 10px;
     }
 }
