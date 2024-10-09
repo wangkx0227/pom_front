@@ -34,7 +34,6 @@ export default {
 @media screen and (max-width: 700px) {
   .supervise_info_list .box-card{
     height: 158vw;
-    position: relative;
   }
 }
 </style>

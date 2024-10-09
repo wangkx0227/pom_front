@@ -374,6 +374,60 @@ export default {
     margin-top: 0 !important;
     width: 100% !important;
   }
-
+  /*搜索按钮*/
+  .el-radio-button--small .el-radio-button__inner {
+    padding: 7px 12px;
+    font-size: 10px;
+    border-radius: 0;
+  }
+  /*下拉框*/
+  .supervision_matters .head_search .el-input__inner {
+    height: 30px;
+    line-height: 30px;
+    padding: 0 15px;
+    font-size: 10px;
+    width: 158px;
+  }
+  .supervision_matters .head_search .el-input__icon {
+    line-height: 30px;
+    font-size: 10px;
+  }
+  .supervision_matters .head_search{
+    flex-wrap: wrap;
+  }
+  .supervision_matters .data_filter{
+    margin-left: 0 !important;
+  }
+  /*日期选择框样式*/
+  .supervision_matters .head_search .data_filter,.filter_button {
+    margin-top: 3px;
+  }
+  .supervision_matters .data_filter .el-range-editor{
+    width: 180px;
+  }
+  .supervision_matters .data_filter .el-date-editor .el-range-separator {
+    line-height: 25px;
+    font-size: 10px;
+  }
+  .supervision_matters .data_filter .el-date-editor .el-range__icon {
+    font-size: 10px;
+    line-height: 25px;
+  }
+  .supervision_matters .el-date-editor .el-range-input {
+    font-size: 10px;
+  }
+  .supervision_matters .el-date-editor .el-range__close-icon {
+    font-size: 10px;
+    width: 10px;
+    line-height: 25px;
+  }
+  /*样式按钮*/
+  .supervision_matters .head_search .filter_button .el-button {
+    padding: 9px 12px;
+    font-size: 10px;
+  }
+  .supervision_matters .head_filter_criteria, .head_search {
+    margin-bottom: 4px;
+  }
 }
 </style>

@@ -442,6 +442,7 @@ export default {
   }
   .work .head_search .el-input__icon {
     line-height: 30px;
+    font-size: 10px;
   }
   .work .head_search{
     flex-wrap: wrap;
@@ -464,7 +465,7 @@ export default {
     line-height: 25px;
   }
   .work .el-date-editor .el-range-input {
-    font-size: 8px;
+    font-size: 10px;
   }
   .work .el-date-editor .el-range__close-icon {
     font-size: 10px;
