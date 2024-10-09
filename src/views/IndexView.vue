@@ -203,46 +203,56 @@ export default {
 }
 /*侧边栏与头部内容*/
 @media screen and (max-width: 700px) {
+  /*不显示滚动条*/
+  ::-webkit-scrollbar {
+    display: none;
+    width: 2px;
+    height: 3px;
+  }
   .el-card__body, .el-main {
     padding: 5px 5px !important;
   }
   .userTag {
-    font-size: 10px;
+    font-size: 11px;
   }
-  /* 头部按钮 */
+  /* 用户按钮 */
   .header-button {
-    margin-right: 10px;
+    margin-right: 11px;
+  }
+  .el-dropdown .el-button--mini,
+  .el-button--mini.is-round {
+    padding: 4px 10px;
   }
 
+  /*刷新按钮*/
   .el-button--small.is-circle {
     padding: 7px;
   }
+  /*消息按钮*/
   .el-button--mini, .el-button--mini.is-round{
     padding: 5px 12px;
   }
 
-  .el-dropdown .el-button--mini,
-  .el-button--mini.is-round {
-    padding: 5px 12px;
-  }
-
+  /*登录用户*/
   .gradient-text {
-    font-size: 14px;
+    font-size: 12px;
   }
-
+  /*标题 pom*/
   .index .title-h5 {
-    font-size: 14px;
+    font-size: 16px;
   }
+  /*主体内容*/
   .index .content {
-    margin-left: 0;
+    margin-left: -3px;
+    margin-right: -3px;
   }
+  /*侧边栏菜单*/
   .sidebar {
     overflow: unset;
     width: 100%;
     height: auto;
     bottom: 0;
     position: fixed;
-
   }
   .sidebar div {
     margin: 10px 0; /* 适当的边距 */
@@ -254,7 +264,6 @@ export default {
     border-top: solid 1px #e6e6e6;
     border-left: none;
   }
-
   .el-menu {
     border-right: none;
     justify-content: center;
@@ -277,21 +286,14 @@ export default {
   .el-submenu {
     display: none;
   }
-
+  /*头部标题*/
   .index .header {
     height: 60px;
     z-index: 2006 !important;
     position: relative;
-
   }
-
-  .el-dropdown-menu {
-    flex-direction: column;
-  }
-
-  .el-dropdown-menu__item {
-    line-height: 24px;
-    font-size: 10px;
+  .el-dropdown-menu{
+    z-index: 2006 !important;
   }
 }
 </style>
