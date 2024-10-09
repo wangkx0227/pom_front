@@ -451,6 +451,8 @@ export default {
   }
   .el-drawer__container .el-drawer{
     width: 100% !important;
+  }
+  .el-drawer__wrapper{
     z-index: 2010 !important;
   }
 }

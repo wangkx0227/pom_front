@@ -244,7 +244,7 @@ export default {
   /*主体内容*/
   .index .content {
     margin-left: -3px;
-    margin-right: -3px;
+    margin-right: 0px;
   }
   /*侧边栏菜单*/
   .sidebar {
