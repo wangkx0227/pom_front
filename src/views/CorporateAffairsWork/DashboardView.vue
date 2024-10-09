@@ -423,7 +423,7 @@ export default {
 
 @media screen and (max-width: 700px) {
   .dashboard_info .box-card{
-    height: 73vh;
+    height: 175vw;
   }
   .dashboard_info .container {
     display: grid !important;
@@ -433,18 +433,17 @@ export default {
   }
 
   .dashboard_info .work_container {
-    width: 40%;
+    width: 97vw;
     display: grid;
     grid-template-rows: 1fr 1fr;
     grid-template-columns: 1fr 1fr;
     height: unset;
   }
   .dashboard_info .work_container .work_block {
-    width: 77%;
-
+    width: 80%;
   }
   .dashboard_info .work_block {
-    width: 34.5%;
+    width: 88vw;
     margin: 2px 5px 5px 2px;
   }
   .dashboard_info .work_block .el-result {
@@ -452,6 +451,7 @@ export default {
   }
   .el-drawer__container .el-drawer{
     width: 100% !important;
+    z-index: 2010 !important;
   }
 }
 </style>
