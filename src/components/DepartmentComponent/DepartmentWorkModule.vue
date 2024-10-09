@@ -429,16 +429,10 @@ export default {
 }
 
 @media screen and (max-width: 700px) {
-  .el-radio-button--small .el-radio-button__inner {
-    padding: 7px 12px;
-    font-size: 10px;
-    border-radius: 0;
-  }
-
   .work .head_search .el-input__inner {
     height: 30px;
     line-height: 30px;
-    padding: 0 15px;
+    padding: 0 8px;
     font-size: 10px;
     width: 120px;
   }

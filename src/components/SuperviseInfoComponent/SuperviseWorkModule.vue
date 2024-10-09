@@ -363,23 +363,6 @@ export default {
 <style>
 /*还没有调整完成*/
 @media screen and (max-width: 700px) {
-
-  /*搜索按钮*/
-  .el-radio-button--small .el-radio-button__inner {
-    padding: 7px 12px;
-    font-size: 10px;
-    border-radius: 0;
-  }
-
-  /*下拉框*/
-  .supervision_matters .head_search .el-input__inner {
-    height: 30px;
-    line-height: 30px;
-    padding: 0 15px;
-    font-size: 10px;
-    width: 158px;
-  }
-
   .supervision_matters .head_search .el-input__icon {
     line-height: 30px;
     font-size: 10px;
@@ -411,16 +394,6 @@ export default {
 
   .supervision_matters .head_filter_criteria, .head_search {
     margin-bottom: 4px;
-  }
-
-  /*  下拉框*/
-  .el-select-dropdown__item span {
-    font-size: 10px !important;
-  }
-  .el-select-dropdown__item {
-    font-size: 10px;
-    height: 25px;
-    line-height: 30px;
   }
 }
 </style>

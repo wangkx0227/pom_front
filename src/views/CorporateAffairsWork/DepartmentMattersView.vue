@@ -35,6 +35,5 @@ export default {
   .department_order_info_list .box-card{
     height: 158vw;
   }
-
 }
 </style>

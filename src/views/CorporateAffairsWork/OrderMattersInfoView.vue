@@ -37,5 +37,11 @@ export default {
 </script>
 
 <style scoped>
+@import url("@/static/date.css");
 @import url("@/static/convention.css");
+@media screen and (max-width: 700px) {
+  .order_info_list .box-card{
+    height: 158vw;
+  }
+}
 </style>

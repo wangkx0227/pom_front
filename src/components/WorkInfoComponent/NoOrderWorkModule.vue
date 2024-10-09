@@ -1,5 +1,5 @@
 <template>
-  <div class="work" v-loading="loading">
+  <div class="no_work" v-loading="loading">
     <div class="head_filter_criteria">
       <el-radio-group v-model="radio_criteria" size="small">
         <el-radio-button label="all">全部</el-radio-button>
@@ -8,7 +8,7 @@
       </el-radio-group>
     </div>
     <div class="head_search" style="display: flex">
-      <div class="select_filter_factory" style="margin-left:5px">
+      <div class="select_filter_matter" style="margin-left:5px">
         <el-select v-model="matter_id" placeholder="根据事项名称筛选">
           <el-option
               v-for="item in matter_name_list"
@@ -759,7 +759,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .el-input.is-disabled .el-input__inner {
   color: black !important;
 }
@@ -775,4 +775,50 @@ export default {
   overflow: scroll;
 }
 
+@media screen and (max-width: 700px) {
+
+  /*下拉框*/
+  .no_work .head_search .el-input__inner {
+    height: 30px;
+    line-height: 30px;
+    padding: 0 8px;
+    font-size: 10px;
+    width: 158px;
+  }
+
+  .no_work .head_search .el-input__icon {
+    line-height: 30px;
+    font-size: 10px;
+  }
+
+  .no_work .head_search {
+    flex-wrap: wrap;
+  }
+
+  .no_work .data_filter {
+    margin-left: 0 !important;
+  }
+
+  /*日期选择框样式*/
+  .no_work .head_search .data_filter, .filter_button {
+    margin-top: 3px;
+  }
+
+  .no_work .data_filter .el-range-editor {
+    width: 180px;
+  }
+
+
+  /*样式按钮*/
+  .no_work .head_search .filter_button .el-button {
+    padding: 9px 12px;
+    font-size: 10px;
+  }
+
+  .no_work .head_filter_criteria, .head_search {
+    margin-bottom: 4px;
+  }
+
+
+}
 </style>
