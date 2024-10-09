@@ -327,26 +327,5 @@ export default {
   .el-pagination.is-background .btn-next, .el-pagination.is-background .btn-prev, .el-pagination.is-background .el-pager li {
     margin: 0 1px;
   }
-
-  /*弹出窗*/
-  .el-message-box__wrapper {
-    top: 10px !important;
-  }
-
-  .el-message-box {
-    width: 340px !important;
-  }
-
-  .el-dialog {
-    margin-top: 0 !important;
-    width: 100% !important;
-  }
-
-  /*  下拉框*/
-  .el-select-dropdown__item {
-    font-size: 10px;
-    height: 25px;
-    line-height: 30px;
-  }
 }
 </style>

@@ -107,7 +107,18 @@
         border-radius: 0;
     }
 
-    .select_filter_matter {
-        margin-left: 0 !important;
+    /*完成事项提示弹出窗*/
+    .el-message-box__wrapper {
+        top: 10px !important;
     }
+
+    .el-message-box {
+        width: 340px !important;
+    }
+
+    .el-dialog {
+        margin-top: 0 !important;
+        width: 100% !important;
+    }
+
 }

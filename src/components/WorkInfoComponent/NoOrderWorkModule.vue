@@ -785,7 +785,9 @@ export default {
     font-size: 10px;
     width: 158px;
   }
-
+  .no_work .select_filter_matter {
+      margin-left: 0 !important;
+  }
   .no_work .head_search .el-input__icon {
     line-height: 30px;
     font-size: 10px;
