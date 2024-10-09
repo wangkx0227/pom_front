@@ -32,8 +32,9 @@ export default {
 @import url("@/static/date.css");
 @import url("@/static/convention.css");
 @media screen and (max-width: 700px) {
-  .delay_order_info_list .box-card{
-    height: 73vh;
+  .department_order_info_list .box-card{
+    height: 158vw;
   }
+
 }
 </style>

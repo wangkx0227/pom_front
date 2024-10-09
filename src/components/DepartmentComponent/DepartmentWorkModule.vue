@@ -484,5 +484,11 @@ export default {
   .el-drawer {
     width: 100% !important;
   }
+  .el-drawer__wrapper{
+    z-index: 2006 !important;
+  }
+  .el-divider--horizontal {
+    margin: 10px 0;
+  }
 }
 </style>
