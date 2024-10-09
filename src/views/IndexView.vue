@@ -201,6 +201,7 @@ export default {
 .header-button {
   margin-right: 15px;
 }
+
 /*侧边栏与头部内容*/
 @media screen and (max-width: 700px) {
   /*不显示滚动条*/
@@ -209,16 +210,20 @@ export default {
     width: 2px;
     height: 3px;
   }
+
   .el-card__body, .el-main {
     padding: 5px 5px !important;
   }
+
   .userTag {
     font-size: 11px;
   }
+
   /* 用户按钮 */
   .header-button {
     margin-right: 11px;
   }
+
   .el-dropdown .el-button--mini,
   .el-button--mini.is-round {
     padding: 4px 10px;
@@ -228,8 +233,9 @@ export default {
   .el-button--small.is-circle {
     padding: 7px;
   }
+
   /*消息按钮*/
-  .el-button--mini, .el-button--mini.is-round{
+  .el-button--mini, .el-button--mini.is-round {
     padding: 5px 12px;
   }
 
@@ -237,14 +243,17 @@ export default {
   .gradient-text {
     font-size: 12px;
   }
+
   /*标题 pom*/
   .index .title-h5 {
     font-size: 16px;
   }
+
   /*主体内容*/
   .index .content {
     margin-left: -3px;
   }
+
   /*侧边栏菜单*/
   .sidebar {
     overflow: unset;
@@ -253,16 +262,19 @@ export default {
     bottom: 0;
     position: fixed;
   }
+
   .sidebar div {
     margin: 10px 0; /* 适当的边距 */
     padding: 10px; /* 适当的内边距 */
     border: 1px solid #ccc; /* 可选的边框 */
   }
+
   .sidebar ul {
     display: flex;
     border-top: solid 1px #e6e6e6;
     border-left: none;
   }
+
   .el-menu {
     border-right: none;
     justify-content: center;
@@ -281,17 +293,35 @@ export default {
     font-size: 10px !important;
     margin-right: 0 !important;
   }
+
   .el-submenu {
     display: none;
   }
+
   /*头部标题*/
   .index .header {
     height: 60px;
     z-index: 2006 !important;
     position: relative;
   }
-  .el-dropdown-menu{
+  .el-dropdown-menu {
     z-index: 2006 !important;
+  }
+  /*  页码*/
+  .el-pagination button, .el-pagination span:not([class*=suffix]) {
+    font-size: 10px;
+    height: 25px;
+    line-height: 25px;
+    padding: 0;
+  }
+  .el-pager li {
+    font-size: 10px;
+    height: 25px;
+    line-height: 25px;
+    padding: 0;
+  }
+  .el-pagination.is-background .btn-next, .el-pagination.is-background .btn-prev, .el-pagination.is-background .el-pager li {
+    margin: 0 1px;
   }
 }
 </style>
