@@ -84,6 +84,7 @@ export default {
               if (data.code === 200) {
                 this.$message.success(data.message);
                 localStorage.setItem("front_list", JSON.stringify(data.front_list)); // 前端菜单权限
+                localStorage.setItem("api_permission_list", JSON.stringify(data.api_permission_list)); // 后端访问权限
                 localStorage.setItem("authorization", "Bearer " + data.access_token); // 写入到浏览器缓存中
                 localStorage.setItem("user_name", data.data.user_name); // 用户名字写入缓存中
                 localStorage.setItem("user_id", data.data.user_id); // 用户名字写入缓存中
