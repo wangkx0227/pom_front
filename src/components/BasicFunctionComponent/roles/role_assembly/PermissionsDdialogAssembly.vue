@@ -98,6 +98,7 @@ export default {
           this.api_method_id_list.push({type: add_type, id: add_pk})
         }
       }
+      console.log(this.menu_id_list) // 还是存在问题
       // 判断是否选中了2级菜单，是否添加了1级菜单,如果没有就进行添加
       for (let i = 0; i < this.menu_id_list.length; i++) {
         let menu_type = this.menu_id_list[i].type.split('-')
