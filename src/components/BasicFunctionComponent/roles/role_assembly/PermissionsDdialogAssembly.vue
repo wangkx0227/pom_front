@@ -68,7 +68,7 @@ export default {
     P_dialogClose(done) {
       done();
     },
-    // 重现加载权限
+    // 重加载权限
     loadPermission() {
       this.P_loading = true;
       this.getMenuPermission();

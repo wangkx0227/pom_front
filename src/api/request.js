@@ -2,7 +2,7 @@ import axios from "axios";
 import {Message} from "element-ui";
 
 // 全局默认值，url设置
-axios.defaults.baseURL = "http://192.168.31.212:8000/api/v2/";
+axios.defaults.baseURL = "http://127.0.0.1:8000/api/v2/";
 axios.defaults.timeout = 10000; // 超时时间
 // axios请求拦截器
 axios.interceptors.request.use(
