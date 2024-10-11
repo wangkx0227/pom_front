@@ -100,8 +100,7 @@ export default {
           this.api_method_id_list.push({type: add_type, id: add_pk, method_way: method_way, menu_type: menu_type})
         }
       }
-      // console.log(this.api_method_id_list, '后端')
-      // console.log(this.menu_id_list, '前端')
+
       // 判断是否选中了2级菜单，是否添加了1级菜单,如果没有就进行添加
 
       for (let i = 0; i < this.menu_id_list.length; i++) {
@@ -125,12 +124,22 @@ export default {
               this.menu_id_list.push({type: `menu-${menu_id_one}`, id: menu_id_one}) // 将1级菜单添加
               this.menu_id_list.push({type: this.api_method_id_list[i].menu_type, id: menu_id_two}) // 将二级菜单添加
             } else { // 如果分割长度是2那么就说明只有1级菜单
+              console.log(1)
               let menu_id = menu_type_list[1]
               this.menu_id_list.push({type: this.api_method_id_list[i].menu_type, id: menu_id})
             }
           }
         }
       }
+      // 进行去重
+      // 使用 Map 对象去重
+      let uniqueMap = new Map();
+      this.menu_id_list.forEach(item => {
+        // 将 id 转换为字符串以确保唯一性
+        uniqueMap.set(item.id.toString(), item);
+      });
+      // 将 Map 转换回数组
+      this.menu_id_list = Array.from(uniqueMap.values()) //去重
     },
     // 确定最后的数据
     saveData() {

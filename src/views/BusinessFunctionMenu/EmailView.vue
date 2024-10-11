@@ -22,8 +22,8 @@ export default {
       // 使用懒加载形式加载组件
       emailConfigureComponent: () => import("@/components/BusinessFunctionComponent/email_function/EmailConfigureModule"),
       reportMailingListComponent: () => import("@/components/BusinessFunctionComponent/email_function/ReportMailingListModule"),
-      report_mailing_url:'business_function/report_email_config/',
-      email_configure_url:'business_function/report_email_log/',
+      report_mailing_url:'business_function/report_email_log/',
+      email_configure_url:'business_function/report_email_config/',
     };
   },
   created() {
