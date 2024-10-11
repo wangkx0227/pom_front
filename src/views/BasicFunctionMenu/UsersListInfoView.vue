@@ -49,8 +49,8 @@ export default {
       return status
     },
     initializeActiveName() {
-      if (this.ShowPermissions(this.second_url)) return 'user';
-      if (this.ShowPermissions(this.duties_url)) return 'relationship';
+      if (this.ShowPermissions(this.user_url)) return 'user';
+      if (this.ShowPermissions(this.relationship_url)) return 'relationship';
       return ''; // 如果没有权限，返回空字符串或其他默认值
     }
   },
