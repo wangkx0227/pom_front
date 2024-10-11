@@ -9,8 +9,8 @@
             type="selection"
             width="80">
         </el-table-column>
-        <el-table-column prop="index" label="#" align="center"></el-table-column>
-        <el-table-column label="标题" align="left" prop="title" width="450">
+        <el-table-column prop="index" label="#" align="center" width="80"></el-table-column>
+        <el-table-column label="标题" align="center" prop="title">
         </el-table-column>
         <el-table-column label="创建日期" align="center" width="180" prop="create_date">
         </el-table-column>

@@ -28,7 +28,7 @@
             <i class="el-icon-office-building"></i>
             账户所属公司
           </template>
-          {{ user_info_form.firm }}
+          无
         </el-descriptions-item>
         <el-descriptions-item :span="1">
           <template slot="label">
@@ -85,7 +85,7 @@
             <i class="el-icon-edit"></i>
             延期审核主管
           </template>
-          罗力
+          {{ user_info_form.extension_user_name }}
         </el-descriptions-item>
         <el-descriptions-item :span="1">
           <template slot="label">
