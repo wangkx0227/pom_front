@@ -121,7 +121,7 @@
     <div class="table_content">
       <el-table :data="OrderMatterData" style="width: 100%" height="610">
         <el-table-column prop="index" label="#" align="center"></el-table-column>
-        <el-table-column label="事项名称" align="center" width="350">
+        <el-table-column label="事项名称" align="center" width="500">
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.matter_name }}</span>
             <el-input v-model="row.matter_name" v-else></el-input>
@@ -242,7 +242,7 @@
         </el-table-column>
         <el-table-column label="修改日期" align="center" width="180" prop="update_date">
         </el-table-column>
-        <el-table-column label="操作"  fixed="right" align="center" width="120">
+        <el-table-column label="操作"  fixed="right" align="center" width="100">
           <template v-slot="scope">
             <div v-if="method_list.includes('PUT')" style="display: inline-block;">
               <el-button v-if="!scope.row.editable" @click="editRow(scope.row)" size="mini" type="text">编辑

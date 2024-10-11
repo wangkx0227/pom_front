@@ -161,7 +161,7 @@
         </el-table-column>
         <el-table-column label="修改日期" align="center" width="180" prop="update_date">
         </el-table-column>
-        <el-table-column label="操作" align="center" width="120" fixed="right" >
+        <el-table-column label="操作" align="center" width="100" fixed="right" >
           <template v-slot="scope">
             <div v-if="method_list.includes('PUT')" style="display: inline-block;">
               <el-button v-if="!scope.row.editable" @click="editRow(scope.row)" size="mini" type="text">编辑
