@@ -26,7 +26,7 @@ export default {
       p_tree_data: [], // 设置属性属性的值
       KeyDefaultProps: { // 属性节点展开后对应数据的key值
         children: 'children',
-        label: 'label'
+        label: 'label',
       },
       menu_id_list: [], // 存放菜单的id
       api_method_id_list: [], // 存放 api接口可以被使用方法的id，结构即可
@@ -86,6 +86,8 @@ export default {
       for (let i = 0; i < checkedNodes.length; i++) {
         let add_pk = checkedNodes[i].id
         let add_type = checkedNodes[i].type
+        let method_way = checkedNodes[i].method_way
+        let menu_type = checkedNodes[i].menu_type
         if (!add_type) {
           add_type = ''
         }
@@ -95,11 +97,13 @@ export default {
           this.menu_id_list.push({type: add_type, id: add_pk})
         }
         if (api) {
-          this.api_method_id_list.push({type: add_type, id: add_pk})
+          this.api_method_id_list.push({type: add_type, id: add_pk, method_way: method_way, menu_type: menu_type})
         }
       }
-      console.log(this.menu_id_list) // 还是存在问题
+      // console.log(this.api_method_id_list, '后端')
+      // console.log(this.menu_id_list, '前端')
       // 判断是否选中了2级菜单，是否添加了1级菜单,如果没有就进行添加
+
       for (let i = 0; i < this.menu_id_list.length; i++) {
         let menu_type = this.menu_id_list[i].type.split('-')
         if (menu_type.length === 3) {
@@ -107,6 +111,23 @@ export default {
           let index = this.menu_id_list.findIndex(item => item.id === one_menu.id);
           if (index === -1) {
             this.menu_id_list.push(one_menu)
+          }
+        }
+      }
+      for (let i = 0; i < this.api_method_id_list.length; i++) {
+        if (this.api_method_id_list[i].method_way === 'GET') {
+          const menu_status = this.menu_id_list.filter(item => item.type === this.api_method_id_list[i].menu_type)
+          if (menu_status.length === 0) {
+            let menu_type_list = this.api_method_id_list[i].menu_type.split('-')
+            if (menu_type_list.length === 3) { // 分割的长度是3的情况下说明除了1级菜单还有2级菜单
+              let menu_id_one = menu_type_list[1]
+              let menu_id_two = menu_type_list[2]
+              this.menu_id_list.push({type: `menu-${menu_id_one}`, id: menu_id_one}) // 将1级菜单添加
+              this.menu_id_list.push({type: this.api_method_id_list[i].menu_type, id: menu_id_two}) // 将二级菜单添加
+            } else { // 如果分割长度是2那么就说明只有1级菜单
+              let menu_id = menu_type_list[1]
+              this.menu_id_list.push({type: this.api_method_id_list[i].menu_type, id: menu_id})
+            }
           }
         }
       }
