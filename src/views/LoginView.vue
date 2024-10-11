@@ -17,7 +17,7 @@
           </el-form-item>
         </el-form>
       </el-tab-pane>
-      <el-tab-pane label="账户登录" name="second">
+      <el-tab-pane label="邮箱账户登录" name="second">
         <el-form :model="login" status-icon class="demo-ruleForm">
           <el-form-item prop="pass">
             <el-input type="text" v-model="login.username" placeholder="用户名" suffix-icon="el-icon-user"></el-input>
