@@ -93,7 +93,7 @@
     <div class="table_content">
       <el-table :data="RuleData" style="width: 100%" height="610">
         <el-table-column prop="index" label="#" align="center"></el-table-column>
-        <el-table-column label="规则名称" width="180" align="center">
+        <el-table-column label="规则名称" width="300" align="center">
           <template v-slot="{ row }">
             <span v-if="!row.editable">{{ row.rule_name }}</span>
             <el-input v-model="row.rule_name" v-else></el-input>
