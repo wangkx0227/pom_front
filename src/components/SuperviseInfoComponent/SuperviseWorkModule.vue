@@ -51,7 +51,7 @@
         <el-table-column prop="index" label="#" align="center"></el-table-column>
         <el-table-column prop="po" label="PO" align="center" width="180"></el-table-column>
         <el-table-column prop="matter_name" label="事项名称" width="500" align="center"></el-table-column>
-        <el-table-column label="监督事项详情" align="center" prop="">
+        <el-table-column label="监督事项详情" align="center" prop="" width="180">
           <template v-slot="{ row }">
             <el-button size="mini" type="text" @click="getMatterInfo(row)"> 查看详情</el-button>
           </template>
@@ -66,12 +66,25 @@
             <el-tag type="info" effect="plain" v-else>未完成</el-tag>
           </template>
         </el-table-column>
+        <el-table-column label="催跟进记录" align="center" width="180" prop="complete_time">
+          <template v-slot="{ row }">
+            <el-button size="mini" type="text">查看记录</el-button>
+          </template>
+        </el-table-column>
         <el-table-column label="实际完成时间" align="center" width="180" prop="complete_time">
         </el-table-column>
-        <el-table-column label="操作" align="center" prop="">
+        <el-table-column label="操作" align="center" width="140">
           <template v-slot="scope">
-            <div v-if="scope.row.complete_status === 0 && method_list.includes('PUT')">
+            <!-- 完成后，隐藏申请延期按钮 -->
+            <div v-if="method_list.includes('PUT') && !scope.row.complete_status" style="display: inline-block;">
               <el-button size="mini" type="text" @click="openCompleteMessageBox(scope.row)">完成事务</el-button>
+            </div>
+            <div style="display: inline;" v-if="method_list.includes('PUT') && !scope.row.complete_status">
+              <el-divider direction="vertical"></el-divider>
+            </div>
+            <div style="display: inline-block;" v-if="!scope.row.order_matter_status">
+              <!--  如果跟进事务跟进人完成了就需要隐藏-->
+              <el-button size="mini" type="text" @click="UrgeFollow(scope.row)">催跟进</el-button>
             </div>
           </template>
         </el-table-column>
@@ -354,6 +367,28 @@ export default {
             this.AnnexFileTableLoading = false;
           });
     },
+    // 催跟进
+    UrgeFollow(row){
+      this.$http
+          .post("work/supervise_matter_list/", {
+            data: row,
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.$message.success(data.message);
+              this.getSuperviseMatters();
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.loading = false;
+          })
+    },
 
   },
 }
@@ -369,6 +404,7 @@ export default {
     font-size: 10px;
     width: 158px;
   }
+
   .supervision_matters .head_search .el-input__icon {
     line-height: 30px;
     font-size: 10px;
