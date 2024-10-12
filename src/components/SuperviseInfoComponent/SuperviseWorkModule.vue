@@ -73,7 +73,7 @@
         </el-table-column>
         <el-table-column label="实际完成时间" align="center" width="180" prop="complete_time">
         </el-table-column>
-        <el-table-column label="操作" align="center" width="140">
+        <el-table-column label="操作" align="center" width="140" class-name="operation">
           <template v-slot="scope">
             <!-- 完成后，隐藏申请延期按钮 -->
             <div v-if="method_list.includes('PUT') && !scope.row.complete_status" style="display: inline-block;">
@@ -473,6 +473,12 @@ export default {
 
   .supervision_matters .head_filter_criteria, .head_search {
     margin-bottom: 4px;
+  }
+  .supervision_matters .el-button--text {
+    padding: 1px !important;
+  }
+  .supervision_matters .operation .cell {
+    display: flex;
   }
 }
 </style>
