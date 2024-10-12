@@ -462,11 +462,11 @@ export default {
     z-index: 2010 !important;
   }
 
-  .el-table {
+  .dashboard_info .el-table {
     font-size: 12px !important;
   }
 
-  .el-table .el-table__cell {
+  .dashboard_info .el-table .el-table__cell {
     padding: 10px 0 !important;
   }
 }
