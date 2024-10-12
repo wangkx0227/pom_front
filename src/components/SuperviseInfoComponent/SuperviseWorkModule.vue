@@ -68,7 +68,7 @@
         </el-table-column>
         <el-table-column label="催跟进记录" align="center" width="180" prop="complete_time">
           <template v-slot="{ row }">
-            <el-button size="mini" type="text">查看记录</el-button>
+            <el-button size="mini" type="text" @click="getUrgeFollow(row)">查看记录</el-button>
           </template>
         </el-table-column>
         <el-table-column label="实际完成时间" align="center" width="180" prop="complete_time">
@@ -147,6 +147,16 @@
         </div>
       </el-dialog>
     </div>
+    <!--   催促信息列表 -->
+    <div class="work_dialog">
+      <el-dialog title="催促记录详情列表" :visible.sync="UrgeFollowDialogVisible" :before-close="urgeTableClose"
+                 width="30%">
+        <el-table :data="urge_follow_data" height="200" border v-loading="UrgeFollowLoading">
+          <el-table-column property="index" label="#" align="center"></el-table-column>
+          <el-table-column property="item" label="催促时间" width="450" align="center"></el-table-column>
+        </el-table>
+      </el-dialog>
+    </div>
   </div>
 </template>
 
@@ -179,6 +189,10 @@ export default {
       matter_name_list: [],
       order_id: null, // 查询的订单id
       matter_name_id: null, // 时间名称id
+      // 催促记录弹窗
+      UrgeFollowDialogVisible: false,
+      UrgeFollowLoading: false,
+      urge_follow_data: []
     };
   },
   created() {
@@ -368,7 +382,7 @@ export default {
           });
     },
     // 催跟进
-    UrgeFollow(row){
+    UrgeFollow(row) {
       this.$http
           .post("work/supervise_matter_list/", {
             data: row,
@@ -389,7 +403,31 @@ export default {
             this.loading = false;
           })
     },
-
+    // 存储记录
+    getUrgeFollow(row) {
+      this.UrgeFollowDialogVisible = true;
+      this.UrgeFollowLoading = true;
+      this.$http
+          .get(`work/supervise_matter_list/?details=urge&pk=${row.id}`)
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.urge_follow_data = data.urge_follow_data;
+            } else {
+              this.urge_follow_data = [];
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.UrgeFollowLoading = false;
+          });
+    },
+    urgeTableClose(done) {
+      done();
+      this.urge_follow_data = [];
+    },
   },
 }
 </script>
