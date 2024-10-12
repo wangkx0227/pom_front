@@ -8,31 +8,37 @@
       <el-table :data="ReadData" style="width: 100%" height="650" @selection-change="TableSelectionChange">
         <el-table-column
             type="selection"
-            width="80">
+        >
         </el-table-column>
-        <el-table-column prop="index" label="#" align="center" width="80"></el-table-column>
-        <el-table-column label="标题" align="center"  prop="title">
+        <el-table-column prop="index" label="#" align="center"></el-table-column>
+        <el-table-column label="标题" align="center" prop="title" width="500">
         </el-table-column>
         <el-table-column label="创建日期" align="center" width="180" prop="create_date">
         </el-table-column>
-        <el-table-column label="操作" align="center" width="180">
+        <el-table-column label="操作" align="center" class-name="operation">
           <template v-slot="scope">
-            <el-popover v-if="!scope.row.editable" placement="top" width="160" v-model="scope.row.visible"
-                        trigger="manual">
-              <p>删除后无恢复，请问确定删除吗？</p>
-              <div style="text-align: right; margin: 0">
-                <el-button size="mini" type="text" @click="scope.row.visible = false">取消
-                </el-button>
-                <el-button type="primary" size="mini" @click="deleteRow(scope.$index, ReadData, scope.row)">确定
-                </el-button>
-              </div>
-              <template v-slot:reference>
-                <el-button size="mini" type="text" @click="deleteDisplay(scope.row)">删除
-                </el-button>
-              </template>
-            </el-popover>
-            <el-divider direction="vertical"></el-divider>
-            <el-button size="mini" type="text" @click="DialogOpen(scope.row)">详情</el-button>
+            <div style="display: inline-block;">
+              <el-popover v-if="!scope.row.editable" placement="top" width="160" v-model="scope.row.visible"
+                          trigger="manual">
+                <p>删除后无恢复，请问确定删除吗？</p>
+                <div style="text-align: right; margin: 0">
+                  <el-button size="mini" type="text" @click="scope.row.visible = false">取消
+                  </el-button>
+                  <el-button type="primary" size="mini" @click="deleteRow(scope.$index, ReadData, scope.row)">确定
+                  </el-button>
+                </div>
+                <template v-slot:reference>
+                  <el-button size="mini" type="text" @click="deleteDisplay(scope.row)">删除
+                  </el-button>
+                </template>
+              </el-popover>
+            </div>
+            <div style="display: inline-block;">
+              <el-divider direction="vertical"></el-divider>
+            </div>
+            <div style="display: inline-block;">
+              <el-button size="mini" type="text" @click="DialogOpen(scope.row)">详情</el-button>
+            </div>
           </template>
         </el-table-column>
       </el-table>
@@ -213,10 +219,21 @@ export default {
   }
 };
 </script>
-<style scoped>
+<style>
 .dialog_content {
   height: 235px;
   overflow-y: scroll;
 }
+
+@media screen and (max-width: 700px) {
+  .read .el-button--text {
+    padding: 1px !important;
+  }
+
+  .read .operation .cell {
+    display: flex;
+  }
+}
+
 </style>
 

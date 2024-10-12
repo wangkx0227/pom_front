@@ -7,14 +7,14 @@
       <el-table :data="UNReadData" style="width: 100%" height="650" @selection-change="TableSelectionChange">
         <el-table-column
             type="selection"
-            width="80">
+            >
         </el-table-column>
-        <el-table-column prop="index" label="#" align="center" width="80"></el-table-column>
-        <el-table-column label="标题" align="center" prop="title">
+        <el-table-column prop="index" label="#" align="center" ></el-table-column>
+        <el-table-column label="标题" align="center" prop="title" width="500">
         </el-table-column>
-        <el-table-column label="创建日期" align="center" width="180" prop="create_date">
+        <el-table-column label="创建日期" align="center"  prop="create_date" width="180">
         </el-table-column>
-        <el-table-column label="操作" align="center" width="180">
+        <el-table-column label="操作" align="center">
           <template v-slot="scope">
             <el-button size="mini" type="text" @click="DialogOpen(scope.row)">详情</el-button>
           </template>
