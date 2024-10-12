@@ -35,7 +35,7 @@
         <div class="work_block">
           <el-tabs v-model="activeName">
             <el-tab-pane label="近期" name="comprehensive">
-              <div style="width: 100%; display: inline-block">
+              <div style="width: 100%; display: inline-block;overflow-y: scroll">
                 <div
                     ref="lineChart"
                     class="lineChart"
@@ -44,7 +44,7 @@
               </div>
             </el-tab-pane>
             <el-tab-pane label="未完成" name="pancake">
-              <div style="width: 100%; display: inline-block">
+              <div style="width: 100%;overflow-y: scroll; display: inline-block">
                 <div
                     ref="pieChart"
                     class="pieChart"
@@ -53,7 +53,7 @@
               </div>
             </el-tab-pane>
             <el-tab-pane label="总计" name="column">
-              <div style="width: 100%; display: inline-block">
+              <div style="width: 100%; overflow-y: scroll;display: inline-block">
                 <div
                     ref="columnar"
                     class="columnar"
