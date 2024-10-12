@@ -153,7 +153,7 @@
                  width="30%">
         <el-table :data="urge_follow_data" height="200" border v-loading="UrgeFollowLoading">
           <el-table-column property="index" label="#" align="center"></el-table-column>
-          <el-table-column property="item" label="催促时间" width="450" align="center"></el-table-column>
+          <el-table-column property="create_date" label="催促时间" width="450" align="center"></el-table-column>
         </el-table>
       </el-dialog>
     </div>
@@ -412,7 +412,7 @@ export default {
           .then((res) => {
             let data = res.data;
             if (data.code === 200) {
-              this.urge_follow_data = data.urge_follow_data;
+              this.urge_follow_data = data.data.urge_follow_data;
             } else {
               this.urge_follow_data = [];
             }
