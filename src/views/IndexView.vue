@@ -281,11 +281,11 @@ export default {
   }
 
   .el-menu .el-menu-item {
-    padding-left: 6px !important;
+    padding-left: 5px !important;
   }
 
   ul li span {
-    font-size: 12px;
+    font-size: 10px;
   }
 
   ul li i {
