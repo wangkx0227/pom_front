@@ -116,7 +116,7 @@
               <el-table-column
                   prop="expected_completion_time"
                   label="应完成日期"
-                  align="center"  width="180">
+                  align="center" width="180">
               </el-table-column>
               <el-table-column
                   prop="matter_name"
@@ -422,9 +422,10 @@ export default {
 }
 
 @media screen and (max-width: 700px) {
-  .dashboard_info .box-card{
-    height: 175vw;
+  .dashboard_info .box-card {
+    height: 158vw;
   }
+
   .dashboard_info .container {
     display: grid !important;
     grid-template-rows: none; /* 或者使用 unset */
@@ -439,21 +440,34 @@ export default {
     grid-template-columns: 1fr 1fr;
     height: unset;
   }
+
   .dashboard_info .work_container .work_block {
     width: 80%;
   }
+
   .dashboard_info .work_block {
     width: 88vw;
     margin: 2px 5px 5px 2px;
   }
+
   .dashboard_info .work_block .el-result {
     padding: 18px 10px;
   }
-  .el-drawer__container .el-drawer{
+
+  .el-drawer__container .el-drawer {
     width: 100% !important;
   }
-  .el-drawer__wrapper{
+
+  .el-drawer__wrapper {
     z-index: 2010 !important;
+  }
+
+  .el-table {
+    font-size: 12px !important;
+  }
+
+  .el-table .el-table__cell {
+    padding: 10px 0 !important;
   }
 }
 </style>
