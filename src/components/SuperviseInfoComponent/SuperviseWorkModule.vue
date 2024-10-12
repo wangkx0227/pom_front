@@ -125,7 +125,6 @@
                       size="mini"
                       type="text"
                       @click="DownloadAnnexFile(scope.row)"
-                      v-if="download_file_method_list.includes('GET')"
                   >下载
                   </el-button>
                 </template>

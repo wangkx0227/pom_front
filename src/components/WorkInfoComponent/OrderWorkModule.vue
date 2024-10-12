@@ -151,7 +151,7 @@
         <el-table :data="annex_file_data" height="300" border v-loading="AnnexFileTableLoading">
           <el-table-column property="index" label="#" align="center"></el-table-column>
           <el-table-column property="file_name" label="文件名称" width="350" align="center"></el-table-column>
-          <el-table-column property="create_date" label="上传时间" width="180" align="center"></el-table-column>
+          <el-table-column property="create_date" label="上传时间1" width="180" align="center"></el-table-column>
           <el-table-column label="操作" width="180" align="center">
             <template v-slot="scope">
               <el-button
