@@ -57,7 +57,7 @@
           <template v-slot="{ row }">
             <el-tag v-if="row.type === 'order_matter'" type="success">订单：跟进类型</el-tag>
             <el-tag v-else-if="row.type === 'no_order_matter'" type="info">非订单：常规类型</el-tag>
-            <el-tag v-else-if="row.type === 'special'">非订单：特殊类型</el-tag>
+            <el-tag v-else-if="row.type === 'special'">订单：特殊类型</el-tag>
             <el-tag v-else-if="row.type === 'supervise'">订单：监督类型</el-tag>
           </template>
         </el-table-column>
