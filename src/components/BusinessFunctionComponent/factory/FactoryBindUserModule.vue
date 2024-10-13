@@ -1,18 +1,20 @@
 <template>
   <div class="factory_bind_user" v-loading="loading">
     <div class="head_search_add">
-      <el-popover placement="top" width="160" style="margin-right: 5px;" v-model="loadVisibleApiFactory">
+      <el-popover placement="top" width="160" style="margin-right: 5px;" v-if="method_list.includes('POST')"
+                  v-model="loadVisibleApiFactory">
         <p>你确定重新加载当后端接口吗？</p>
         <div style="text-align: right; margin: 0">
           <el-button size="mini" type="text" @click="loadVisibleApiFactory = false">取消</el-button>
           <el-button type="primary" size="mini" @click="addFactory">确定</el-button>
         </div>
         <el-button slot="reference" icon="el-icon-refresh"
-                   v-if="method_list.includes('POST')">加载菜单
+        >加载工厂
         </el-button>
       </el-popover>
+
       <el-autocomplete class="inline-input" :fetch-suggestions="querySearch" v-model="search_factory_name"
-                       placeholder="工厂名称" :trigger-on-focus="false" @select="factoryIdSelect"
+                       placeholder="工厂名称" :trigger-on-focus="false" @select="factoryIdSelect" clearable
                        style="margin-right: 5px;"></el-autocomplete>
       <el-button type="primary" icon="el-icon-search" plain @click="searchDate">搜索
       </el-button>
@@ -268,7 +270,6 @@ export default {
           .finally(() => {
             this.loading = false;
             this.loadVisibleApiFactory = false;
-
           });
 
     }
