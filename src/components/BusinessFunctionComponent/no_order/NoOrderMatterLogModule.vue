@@ -215,6 +215,7 @@ export default {
               this.getMatterExceptionalData(row) // 重新调用，进行刷新表格数据
             } else {
               this.$message.error(data.message);
+              this.getMatterExceptionalData(row) // 重新调用，进行刷新表格数据
             }
           })
           .catch((error) => {
