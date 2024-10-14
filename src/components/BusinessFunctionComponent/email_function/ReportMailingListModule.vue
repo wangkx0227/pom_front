@@ -187,7 +187,7 @@ export default {
       this.$http
           .post("business_function/report_email_log/", {
             data: row,
-          })
+          },{responseType: 'blob'})
           .then((res) => {
             let data = res.data;
             if (res.status === 200) {
