@@ -196,7 +196,7 @@ export default {
               if (contentDisposition) {
                 const fileNameSplit = contentDisposition.split("=");
                 if (fileNameSplit && fileNameSplit.length > 1) {
-                  fileName = fileNameSplit[1]
+                  fileName = fileNameSplit[1].replace(/"/g, "");
                 }
               }
               const blob = new Blob([data], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
