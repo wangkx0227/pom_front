@@ -287,7 +287,7 @@ export default {
       this.getSuperviseMatters();
     },
     openCompleteMessageBox(row) {
-      this.$confirm('请检查跟进人完成情况！完成事项后，按照当前的时间记录，请问是要完成码？', '提示', {
+      this.$confirm('请检查跟进人完成情况！完成事项后，按照当前的时间记录，请问是要完成？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
