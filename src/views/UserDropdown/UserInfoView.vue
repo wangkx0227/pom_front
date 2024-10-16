@@ -90,13 +90,13 @@
         <el-descriptions-item :span="1">
           <template slot="label">
             <i class="el-icon-set-up"></i>
-            是否开启中文账户名称登录
+            是否关闭中文账户名称登录
           </template>
           <el-switch
               v-model="user_info_form.is_user_name_login"
               @change="changeSwitch($event,user_info_form)"
-              active-text="开启"
-              inactive-text="关闭">
+              active-text="是"
+              inactive-text="否">
           </el-switch>
         </el-descriptions-item>
         <el-descriptions-item :span="2">
