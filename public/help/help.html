@@ -1,0 +1,1066 @@
+<html>
+<head>
+<meta charset="UTF-8">
+    <meta name="color-scheme" content="light dark">
+    <style type="text/css">
+        #_toc {
+            position: fixed;
+            top: 0px;
+            bottom: 0px;
+            left: 0px;
+            width: 20%;
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        ._color-light #_toc {
+            border-right: 1px solid rgb(225, 228, 232);
+        }
+        .markdown-theme {
+            box-sizing: border-box;
+            width: 80% !important;
+            padding: 20px !important;
+            margin: 0 auto !important;
+            position: absolute;
+            left: 20%;
+        }
+
+
+        #_toc > ._ul:first-child {
+            padding-top: 15px !important;
+        }
+
+        #_toc > ._ul {
+            padding: 0 0 0 10px !important;
+        }
+
+        #_toc ._ul {
+            padding-left: 20px !important;
+            margin: 0 !important;
+        }
+
+        #_toc ._ul a {
+            display: block !important;
+            border-width: 0 !important;
+            border-style: initial !important;
+            border-color: initial !important;
+            border-image: initial !important;
+            padding: 5px 10px !important;
+        }
+    </style>
+    <style id="MJX-CHTML-styles">
+        mjx-container[jax="CHTML"] {
+            line-height: 0;
+        }
+
+        mjx-container [space="1"] {
+            margin-left: .111em;
+        }
+
+        mjx-container [space="2"] {
+            margin-left: .167em;
+        }
+
+        mjx-container [space="3"] {
+            margin-left: .222em;
+        }
+
+        mjx-container [space="4"] {
+            margin-left: .278em;
+        }
+
+        mjx-container [space="5"] {
+            margin-left: .333em;
+        }
+
+        mjx-container [rspace="1"] {
+            margin-right: .111em;
+        }
+
+        mjx-container [rspace="2"] {
+            margin-right: .167em;
+        }
+
+        mjx-container [rspace="3"] {
+            margin-right: .222em;
+        }
+
+        mjx-container [rspace="4"] {
+            margin-right: .278em;
+        }
+
+        mjx-container [rspace="5"] {
+            margin-right: .333em;
+        }
+
+        mjx-container [size="s"] {
+            font-size: 70.7%;
+        }
+
+        mjx-container [size="ss"] {
+            font-size: 50%;
+        }
+
+        mjx-container [size="Tn"] {
+            font-size: 60%;
+        }
+
+        mjx-container [size="sm"] {
+            font-size: 85%;
+        }
+
+        mjx-container [size="lg"] {
+            font-size: 120%;
+        }
+
+        mjx-container [size="Lg"] {
+            font-size: 144%;
+        }
+
+        mjx-container [size="LG"] {
+            font-size: 173%;
+        }
+
+        mjx-container [size="hg"] {
+            font-size: 207%;
+        }
+
+        mjx-container [size="HG"] {
+            font-size: 249%;
+        }
+
+        mjx-container [width="full"] {
+            width: 100%;
+        }
+
+        mjx-box {
+            display: inline-block;
+        }
+
+        mjx-block {
+            display: block;
+        }
+
+        mjx-itable {
+            display: inline-table;
+        }
+
+        mjx-row {
+            display: table-row;
+        }
+
+        mjx-row > * {
+            display: table-cell;
+        }
+
+        mjx-mtext {
+            display: inline-block;
+        }
+
+        mjx-mstyle {
+            display: inline-block;
+        }
+
+        mjx-merror {
+            display: inline-block;
+            color: red;
+            background-color: yellow;
+        }
+
+        mjx-mphantom {
+            visibility: hidden;
+        }
+
+        _::-webkit-full-page-media, _:future, :root mjx-container {
+            will-change: opacity;
+        }
+
+        mjx-assistive-mml {
+            position: absolute !important;
+            top: 0px;
+            left: 0px;
+            clip: rect(1px, 1px, 1px, 1px);
+            padding: 1px 0px 0px 0px !important;
+            border: 0px !important;
+            display: block !important;
+            width: auto !important;
+            overflow: hidden !important;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        mjx-assistive-mml[display="block"] {
+            width: 100% !important;
+        }
+
+        mjx-c::before {
+            display: block;
+            width: 0;
+        }
+        mjx-stretchy-v mjx-c, mjx-stretchy-h mjx-c {
+            font-family: MJXZERO, MJXTEX-S1, MJXTEX-S4, MJXTEX, MJXTEX-A ! important;
+        }
+
+    </style>
+    <style id="_prism">
+        code[class*=language-], pre[class*=language-] {
+            color: #000;
+            text-shadow: 0 1px #fff;
+            font-family: Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+            font-size: 1em;
+            text-align: left;
+            white-space: pre;
+            word-spacing: normal;
+            word-break: normal;
+            word-wrap: normal;
+            line-height: 1.5;
+            -moz-tab-size: 4;
+            -o-tab-size: 4;
+            tab-size: 4;
+            -webkit-hyphens: none;
+            -moz-hyphens: none;
+            -ms-hyphens: none;
+            hyphens: none
+        }
+
+        code[class*=language-] ::-moz-selection, code[class*=language-]::-moz-selection, pre[class*=language-] ::-moz-selection, pre[class*=language-]::-moz-selection {
+            text-shadow: none;
+            background: #b3d4fc
+        }
+
+        code[class*=language-] ::selection, code[class*=language-]::selection, pre[class*=language-] ::selection, pre[class*=language-]::selection {
+            text-shadow: none;
+            background: #b3d4fc
+        }
+
+        @media print {
+            code[class*=language-], pre[class*=language-] {
+                text-shadow: none
+            }
+        }
+
+        pre[class*=language-] {
+            overflow: auto
+        }
+
+        :not(pre) > code[class*=language-], pre[class*=language-] {
+        }
+
+        :not(pre) > code[class*=language-] {
+            padding: .1em;;
+            white-space: normal
+        }
+
+        .token.cdata, .token.comment, .token.doctype, .token.prolog {
+            color: #708090
+        }
+
+        .token.punctuation {
+            color: #999
+        }
+
+        .token.namespace {
+            opacity: .7
+        }
+
+        .token.boolean, .token.constant, .token.deleted, .token.number, .token.property, .token.symbol, .token.tag {
+            color: #905
+        }
+
+        .token.attr-name, .token.builtin, .token.char, .token.inserted, .token.selector, .token.string {
+            color: #690
+        }
+
+        .language-css .token.string, .style .token.string, .token.entity, .token.operator, .token.url {
+            color: #9a6e3a;
+        }
+
+        .token.atrule, .token.attr-value, .token.keyword {
+            color: #07a
+        }
+
+        .token.class-name, .token.function {
+            color: #dd4a68
+        }
+
+        .token.important, .token.regex, .token.variable {
+            color: #e90
+        }
+
+        .token.bold, .token.important {
+            font-weight: 700
+        }
+
+        .token.italic {
+            font-style: italic
+        }
+
+        .token.entity {
+            cursor: help
+        }
+    </style>
+    <style id="_theme">
+        *, ::after, ::before {
+            box-sizing: border-box
+        }
+
+        dd, dl, figcaption, figure, h1, h2, h3, h4, li, ol[class], p, ul[class] {
+            margin: 0
+        }
+
+        html {
+            font-size: 1rem
+        }
+
+        @media (prefers-reduced-motion: no-preference) {
+            html {
+            }
+        }
+
+        body.libertinus {
+            font-family: "Libertinus", Georgia, Cambria, "Times New Roman", Times, serif
+        }
+
+        body {
+            font-family: "Latin Modern", Georgia, Cambria, "Times New Roman", Times, serif;
+            line-height: 1.8;
+            min-height: 100vh;
+            overflow-x: hidden;
+            margin: 0 auto;
+            padding: 2rem 1.25rem;
+            counter-reset: sidenote-counter;
+            color: #1b1818;
+            background-color: #f9fafb;
+            text-rendering: optimizeLegibility
+        }
+
+        p {
+            text-align: justify;
+            hyphens: auto;
+            -webkit-hyphens: auto;
+            -moz-hyphens: auto;
+            margin-top: 1rem
+        }
+
+        a:not([class]) {
+            text-decoration-skip-ink: auto
+        }
+
+        a, a:visited {
+            color: #a00
+        }
+
+        a:focus {
+            outline-offset: 2px;
+            outline: 2px solid #1660f3
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block
+        }
+
+        button, input, select, textarea {
+            font: inherit
+        }
+
+        textarea {
+            width: 100%
+        }
+
+        article > * + * {
+            margin-top: 1em
+        }
+
+        code, kbd, pre {
+            font-family: Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 85%
+        }
+
+        kbd {
+            background: #fff;
+            border: 1px solid #afb3b6;
+            border-radius: 2px;
+            padding: 2px 4px;
+            font-size: 75%
+        }
+
+        pre, table {
+            max-width: 100%
+        }
+
+        pre {
+            padding: 1rem 1.4rem;
+            overflow: auto;
+            border-radius: 4px;
+            background: #e8edf2
+        }
+
+        pre code {
+            font-size: 95%;
+            position: relative
+        }
+
+        table {
+            border-collapse: collapse;
+            border-spacing: 0;
+            width: auto;
+            border-top: 2.27px solid #000;
+            border-bottom: 2.27px solid #000;
+            overflow-x: auto;
+            counter-increment: caption
+        }
+
+        table tr > th[scope=col] {
+            border-bottom: 1.36px solid #000
+        }
+
+        table tr > th[scope=row] {
+            border-right: 1.36px solid #000
+        }
+
+        table > tbody > tr:first-child > td, table > tbody > tr:first-child > th {
+            border-top: 1.36px solid #000
+        }
+
+        table > tbody > tr:last-child > td, table > tbody > tr:last-child > th {
+            border-bottom: 1.36px solid #000
+        }
+
+        caption, td, th {
+            text-align: left
+        }
+
+        td, th {
+            padding: .5rem;
+            line-height: 1.1
+        }
+
+        caption {
+            font-size: .923em;
+            padding: 0 .25em .25em;
+            width: 100%;
+            margin-left: 0
+        }
+
+        caption::before {
+            content: "Table " counter(caption) ". ";
+            font-weight: 700
+        }
+
+        .scroll-wrapper {
+            overflow-x: auto
+        }
+
+        .scroll-wrapper > table td {
+            white-space: nowrap
+        }
+
+        h1:first-child {
+            text-align: center
+        }
+
+        nav ol {
+            counter-reset: item;
+            padding-left: 2rem
+        }
+
+        nav li {
+            display: block
+        }
+
+        nav li:before {
+            content: counters(item, ".") " ";
+            counter-increment: item;
+            padding-right: .85rem
+        }
+
+        dl dd {
+            text-align: center
+        }
+
+        .lemma, .theorem {
+            counter-increment: theorem;
+            display: block;
+            margin: 12px 0;
+            font-style: italic
+        }
+
+        .lemma::before, .theorem::before {
+            content: "Theorem " counter(theorem) ". ";
+            font-weight: 700;
+            font-style: normal
+        }
+
+        .lemma::before {
+            content: "Lemma " counter(theorem) ". "
+        }
+
+        .definition, .proof {
+            display: block;
+            margin: 12px 0;
+            font-style: normal
+        }
+
+        .proof {
+            position: relative
+        }
+
+        .proof::before {
+            content: "Proof.鈥�" attr(title);
+            font-style: italic
+        }
+
+        .proof:after {
+            content: "鈼撅笍";
+            position: absolute;
+            right: -12px;
+            bottom: -2px
+        }
+
+        .definition {
+            counter-increment: definition
+        }
+
+        .definition::before {
+            content: "Definition " counter(definition) ". ";
+            font-weight: 700;
+            font-style: normal
+        }
+
+        .author {
+            margin: .85rem 0;
+            font-variant-caps: small-caps;
+            text-align: center
+        }
+
+        .sidenote {
+            font-size: .8rem;
+            float: right;
+            clear: right;
+            width: 18vw;
+            margin-right: -20vw;
+            margin-bottom: 1em
+        }
+
+        .sidenote.left {
+            float: left;
+            margin-left: -20vw;
+            margin-bottom: 1em
+        }
+
+        .sidenote:target {
+            border: #ddd688 1.5px solid;
+            padding: 0 .5rem;
+            scroll-margin-block-start: 10rem
+        }
+
+        .sidenote-number {
+            counter-increment: sidenote-counter
+        }
+
+        .sidenote-number::after, .sidenote::before {
+            position: relative;
+            vertical-align: baseline
+        }
+
+        .sidenote-number::after {
+            content: counter(sidenote-counter);
+            font-size: .7rem;
+            top: -.5rem;
+            left: .1rem
+        }
+
+        .sidenote-number ~ .sidenote::before {
+            content: counter(sidenote-counter) " ";
+            font-size: .7rem;
+            top: -.5rem
+        }
+
+        label.sidenote-toggle:not(.sidenote-number) {
+            display: none
+        }
+
+        blockquote .sidenote {
+            margin-right: -24vw;
+            width: 18vw
+        }
+
+        label.sidenote-toggle {
+            display: inline;
+            cursor: pointer
+        }
+
+        input.sidenote-toggle {
+            display: none
+        }
+
+        @media (max-width: 1050px) {
+            label.sidenote-toggle:not(.sidenote-number) {
+                display: inline
+            }
+
+            .sidenote {
+                display: none
+            }
+
+            .sidenote-toggle:checked + .sidenote {
+                display: block;
+                margin: .5rem 1.25rem 1rem .5rem;
+                float: left;
+                left: 1rem;
+                clear: both;
+                width: 95%
+            }
+
+            blockquote .sidenote {
+                margin-right: -25vw;
+                width: 16vw
+            }
+        }
+
+        .footnotes p {
+            text-align: left;
+            line-height: 1.5;
+            font-size: 85%;
+            margin-bottom: .4rem
+        }
+
+        .footnotes {
+            border-top: 1px solid #636363
+        }
+
+        .abstract, .abstract p {
+            text-align: center;
+            margin-top: 0
+        }
+
+        .abstract {
+            margin: 2.25rem 0
+        }
+
+        .abstract > h2 {
+            font-size: 1rem;
+            margin-bottom: -.2rem
+        }
+
+        .latex span:nth-child(1) {
+            text-transform: uppercase;
+            font-size: .75em;
+            vertical-align: .28em;
+            margin-left: -.48em;
+            margin-right: -.15em;
+            line-height: 1ex
+        }
+
+        .latex span:nth-child(2) {
+            text-transform: uppercase;
+            vertical-align: -.5ex;
+            margin-left: -.1667em;
+            margin-right: -.125em;
+            line-height: 1ex
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            line-height: 3.25rem;
+            margin-bottom: 1.625rem
+        }
+
+        h2 {
+            font-size: 1.7rem;
+            line-height: 2rem;
+            margin-top: 3rem
+        }
+
+        h3, h4, h5, h6 {
+            font-size: 1.4rem;
+            line-height: 1.625rem
+        }
+
+        h4, h5, h6 {
+            font-size: 1.2rem;
+            margin-top: 2rem
+        }
+
+        h5, h6 {
+            font-size: 1rem;
+            margin-top: 1.8rem
+        }
+
+        h3, h6 {
+            margin-top: 2.5rem
+        }
+
+        h6 {
+            font-style: italic;
+            font-weight: 400
+        }
+
+        h1 + h2 {
+            margin-top: 1.625rem
+        }
+
+        h2 + h3, h3 + h4, h4 + h5 {
+            margin-top: .8rem
+        }
+
+        h5 + h6 {
+            margin-top: -.8rem
+        }
+
+        h2, h3, h4, h5, h6 {
+            margin-bottom: .8rem
+        }
+    </style>
+</head>
+<body class="_theme-latex _color-light _toc-left">
+<div id="_html" class="markdown-theme" style="visibility: visible;"><h1 id="功能介绍"><a class="anchor" name="功能介绍"
+                                                                                     href="#功能介绍"><span
+        class="octicon octicon-link"></span></a>功能介绍</h1>
+    <h2 id="1登录页面功能详情介绍"><a class="anchor" name="1登录页面功能详情介绍" href="#1登录页面功能详情介绍"><span
+            class="octicon octicon-link"></span></a>1.登录页面功能详情介绍</h2>
+    <pre><code>登录有两种方式：
+    1.使用中文名称登录
+        用户名称：xxx
+        用户密码：xxx
+    2.使用个人邮箱登录
+        邮箱名称：xxx@xxx.com
+        邮箱密码：xxx
+</code></pre>
+    <p><img src="./img/image-20241015213122866.png" alt="image-20241015213122866">
+    </p>
+    <hr>
+    <h2 id="2首页页面功能详情介绍"><a class="anchor" name="2首页页面功能详情介绍" href="#2首页页面功能详情介绍"><span
+            class="octicon octicon-link"></span></a>2.首页页面功能详情介绍</h2>
+    <pre><code>1.功能菜单
+2.页面刷新按钮
+3.消息页面按钮
+4.用户个人功能按钮
+5.主页面展示
+</code></pre>
+    <p><img src="./img/image-20241015213839981.png" alt="image-20241015213839981">
+    </p>
+    <hr>
+    <h3 id="21用户个人功能菜单说明"><a class="anchor" name="21用户个人功能菜单说明" href="#21用户个人功能菜单说明"><span
+            class="octicon octicon-link"></span></a>2.1.用户个人功能菜单说明</h3>
+    <pre><code>1.访问记录按钮
+2.用户信息按钮
+3.退出登录按钮
+</code></pre>
+    <p><img src="./img/image-20241015214003353.png" alt="image-20241015214003353">
+    </p>
+    <hr>
+    <h3 id="22用户功能访问记录功能说明"><a class="anchor" name="22用户功能访问记录功能说明" href="#22用户功能访问记录功能说明"><span
+            class="octicon octicon-link"></span></a>2.2.用户功能：访问记录功能说明</h3>
+    <p><img src="./img/image-20241015214112409.png" alt="image-20241015214112409">
+    </p>
+    <hr>
+    <h3 id="23用户功能用户信息功能说明"><a class="anchor" name="23用户功能用户信息功能说明" href="#23用户功能用户信息功能说明"><span
+            class="octicon octicon-link"></span></a>2.3.用户功能：用户信息功能说明</h3>
+    <p><img src="./img/image-20241015214148454.png" alt="image-20241015214148454">
+    </p>
+    <pre><code>注意：
+    1.	在第一次登录，请使用中文名称登录
+    2.	请及时修改自己的邮箱账户(邮箱账户时统一导入的可能不准确)
+    3.	建议关闭中文登录功能,中文登录可能存在不安全情况
+    4.	请及时修改密码，默认密码：1234
+</code></pre>
+    <h2 id="3首页仪表盘页面详情介绍"><a class="anchor" name="3首页仪表盘页面详情介绍" href="#3首页仪表盘页面详情介绍"><span
+            class="octicon octicon-link"></span></a>3.首页(仪表盘页面)详情介绍</h2>
+    <p><img src="./img/image-20241015214504648.png" alt="image-20241015214504648">
+    </p>
+    <pre><code>注意：
+    1.	图形化显示的事务，是按照未完成的事项的最早的时间 + 5天进行计算
+    2.	表格展示的事务信息，不是实时展示，存在时效性，失效性2分钟(比如 我在16:45点击了完成事项，那么当你回到首页时，这个事项还会显示，16:47左右数据才会更新！)
+</code></pre>
+    <h3 id="31首页消息用户信息功能说明1"><a class="anchor" name="31首页消息用户信息功能说明1" href="#31首页消息用户信息功能说明1"><span
+            class="octicon octicon-link"></span></a>3.1.首页消息：用户信息功能说明1:</h3>
+    <p><img src="./img/image-20241015214736785.png" alt="image-20241015214736785">
+    </p>
+    <hr>
+    <h3 id="32---首页消息用户信息功能说明2"><a class="anchor" name="32---首页消息用户信息功能说明2" href="#32---首页消息用户信息功能说明2"><span
+            class="octicon octicon-link"></span></a>3.2. 首页消息：用户信息功能说明2：</h3>
+    <p><img src="./img/image-20241015214758499.png" alt="image-20241015214758499">
+    </p>
+    <hr>
+    <h2 id="4事务信息跟进人事务功能详情介绍"><a class="anchor" name="4事务信息跟进人事务功能详情介绍" href="#4事务信息跟进人事务功能详情介绍"><span
+            class="octicon octicon-link"></span></a>4.事务信息(跟进人事务)功能详情介绍</h2>
+    <p><img src="./img/image-20241015214856605.png" alt="image-20241015214856605">
+    </p>
+    <pre><code>注意：
+    1.	当前系统摒弃过期显示，会将与当前用户相关的事项全部显示，只会区分 已完成 与 未完成
+    2.	展示到页面的时间也是按照：小 --- 大 的时间排序，所以先完成的事项就会显示到前面，所以请注意！！！
+    3.	当前的订单事务，取消之前的按照item进行区分的事务导入方式，而是通过订单的单号显示事务。
+        比如：TG240 一共有14个事项需要完成，录入的订单ITEM是10个
+            之前的旧POM就会显示关于当前订单的事项：140个
+            新系统按照订单号显示：14个
+</code></pre>
+    <h3 id="41事务信息搜索功能说明"><a class="anchor" name="41事务信息搜索功能说明" href="#41事务信息搜索功能说明"><span
+            class="octicon octicon-link"></span></a>4.1.事务信息：搜索功能说明：</h3>
+    <p><img src="./img/image-20241015215748792.png" alt="image-20241015215748792">
+    </p>
+    <pre><code>注意：
+    无论是订单非订单还是特殊事项，默认都是显示当前用户全部(包含未完成与完成)
+    可以根据 筛选框 + 下面的条件 + 点击搜索按钮进行搜索
+</code></pre>
+    <h3 id="42事务信息延期与完成功能说明"><a class="anchor" name="42事务信息延期与完成功能说明" href="#42事务信息延期与完成功能说明"><span
+            class="octicon octicon-link"></span></a>4.2.事务信息：延期与完成功能说明：</h3>
+    <h4 id="421延期操作"><a class="anchor" name="421延期操作" href="#421延期操作"><span class="octicon octicon-link"></span></a>4.2.1.延期操作：
+    </h4>
+    <p><img src="./img/image-20241015220650211.png" alt="image-20241015220650211">
+    </p>
+    <pre><code>注意：
+    1.申请延期操作，是可以多次申请
+    2.当前的申请延期通过后，完成时间就会发生变化(如果当前事项存在监督，那么对应的监督事项也会发生变化)
+    3.如果申请通过后，是无法删除申请延期记录的
+</code></pre>
+    <h4 id="422完成事项操作"><a class="anchor" name="422完成事项操作" href="#422完成事项操作"><span
+            class="octicon octicon-link"></span></a>4.2.2.完成事项操作：</h4>
+    <h5 id="需要上传附件"><a class="anchor" name="需要上传附件" href="#需要上传附件"><span class="octicon octicon-link"></span></a>需要上传附件：
+    </h5>
+    <p><img src="./img/image-20241015222045440.png" alt="image-20241015222045440">
+    </p>
+    <pre><code>注意：
+    如果是上传文件，由于当前系统按照PO单号进行区分，就对当前事项上传PO下的全部ITEM需要的文件。
+</code></pre>
+    <h5 id="不需要上传附件"><a class="anchor" name="不需要上传附件" href="#不需要上传附件"><span class="octicon octicon-link"></span></a>不需要上传附件：
+    </h5>
+    <p><img src="./img/image-20241015222414059.png" alt="image-20241015222414059">
+    </p>
+    <hr>
+    <h2 id="5监督信息监督人功能详情介绍"><a class="anchor" name="5监督信息监督人功能详情介绍" href="#5监督信息监督人功能详情介绍"><span
+            class="octicon octicon-link"></span></a>5.监督信息(监督人)功能详情介绍：</h2>
+    <pre><code>注意：
+    1.监督人需要完成的事项，督促跟进人完成事项的作用。
+    2.监督人完成事项，单独出来的，无论跟进人是否完成事项，都不会影响到监督人完成事项。
+    3.催跟进功能，点击后，会对跟进人发送一条消息记录，提示监督人在催跟进人 &lt;图-2&gt;
+</code></pre>
+    <p><img src="./img/image-20241015224132652.png" alt="image-20241015224132652">
+    </p>
+    <hr>
+    <p><img src="./img/image-20241015224340088.png" alt="image-20241015224340088">
+    </p>
+    <hr>
+    <h2 id="6部门事项功能详情介绍"><a class="anchor" name="6部门事项功能详情介绍" href="#6部门事项功能详情介绍"><span
+            class="octicon octicon-link"></span></a>6.部门事项功能详情介绍：</h2>
+    <pre><code>注意：
+    部门事项一般只有 组长权限与经理权限才能拥有的事项
+    可以看到当前部门下的全部组员的事项完成情况，以及附件，延期情况。
+    可以时刻的关注组员事项完成进度
+</code></pre>
+    <p><img src="./img/image-20241015224952608.png" alt="image-20241015224952608">
+    </p>
+    <hr>
+    <h2 id="7延期审核功能详情介绍"><a class="anchor" name="7延期审核功能详情介绍" href="#7延期审核功能详情介绍"><span
+            class="octicon octicon-link"></span></a>7.延期审核功能详情介绍：</h2>
+    <pre><code>延期审核：
+    有当前组员的上级主管进行审核操作
+    关系：
+        组员 -&gt; 组长  # 组员提交的延期，会由组长审批
+        组长 -&gt; 经理  # 组长提交的延期，由经理审批
+
+注意：
+    1.当提交延期操作是，会对审核(组长/经理)发送一条消息
+    2.当(组长/经理)审核完成后，会对提交的审核用户发送一条消息
+    3.审核点击确定后，就会影响到监督人与跟进人的时间
+</code></pre>
+    <p><img src="./img/image-20241015230302353.png" alt="image-20241015230302353">
+    </p>
+    <hr>
+    <h2 id="8其他功能说明介绍"><a class="anchor" name="8其他功能说明介绍" href="#8其他功能说明介绍"><span
+            class="octicon octicon-link"></span></a>8.其他功能说明介绍</h2>
+    <pre><code>注意：
+    当前功能只有 组长和经理才有的功能权限
+
+1.事务查询 - 经理权限
+2.非订单 - 经理与组长
+3.订单 - 经理与组长
+4.邮箱功能 - 经理/组长/组员
+5.事务变更 - 经理与组长
+</code></pre>
+    <h3 id="81事务查询"><a class="anchor" name="81事务查询" href="#81事务查询"><span class="octicon octicon-link"></span></a>8.1.事务查询
+    </h3>
+    <pre><code>说明：
+    这个功能是查看全部的，无论是当前部门还是其他部门的全部事务。
+    与部门事务功能相同，比部门事务更为全面。
+    只有经理级的权限才有
+</code></pre>
+    <p><img src="./img/image-20241015231944747.png" alt="image-20241015231944747">
+    </p>
+    <hr>
+    <h3 id="82非订单"><a class="anchor" name="82非订单" href="#82非订单"><span class="octicon octicon-link"></span></a>8.2.非订单
+    </h3>
+    <pre><code>说明：
+    用来展示，非订单事务生成记录的情况以及异常的情况
+    用来区分记录当天生成了几条，是否异常，具体的跟进人是谁。
+</code></pre>
+    <p><img src="./img/image-20241015232223251.png" alt="image-20241015232223251">
+    </p>
+    <hr>
+    <h3 id="83订单"><a class="anchor" name="83订单" href="#83订单"><span class="octicon octicon-link"></span></a>8.3.订单</h3>
+    <pre><code>说明：
+    用来记录，订单系统中提交的订单记录
+    显示具体的po，工厂，订单周期，ITEM，导入的时间，是否订单生成事务出现异常
+</code></pre>
+    <p><img src="./img/image-20241015232425290.png" alt="image-20241015232425290">
+    </p>
+    <hr>
+    <h3 id="84邮箱功能"><a class="anchor" name="84邮箱功能" href="#84邮箱功能"><span class="octicon octicon-link"></span></a>8.4.邮箱功能
+    </h3>
+    <pre><code>说明：
+    会记录每天的日报以及月报，可以随时的根据日期查看当前日报/月报的情况
+</code></pre>
+    <p><img src="./img/image-20241015232539982.png" alt="image-20241015232539982">
+    </p>
+    <hr>
+    <h3 id="86变更记录"><a class="anchor" name="86变更记录" href="#86变更记录"><span class="octicon octicon-link"></span></a>8.6.变更记录
+    </h3>
+    <pre><code>说明：
+    用来记录，事务的变更
+        比如：A用户变更B用户，完成时间 2024-10-15 变更为 2024-10-17
+</code></pre>
+    <p><img src="./img/image-20241015232813738.png" alt="image-20241015232813738">
+    </p>
+    <hr>
+    <h2 id="9支持手机浏览器操作显示"><a class="anchor" name="9支持手机浏览器操作显示" href="#9支持手机浏览器操作显示"><span
+            class="octicon octicon-link"></span></a>9.支持手机浏览器操作显示</h2>
+    <pre><code>支持手机适应展示，方便使用进行操作，不建议使用qq浏览器或搜狗索浏览器，或者是使用微信打开的微信浏览器，可能会出现部分功能无法使用的情况。
+</code></pre>
+    <p><img src="./img/image-20241015233252337.png" alt="image-20241015233252337">
+    </p>
+    <hr>
+    <p><img src="./img/image-20241015233303554.png" alt="image-20241015233303554">
+    </p>
+    <hr>
+</div>
+<div id="_toc" class="tex2jax-ignore" style="visibility: visible;">
+    <div class="_ul"><a href="#功能介绍">功能介绍</a></div>
+    <div class="_ul">
+        <div class="_ul"><a href="#1登录页面功能详情介绍">1.登录页面功能详情介绍</a></div>
+    </div>
+    <div class="_ul">
+        <div class="_ul"><a href="#2首页页面功能详情介绍">2.首页页面功能详情介绍</a></div>
+    </div>
+    <div class="_ul">
+        <div class="_ul">
+            <div class="_ul"><a href="#21用户个人功能菜单说明">2.1.用户个人功能菜单说明</a></div>
+        </div>
+    </div>
+    <div class="_ul">
+        <div class="_ul">
+            <div class="_ul"><a href="#22用户功能访问记录功能说明">2.2.用户功能：访问记录功能说明</a></div>
+        </div>
+    </div>
+    <div class="_ul">
+        <div class="_ul">
+            <div class="_ul"><a href="#23用户功能用户信息功能说明">2.3.用户功能：用户信息功能说明</a></div>
+        </div>
+    </div>
+    <div class="_ul">
+        <div class="_ul"><a href="#3首页仪表盘页面详情介绍">3.首页(仪表盘页面)详情介绍</a></div>
+    </div>
+    <div class="_ul">
+        <div class="_ul">
+            <div class="_ul"><a href="#31首页消息用户信息功能说明1">3.1.首页消息：用户信息功能说明1:</a></div>
+        </div>
+    </div>
+    <div class="_ul">
+        <div class="_ul">
+            <div class="_ul"><a href="#32---首页消息用户信息功能说明2">3.2. 首页消息：用户信息功能说明2：</a></div>
+        </div>
+    </div>
+    <div class="_ul">
+        <div class="_ul"><a href="#4事务信息跟进人事务功能详情介绍">4.事务信息(跟进人事务)功能详情介绍</a></div>
+    </div>
+    <div class="_ul">
+        <div class="_ul">
+            <div class="_ul"><a href="#41事务信息搜索功能说明">4.1.事务信息：搜索功能说明：</a></div>
+        </div>
+    </div>
+    <div class="_ul">
+        <div class="_ul">
+            <div class="_ul"><a href="#42事务信息延期与完成功能说明">4.2.事务信息：延期与完成功能说明：</a></div>
+        </div>
+    </div>
+    <div class="_ul">
+        <div class="_ul">
+            <div class="_ul">
+                <div class="_ul"><a href="#421延期操作">4.2.1.延期操作：</a></div>
+            </div>
+        </div>
+    </div>
+    <div class="_ul">
+        <div class="_ul">
+            <div class="_ul">
+                <div class="_ul"><a href="#422完成事项操作">4.2.2.完成事项操作：</a></div>
+            </div>
+        </div>
+    </div>
+    <div class="_ul">
+        <div class="_ul">
+            <div class="_ul">
+                <div class="_ul">
+                    <div class="_ul"><a href="#需要上传附件">需要上传附件：</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="_ul">
+        <div class="_ul">
+            <div class="_ul">
+                <div class="_ul">
+                    <div class="_ul"><a href="#不需要上传附件">不需要上传附件：</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="_ul">
+        <div class="_ul"><a href="#5监督信息监督人功能详情介绍">5.监督信息(监督人)功能详情介绍：</a></div>
+    </div>
+    <div class="_ul">
+        <div class="_ul"><a href="#6部门事项功能详情介绍">6.部门事项功能详情介绍：</a></div>
+    </div>
+    <div class="_ul">
+        <div class="_ul"><a href="#7延期审核功能详情介绍">7.延期审核功能详情介绍：</a></div>
+    </div>
+    <div class="_ul">
+        <div class="_ul"><a href="#8其他功能说明介绍">8.其他功能说明介绍</a></div>
+    </div>
+    <div class="_ul">
+        <div class="_ul">
+            <div class="_ul"><a href="#81事务查询">8.1.事务查询</a></div>
+        </div>
+    </div>
+    <div class="_ul">
+        <div class="_ul">
+            <div class="_ul"><a href="#82非订单">8.2.非订单</a></div>
+        </div>
+    </div>
+    <div class="_ul">
+        <div class="_ul">
+            <div class="_ul"><a href="#83订单">8.3.订单</a></div>
+        </div>
+    </div>
+    <div class="_ul">
+        <div class="_ul">
+            <div class="_ul"><a href="#84邮箱功能">8.4.邮箱功能</a></div>
+        </div>
+    </div>
+    <div class="_ul">
+        <div class="_ul">
+            <div class="_ul"><a href="#86变更记录">8.6.变更记录</a></div>
+        </div>
+    </div>
+    <div class="_ul">
+        <div class="_ul"><a href="#9支持手机浏览器操作显示">9.支持手机浏览器操作显示</a></div>
+    </div>
+</div>
+</body>
+</html>

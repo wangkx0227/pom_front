@@ -24,6 +24,9 @@
               <el-dropdown-item command="userinfo" divided>
                 用户信息
               </el-dropdown-item>
+              <el-dropdown-item command="help" divided>
+                说明手册
+              </el-dropdown-item>
               <el-dropdown-item command="logout" divided>
                 退出登录
               </el-dropdown-item>
@@ -88,6 +91,10 @@ export default {
         // 跳转
         this.userInfo();
       }
+      if (command === "help") {
+        // 跳转
+        this.helpInfo();
+      }
       if (command === "access") {
         this.userAccess();
       }
@@ -137,6 +144,13 @@ export default {
         this.$router.push({
           name: "personal_access",
         },);
+      }
+    },
+    // help页面
+    helpInfo() {
+      // 访问的是当前组件的网址，什么都不做
+      if (this.$route.path !== "/help") {
+        this.$router.push({name: "help"});
       }
     },
     // 判断当前是pc端还是手机端，手机端进行提示信息
