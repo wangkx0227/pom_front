@@ -118,7 +118,7 @@
         </el-table-column>
         <el-table-column label="是否上传附件" align="center" width="180">
           <template v-slot="{ row }">
-            <span  v-if="!row.editable">
+            <span v-if="!row.editable">
               <el-tag v-if="row.is_file === 0">否</el-tag>
               <el-tag v-else type="info">是</el-tag>
             </span>
@@ -161,7 +161,7 @@
         </el-table-column>
         <el-table-column label="修改日期" align="center" width="180" prop="update_date">
         </el-table-column>
-        <el-table-column label="操作" align="center" width="100" fixed="right" >
+        <el-table-column label="操作" align="center" width="100" fixed="right">
           <template v-slot="scope">
             <div v-if="method_list.includes('PUT')" style="display: inline-block;">
               <el-button v-if="!scope.row.editable" @click="editRow(scope.row)" size="mini" type="text">编辑
@@ -423,8 +423,13 @@ export default {
               this.$message.error(error.message);
             })
             .finally(() => {
-              this.user_id_list = [];
-              this.addWorkForm.is_show = true;
+              this.addWorkForm = {
+                matter_name: "",
+                is_show: true,
+                is_file: 1,
+                user_id_list: [],
+                no_order_matter_rule_id: "",
+              }
               this.addLoading = false;
             });
       }
