@@ -40,8 +40,11 @@
         <el-table-column prop="index" label="#" align="center"></el-table-column>
         <el-table-column label="事项名称" align="center" width="500">
           <template v-slot="{ row }">
-            <span v-if="!row.editable">{{ row.matter_name }}</span>
-            <el-input v-model="row.matter_name" v-else></el-input>
+            <span>{{ row.matter_name }}</span>
+            <div v-if="row.description">
+              <span>{{ row.description }}</span>
+            </div>
+
           </template>
         </el-table-column>
         <el-table-column label="跟进人用户" align="center" width="180" prop="user_name">
