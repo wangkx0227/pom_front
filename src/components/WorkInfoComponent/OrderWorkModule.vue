@@ -9,7 +9,7 @@
     </div>
     <div class="head_search" style="display: flex">
       <div class="select_filter_po">
-        <el-select v-model="order_id" filterable placeholder="根据PO晒选">
+        <el-select v-model="order_id" filterable placeholder="根据PO筛选">
           <el-option
               v-for="item in order_record_info_list"
               :key="item.order_id"
@@ -21,7 +21,7 @@
         </el-select>
       </div>
       <div class="select_filter_factory" style="margin-left:5px">
-        <el-select v-model="factory_id" filterable placeholder="根据工厂晒选">
+        <el-select v-model="factory_id" filterable placeholder="根据工厂筛选">
           <el-option v-for="item in factory_info_list"
                      :key="item.factory_id"
                      :label="item.factory_name"
