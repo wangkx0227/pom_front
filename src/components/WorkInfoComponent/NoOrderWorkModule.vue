@@ -183,7 +183,7 @@
             <template v-slot="scope">
               <el-button size="mini"
                          type="text"
-                         v-if="delay_method_list.includes('DELETE1')"
+                         v-if="delay_method_list.includes('DELETE')"
                          @click="delDelayData(scope.$index, delay_data, scope.row)">删除
               </el-button>
             </template>
