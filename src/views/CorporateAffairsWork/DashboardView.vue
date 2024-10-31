@@ -4,7 +4,7 @@
       <div class="container">
         <div class="work_container">
           <div class="work_block">
-            <el-result title="订单事务" :subTitle="`${dashboard_number_data.order_matter_num}`">
+            <el-result title="跟进事务" :subTitle="`${dashboard_number_data.order_matter_num}`">
               <template slot="icon">
                 <i class="el-icon-folder icon_size" style="font-size: 25px "></i>
               </template>

@@ -2,7 +2,7 @@
   <div class="order_info_list">
     <el-card class="box-card">
       <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="订单事务" name="order_work" v-if="ShowPermissions(q_w_url)">
+        <el-tab-pane label="跟进事务" name="order_work" v-if="ShowPermissions(q_w_url)">
           <component :is="OrderWorkComponent" v-if="activeName === 'order_work'"/>
         </el-tab-pane>
         <el-tab-pane label="非订单事务" name="no_order_work"  v-if="ShowPermissions(n_q_w_url)">
