@@ -116,8 +116,8 @@
               <el-tag v-else type="warning">未完成</el-tag>
             </el-descriptions-item>
             <el-descriptions-item label="是否上传附件" :span="1">
-              <el-tag v-if="follow_matter_info_data.is_file">有</el-tag>
-              <el-tag v-else type="warning">无</el-tag>
+              <el-tag v-if="follow_matter_info_data.is_file">是</el-tag>
+              <el-tag v-else type="warning">否</el-tag>
             </el-descriptions-item>
             <el-descriptions-item label="完成时间" :span="3">{{
                 follow_matter_info_data.complete_time

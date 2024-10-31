@@ -89,7 +89,7 @@
               <el-button v-if="scope.row.is_file" size="mini" type="text" @click="OpenNoOrderWorkDialog(scope.row)">
                 事务完成
               </el-button>
-              <el-button size="mini" type="text" v-else @click="openCompleteMessageBox(scope.row)">完成事务</el-button>
+              <el-button size="mini" type="text" v-else @click="openCompleteMessageBox(scope.row)">点选完成</el-button>
             </div>
             <div v-if="method_list.includes('PUT') && method_list.includes('POST') && !scope.row.complete_status "
                  style="display: inline;">

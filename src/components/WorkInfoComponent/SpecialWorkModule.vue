@@ -91,7 +91,7 @@
           <template v-slot="scope">
             <!-- 完成后，隐藏申请延期按钮 -->
             <div v-if="method_list.includes('PUT') && scope.row.complete_status === 0">
-              <el-button size="mini" type="text"  @click="openCompleteMessageBox(scope.row)">完成事务</el-button>
+              <el-button size="mini" type="text"  @click="openCompleteMessageBox(scope.row)">点选完成</el-button>
             </div>
           </template>
         </el-table-column>
