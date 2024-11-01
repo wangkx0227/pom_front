@@ -48,20 +48,33 @@
     </div>
     <div class="table_content">
       <el-table
-          :data="special_matter_list"
-          style="width: 100%"
-          height="590"
-          row-key="id"
           lazy
-          :load="load"
+          ref="table"
+          height="590"
+          row-key="index"
+          style="width: 100%"
+          :load="LoadChildren"
+          :data="special_matter_list"
           :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
       >
         <el-table-column prop="index" label="#" align="center"></el-table-column>
         <el-table-column label="事项名称" align="center" width="500" prop="matter_name">
+          <template v-slot="{ row }">
+            <span v-if="row.child_node">--</span>
+            <span v-else>{{ row.matter_name }}</span>
+          </template>
         </el-table-column>
         <el-table-column label="工厂名称" align="center" width="300" prop="factory_name">
+          <template v-slot="{ row }">
+            <span v-if="row.child_node">--</span>
+            <span v-else>{{ row.factory_name }}</span>
+          </template>
         </el-table-column>
         <el-table-column label="PO" align="center" prop="po" width="180">
+          <template v-slot="{ row }">
+            <span v-if="row.child_node">--</span>
+            <span v-else>{{ row.po }}</span>
+          </template>
         </el-table-column>
         <el-table-column label="ITEM列表" align="center" width="180">
           <template v-slot="{ row }">
@@ -71,28 +84,42 @@
           </template>
         </el-table-column>
         <el-table-column label="跟进人用户" align="center" width="180" prop="user_name">
+          <template v-slot="{ row }">
+            <span v-if="row.child_node">--</span>
+            <span v-else>{{ row.user_name }}</span>
+          </template>
         </el-table-column>
         <el-table-column label="应完成时间" align="center" width="180" prop="expected_completion_time">
         </el-table-column>
         <el-table-column label="描述信息" align="center" width="180">
           <template v-slot="{ row }">
-            <div v-if="row.is_link_description">
-              <el-link :underline="false" icon="el-icon-video-play"
-                       :href="row.description"
-                       target="_blank" type="primary">视频地址
-              </el-link>
-            </div>
+            <span v-if="row.child_node"></span>
             <div v-else>
-              <el-tooltip class="item" effect="dark" :content="row.description" placement="bottom" v-if="!row.editable">
-                <div class="cell ellipsis">{{ row.description }}</div>
-              </el-tooltip>
+              <div v-if="row.is_link_description">
+                <el-link :underline="false" icon="el-icon-video-play"
+                         :href="row.description"
+                         target="_blank" type="primary">视频地址
+                </el-link>
+              </div>
+              <div v-else>
+                <el-tooltip class="item" effect="dark" :content="row.description" placement="bottom"
+                            v-if="!row.editable">
+                  <div class="cell ellipsis">{{ row.description }}</div>
+                </el-tooltip>
+              </div>
             </div>
           </template>
         </el-table-column>
         <el-table-column label="完成状态" align="center" width="180">
           <template v-slot="{ row }">
-            <el-tag v-if="row.complete_status === 1" effect="plain">已完成</el-tag>
-            <el-tag type="info" effect="plain" v-else>未完成</el-tag>
+            <div v-if="row.child_node">
+              <el-tag v-if="row.complete_time" size="mini" effect="plain">已完成</el-tag>
+              <el-tag type="info" effect="plain" size="mini" v-else>未完成</el-tag>
+            </div>
+            <div v-else>
+              <el-tag v-if="row.complete_status === 1" effect="plain">已完成</el-tag>
+              <el-tag type="info" effect="plain" v-else>未完成</el-tag>
+            </div>
           </template>
         </el-table-column>
         <el-table-column label="实际完成时间" align="center" width="180" prop="complete_time">
@@ -100,8 +127,16 @@
         <el-table-column label="操作" align="center" width="90">
           <template v-slot="scope">
             <!-- 完成后，隐藏申请延期按钮 -->
-            <div v-if="method_list.includes('PUT') && scope.row.complete_status === 0">
-              <el-button size="mini" type="text" @click="openCompleteMessageBox(scope.row)">点选完成</el-button>
+            <div v-if="scope.row.child_node">
+              <el-button v-if="!scope.row.complete_time" size="mini" type="text"
+                         @click="ItemOpenCompleteMessageBox(scope.row)">点选完成
+              </el-button>
+            </div>
+            <div v-else>
+              <el-button
+                  v-if="method_list.includes('PUT') && scope.row.complete_status === 0"
+                  size="mini" type="text" @click="openCompleteMessageBox(scope.row)">点选完成
+              </el-button>
             </div>
           </template>
         </el-table-column>
@@ -153,6 +188,8 @@ export default {
       factory_info_list: [],
       order_id: null, // 查询的订单id
       factory_id: null, // 查询的工厂id
+      // 存储子节点的数据对象
+      mapData: new Map(),
     };
   },
   created() {
@@ -191,10 +228,6 @@ export default {
               this.annex_method_list = data.data.annex_method_list;
               this.order_record_info_list = data.data.order_record_info_list;
               this.factory_info_list = data.data.factory_info_list;
-              // 添加一个懒加载的效果
-              for (let i = 0; i < this.special_matter_list.length; i++) {
-                this.special_matter_list[i]['hasChildren'] = true
-              }
             } else {
               this.no_order_matter_list = [];
             }
@@ -252,7 +285,7 @@ export default {
     },
     // 完成事项按钮 - 不需要上传附件弹窗
     openCompleteMessageBox(row) {
-      this.$confirm('完成事项后，按照当前的时间记录，请问是要完成码？', '提示', {
+      this.$confirm('完成事项后，按照当前的时间记录，请问是要完成？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -263,7 +296,7 @@ export default {
     },
     // 完成事项函数
     completeSpecialMatter(row) {
-      row.visible = false;
+      this.loading = true;
       this.$http
           .put("work/special_matter_list/", {
             data: row,
@@ -282,7 +315,6 @@ export default {
           })
           .finally(() => {
             this.loading = false;
-            row.visible = false;
           })
     },
     // 获取ITEM列表
@@ -311,38 +343,68 @@ export default {
     dialogItemTableClose(done) {
       done(); // 关闭窗口
     },
-
-    load(tree, treeNode, resolve) {
+    // 懒加载显示item完成情况
+    LoadChildren(tree, treeNode, resolve) {
       // tree 当前行的数据信息
       // treeNode 节点层级信息
       // 加载对象 resolve
-      setTimeout(() => {
-        const children =  [
-          {
-            id: 31,
-            index: "1-1",
-            matter_name: "--",
-            factory_name: '--',
-            po: '--',
-            user_name: '--',
-            expected_completion_time: '--',
-            item:"S69415C",
-          }, {
-            id: 32,
-            index: "1-2",
-            matter_name: "审核:确认PO所有内容",
-            factory_name: '东莞市塘厦南天印刷厂',
-            po: '测试订单',
-            user_name: '同上',
-            expected_completion_time: '2024-12-10',
-            item:"S69415C",
-          }
-        ]
-        resolve(children);
-        children.forEach(child => {
-          child['child_node'] = true;
-        });
-      }, 1000)
+      const data = {
+        index: tree.index,
+        matter_id: tree.id,
+        order_record_info_id: tree.order_record_info_id,
+        expected_completion_time: tree.expected_completion_time,
+      };
+      const url = `work/item_info_complete_time/?matter_id=${data.matter_id}&order_record_info_id=${data.order_record_info_id}&index=${data.index}&expected_completion_time=${data.expected_completion_time}`
+      this.$http
+          .get(url)
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              resolve(data.item_info_list);
+            } else {
+              resolve([]);
+            }
+          })
+          .catch((error) => {
+            resolve([]);
+            this.$message.error(error.message);
+          })
+    },
+    // 单条item点选完成
+    ItemOpenCompleteMessageBox(row) {
+      this.$confirm('确定只对当前ITEM选择完成？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.ItemCompleteSpecialMatter(row);
+      }).catch(() => {
+      });
+    },
+    ItemCompleteSpecialMatter(row) {
+      this.loading = true;
+      this.$http
+          .post("work/item_info_complete_time/?type=special", {
+            data: row,
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.$message.success(data.message);
+              // 完成状态后，清除展开状态，同时刷新事务列表
+              this.$set(this.$refs["table"].store.states, "lazyTreeNodeMap", {});
+              this.$set(this.$refs["table"].store.states, "treeData", {});
+              this.getSpecialMatterListData();
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.loading = false;
+          })
     },
   },
 };
