@@ -47,17 +47,26 @@
       </div>
     </div>
     <div class="table_content">
-      <el-table :data="special_matter_list" style="width: 100%" height="590">
+      <el-table
+          :data="special_matter_list"
+          style="width: 100%"
+          height="590"
+          row-key="id"
+          lazy
+          :load="load"
+          :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+      >
         <el-table-column prop="index" label="#" align="center"></el-table-column>
         <el-table-column label="事项名称" align="center" width="500" prop="matter_name">
         </el-table-column>
-        <el-table-column label="工厂名称" align="center" width="180" prop="factory_name">
+        <el-table-column label="工厂名称" align="center" width="300" prop="factory_name">
         </el-table-column>
         <el-table-column label="PO" align="center" prop="po" width="180">
         </el-table-column>
         <el-table-column label="ITEM列表" align="center" width="180">
           <template v-slot="{ row }">
-            <el-button size="mini" type="text" @click="getOrderRecordItem(row)"> 查看详情
+            <span v-if="row.child_node">{{ row.item }}</span>
+            <el-button v-else size="mini" type="text" @click="getOrderRecordItem(row)"> 查看详情
             </el-button>
           </template>
         </el-table-column>
@@ -68,9 +77,10 @@
         <el-table-column label="描述信息" align="center" width="180">
           <template v-slot="{ row }">
             <div v-if="row.is_link_description">
-            <el-link :underline="false" icon="el-icon-video-play"
-                     :href="row.description"
-                     target="_blank" type="primary">视频地址</el-link>
+              <el-link :underline="false" icon="el-icon-video-play"
+                       :href="row.description"
+                       target="_blank" type="primary">视频地址
+              </el-link>
             </div>
             <div v-else>
               <el-tooltip class="item" effect="dark" :content="row.description" placement="bottom" v-if="!row.editable">
@@ -81,7 +91,7 @@
         </el-table-column>
         <el-table-column label="完成状态" align="center" width="180">
           <template v-slot="{ row }">
-            <el-tag  v-if="row.complete_status === 1" effect="plain">已完成</el-tag>
+            <el-tag v-if="row.complete_status === 1" effect="plain">已完成</el-tag>
             <el-tag type="info" effect="plain" v-else>未完成</el-tag>
           </template>
         </el-table-column>
@@ -91,7 +101,7 @@
           <template v-slot="scope">
             <!-- 完成后，隐藏申请延期按钮 -->
             <div v-if="method_list.includes('PUT') && scope.row.complete_status === 0">
-              <el-button size="mini" type="text"  @click="openCompleteMessageBox(scope.row)">点选完成</el-button>
+              <el-button size="mini" type="text" @click="openCompleteMessageBox(scope.row)">点选完成</el-button>
             </div>
           </template>
         </el-table-column>
@@ -102,7 +112,7 @@
       <el-dialog title="ITEM详情列表" :visible.sync="dialogTableVisible" :before-close="dialogItemTableClose" width="30%">
         <el-table :data="item_list" height="200" border v-loading="dialogTableLoading">
           <el-table-column property="index" label="#" align="center"></el-table-column>
-          <el-table-column property="item" label="ITEM" width="450" align="center"></el-table-column>
+          <el-table-column property="item" label="ITEM" width="300" align="center"></el-table-column>
         </el-table>
       </el-dialog>
     </div>
@@ -181,6 +191,10 @@ export default {
               this.annex_method_list = data.data.annex_method_list;
               this.order_record_info_list = data.data.order_record_info_list;
               this.factory_info_list = data.data.factory_info_list;
+              // 添加一个懒加载的效果
+              for (let i = 0; i < this.special_matter_list.length; i++) {
+                this.special_matter_list[i]['hasChildren'] = true
+              }
             } else {
               this.no_order_matter_list = [];
             }
@@ -294,8 +308,41 @@ export default {
           });
     },
     // ITEM弹窗回调
-    dialogItemTableClose(done){
+    dialogItemTableClose(done) {
       done(); // 关闭窗口
+    },
+
+    load(tree, treeNode, resolve) {
+      // tree 当前行的数据信息
+      // treeNode 节点层级信息
+      // 加载对象 resolve
+      setTimeout(() => {
+        const children =  [
+          {
+            id: 31,
+            index: "1-1",
+            matter_name: "--",
+            factory_name: '--',
+            po: '--',
+            user_name: '--',
+            expected_completion_time: '--',
+            item:"S69415C",
+          }, {
+            id: 32,
+            index: "1-2",
+            matter_name: "审核:确认PO所有内容",
+            factory_name: '东莞市塘厦南天印刷厂',
+            po: '测试订单',
+            user_name: '同上',
+            expected_completion_time: '2024-12-10',
+            item:"S69415C",
+          }
+        ]
+        resolve(children);
+        children.forEach(child => {
+          child['child_node'] = true;
+        });
+      }, 1000)
     },
   },
 };
@@ -316,6 +363,7 @@ export default {
   min-height: 80px;
   overflow: scroll;
 }
+
 @media screen and (max-width: 700px) {
 
 
