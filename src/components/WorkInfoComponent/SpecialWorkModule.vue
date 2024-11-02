@@ -281,6 +281,8 @@ export default {
       this.order_id = null;
       this.factory_id = null;
       this.radio_criteria = 'all';
+      this.$set(this.$refs["table"].store.states, "lazyTreeNodeMap", {});
+      this.$set(this.$refs["table"].store.states, "treeData", {});
       this.getSpecialMatterListData();
     },
     // 完成事项按钮 - 不需要上传附件弹窗
@@ -361,6 +363,8 @@ export default {
             let data = res.data;
             if (data.code === 200) {
               resolve(data.item_info_list);
+              // 存储值到map对象中
+              this.mapData.set(tree.id, {tree, treeNode, resolve});
             } else {
               resolve([]);
             }
@@ -370,7 +374,7 @@ export default {
             this.$message.error(error.message);
           })
     },
-    // 单条item点选完成
+    // 懒加载单条item点选完成
     ItemOpenCompleteMessageBox(row) {
       this.$confirm('确定只对当前ITEM选择完成？', '提示', {
         confirmButtonText: '确定',
@@ -383,6 +387,10 @@ export default {
     },
     ItemCompleteSpecialMatter(row) {
       this.loading = true;
+      // 根据条件，父级id查找到保存在map对象中的节点信息
+      const { matter_id } = row
+      const { tree, treeNode, resolve } = this.mapData.get(parseInt(matter_id))
+      this.$set(this.$refs.table.store.states.lazyTreeNodeMap, parseInt(matter_id), [])
       this.$http
           .post("work/item_info_complete_time/?type=special", {
             data: row,
@@ -391,9 +399,9 @@ export default {
             let data = res.data;
             if (data.code === 200) {
               this.$message.success(data.message);
-              // 完成状态后，清除展开状态，同时刷新事务列表
-              this.$set(this.$refs["table"].store.states, "lazyTreeNodeMap", {});
-              this.$set(this.$refs["table"].store.states, "treeData", {});
+              // LoadChildren 从而达到更新子节点信息的效果
+              this.LoadChildren(tree, treeNode, resolve);
+              // 刷新父节点数据
               this.getSpecialMatterListData();
             } else {
               this.$message.error(data.message);
