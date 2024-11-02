@@ -113,8 +113,8 @@
         <el-table-column label="完成状态" align="center" width="180">
           <template v-slot="{ row }">
             <div v-if="row.child_node">
-              <el-tag v-if="row.complete_time" size="mini" effect="plain">已完成</el-tag>
-              <el-tag type="info" effect="plain" size="mini" v-else>未完成</el-tag>
+              <el-tag v-if="row.complete_time" effect="plain">已完成</el-tag>
+              <el-tag type="info" effect="plain" v-else>未完成</el-tag>
             </div>
             <div v-else>
               <el-tag v-if="row.complete_status === 1" effect="plain">已完成</el-tag>
@@ -307,7 +307,7 @@ export default {
             let data = res.data;
             if (data.code === 200) {
               this.$message.success(data.message);
-              this.getSpecialMatterListData();
+              this.ReloadChildNodes(row);
             } else {
               this.$message.error(data.message);
             }
@@ -388,9 +388,6 @@ export default {
     ItemCompleteSpecialMatter(row) {
       this.loading = true;
       // 根据条件，父级id查找到保存在map对象中的节点信息
-      const { matter_id } = row
-      const { tree, treeNode, resolve } = this.mapData.get(parseInt(matter_id))
-      this.$set(this.$refs.table.store.states.lazyTreeNodeMap, parseInt(matter_id), [])
       this.$http
           .post("work/item_info_complete_time/?type=special", {
             data: row,
@@ -399,10 +396,8 @@ export default {
             let data = res.data;
             if (data.code === 200) {
               this.$message.success(data.message);
-              // LoadChildren 从而达到更新子节点信息的效果
-              this.LoadChildren(tree, treeNode, resolve);
-              // 刷新父节点数据
-              this.getSpecialMatterListData();
+              // 刷新父节点数据/子节点状态
+              this.ReloadChildNodes(row)
             } else {
               this.$message.error(data.message);
             }
@@ -414,6 +409,20 @@ export default {
             this.loading = false;
           })
     },
+    // 刷新子节点状态/父节点状态 LoadChildren 从而达到更新子节点信息的效果
+    ReloadChildNodes(row) {
+      // 通过row拿id值，根据这个id刷新子节点的完成状态
+      let matter_id;
+      if (row.matter_id) {
+        matter_id = row.matter_id;
+      } else {
+        matter_id = row.id;
+      }
+      const {tree, treeNode, resolve} = this.mapData.get(parseInt(matter_id))
+      this.$set(this.$refs.table.store.states.lazyTreeNodeMap, parseInt(matter_id), [])
+      this.LoadChildren(tree, treeNode, resolve);
+      this.getSpecialMatterListData();
+    }
   },
 };
 </script>
