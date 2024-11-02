@@ -157,20 +157,22 @@
                   size="mini"
                   type="text"
                   v-if="!scope.row.complete_time && scope.row.is_file === '0'"
-                  @click="ItemOpenCompleteMessageBox(scope.row)">点选完成
+                  @click="ItemOpenCompleteMessageBox(scope.row)">点选完成（无附件）
               </el-button>
               <el-button
                   size="mini"
                   type="text"
                   v-if="!scope.row.complete_time && scope.row.is_file === '1'"
-                  >点选完成（附件）
+                  @click="OpenOrderWorkDialog(scope.row,'item')"
+              >点选完成（附件）
               </el-button>
 
             </div>
             <div v-else>
               <!-- 完成后，隐藏申请延期按钮 -->
               <div v-if="method_list.includes('PUT') && !scope.row.complete_status" style="display: inline-block;">
-                <el-button v-if="scope.row.is_file" size="mini" type="text" @click="OpenOrderWorkDialog(scope.row)">
+                <el-button v-if="scope.row.is_file" size="mini" type="text"
+                           @click="OpenOrderWorkDialog(scope.row,'order')">
                   点选完成
                 </el-button>
                 <el-button size="mini" type="text" v-else @click="openCompleteMessageBox(scope.row)">点选完成</el-button>
@@ -429,6 +431,7 @@ export default {
       factory_id: null, // 查询的工厂id
       // 存储子节点的数据对象
       mapData: new Map(),
+      upload_type: null, // 是单条提交item附件上传，还是多条上传
     };
   },
   created() {
@@ -560,9 +563,10 @@ export default {
           })
     },
     // 事项完成 - 打开上传附件弹窗
-    OpenOrderWorkDialog(row) {
+    OpenOrderWorkDialog(row, status) {
       this.OrderWorkDialogVisible = true;
       this.open_work_annex_row_data = row;
+      this.upload_type = status;
     },
     // 完成事项 - 关闭弹出进行回调，按钮
     OrderWorkDialogButtonClose() {
@@ -608,7 +612,7 @@ export default {
         let jsonData = JSON.stringify(this.open_work_annex_row_data);
         formData.append('data', jsonData);
         this.$http
-            .put("work/order_matter_list/", formData, {
+            .put(`work/order_matter_list/?upload_type=${this.upload_type}`, formData, {
               headers: {
                 'Content-Type': 'multipart/form-data', // 必须设置请求头
               }
@@ -618,7 +622,11 @@ export default {
               if (data.code === 200) {
                 this.$message.success(data.message);
                 // 附件上传，刷新子节点与父节点状态
-                this.ReloadChildNodes(this.open_work_annex_row_data);
+                if (this.mapData.size !== 0) {
+                  this.ReloadChildNodes(this.open_work_annex_row_data);
+                } else {
+                  this.getOrderWorkListData();
+                }
               } else {
                 this.$message.error(data.message);
               }
@@ -630,6 +638,7 @@ export default {
               this.fileList = [];
               this.OrderWorkDialogVisible = false
               this.open_work_annex_row_data = null;
+              this.upload_type = null;
             });
       }
     },
