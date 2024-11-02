@@ -550,7 +550,11 @@ export default {
             if (data.code === 200) {
               this.$message.success(data.message);
               // 刷新节点数据
-              this.ReloadChildNodes(row);
+              if (this.mapData.size !== 0) {
+                this.ReloadChildNodes(row);
+              } else {
+                this.getOrderWorkListData();
+              }
             } else {
               this.$message.error(data.message);
             }

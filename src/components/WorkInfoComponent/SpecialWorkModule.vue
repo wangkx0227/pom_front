@@ -316,7 +316,12 @@ export default {
             let data = res.data;
             if (data.code === 200) {
               this.$message.success(data.message);
-              this.ReloadChildNodes(row);
+              // 刷新节点
+              if (this.mapData.size !== 0) {
+                this.ReloadChildNodes(row);
+              } else {
+                this.getSpecialMatterListData();
+              }
             } else {
               this.$message.error(data.message);
             }
