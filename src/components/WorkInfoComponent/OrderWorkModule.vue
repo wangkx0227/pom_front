@@ -576,6 +576,7 @@ export default {
     },
     // 完成事项 - 关闭弹出进行回调，按钮
     OrderWorkDialogButtonClose() {
+      this.update_type = null;
       this.OrderWorkDialogVisible = false;
       this.getOrderWorkListData();
     },
