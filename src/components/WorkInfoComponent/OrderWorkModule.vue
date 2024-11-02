@@ -47,73 +47,141 @@
       </div>
     </div>
     <div class="table_content">
-      <el-table :data="order_matter_list" style="width: 100%" height="590">
+      <el-table
+          lazy
+          border
+          ref="table"
+          height="590"
+          row-key="index"
+          style="width: 100%"
+          :load="LoadChildren"
+          :data="order_matter_list"
+          :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+      >
         <el-table-column prop="index" label="#" align="center"></el-table-column>
         <el-table-column label="PO" align="center" width="180" prop="po">
+          <template v-slot="{ row }">
+            <span v-if="row.child_node">--</span>
+            <span v-else>{{ row.po }}</span>
+          </template>
         </el-table-column>
         <el-table-column label="事项名称" align="center" prop="matter_name" width="500">
           <template v-slot="{ row }">
-            <span v-if="!row.editable">{{ row.matter_name }}</span>
+            <span v-if="row.child_node">--</span>
+            <span v-else>{{ row.matter_name }}</span>
           </template>
         </el-table-column>
         <el-table-column label="工厂名称" align="center" width="180" prop="factory_name">
+          <template v-slot="{ row }">
+            <span v-if="row.child_node">--</span>
+            <span v-else>{{ row.factory_name }}</span>
+          </template>
         </el-table-column>
         <el-table-column label="ITEM列表" align="center" width="180">
           <template v-slot="{ row }">
-            <el-button size="mini" type="text" @click="getOrderRecordItem(row)"> 查看详情
+            <span v-if="row.child_node">{{ row.item }}</span>
+            <el-button v-else size="mini" type="text" @click="getOrderRecordItem(row)"> 查看详情
             </el-button>
           </template>
         </el-table-column>
         <el-table-column label="跟进人用户" align="center" width="180" prop="user_name">
+          <template v-slot="{ row }">
+            <span v-if="row.child_node">--</span>
+            <span v-else>{{ row.user_name }}</span>
+          </template>
         </el-table-column>
         <el-table-column label="应完成时间" align="center" width="180" prop="expected_completion_time">
+
         </el-table-column>
         <el-table-column label="完成状态" align="center" width="180">
           <template v-slot="{ row }">
-            <el-tag v-if="row.complete_status === 1" effect="plain">已完成</el-tag>
-            <el-tag type="info" effect="plain" v-else>未完成</el-tag>
+            <div v-if="row.child_node">
+              <el-tag v-if="row.complete_time" effect="plain">已完成</el-tag>
+              <el-tag type="info" effect="plain" v-else>未完成</el-tag>
+            </div>
+            <div v-else>
+              <el-tag v-if="row.complete_status === 1" effect="plain">已完成</el-tag>
+              <el-tag type="info" effect="plain" v-else>未完成</el-tag>
+            </div>
           </template>
         </el-table-column>
         <el-table-column label="是否需要上传附件" align="center" width="180">
           <template v-slot="{ row }">
-            <el-tag v-if="row.is_file === 1">是</el-tag>
-            <el-tag type="info" v-else>否</el-tag>
+            <div v-if="row.child_node">
+              <span>--</span>
+            </div>
+            <div v-else>
+              <el-tag v-if="row.is_file === 1">是</el-tag>
+              <el-tag type="info" v-else>否</el-tag>
+            </div>
           </template>
         </el-table-column>
         <el-table-column label="延期列表" align="center" width="180">
           <template v-slot="{ row }">
-            <el-button v-if="row.delay_status && delay_method_list.includes('GET')" size="mini" type="text"
-                       @click="OpenDelayDialog(row)">延期列表查看
-            </el-button>
+            <div v-if="row.child_node">
+              <span>--</span>
+            </div>
+            <div v-else>
+              <el-button v-if="row.delay_status && delay_method_list.includes('GET')" size="mini" type="text"
+                         @click="OpenDelayDialog(row)">延期列表查看
+              </el-button>
+            </div>
           </template>
         </el-table-column>
         <el-table-column label="附件列表" align="center" width="180">
           <template v-slot="{ row }">
-            <el-button v-if="row.annex_status && annex_method_list.includes('GET')" size="mini" type="text"
-                       @click="OpenAnnexFileDialog(row)">附件列表查看
-            </el-button>
+            <div v-if="row.child_node">
+              <span>--</span>
+            </div>
+            <div v-else>
+              <el-button v-if="row.annex_status && annex_method_list.includes('GET')" size="mini" type="text"
+                         @click="OpenAnnexFileDialog(row)">附件列表查看
+              </el-button>
+            </div>
           </template>
         </el-table-column>
         <el-table-column label="实际完成时间" align="center" width="180">
           <template v-slot="{ row }">
-            <span v-if="row.complete_status === 1">{{ row.complete_time }}</span>
+            <div v-if="row.child_node">
+              <span>{{ row.complete_time }}</span>
+            </div>
+            <div v-else>
+              <span v-if="row.complete_status === 1">{{ row.complete_time }}</span>
+            </div>
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center" width="140" class-name="operation">
           <template v-slot="scope">
-            <!-- 完成后，隐藏申请延期按钮 -->
-            <div v-if="method_list.includes('PUT') && !scope.row.complete_status" style="display: inline-block;">
-              <el-button v-if="scope.row.is_file" size="mini" type="text" @click="OpenOrderWorkDialog(scope.row)">
-                点选完成
+            <div v-if="scope.row.child_node">
+              <el-button
+                  size="mini"
+                  type="text"
+                  v-if="!scope.row.complete_time && scope.row.is_file === '0'"
+                  @click="ItemOpenCompleteMessageBox(scope.row)">点选完成
               </el-button>
-              <el-button size="mini" type="text" v-else @click="openCompleteMessageBox(scope.row)">点选完成</el-button>
+              <el-button
+                  size="mini"
+                  type="text"
+                  v-if="!scope.row.complete_time && scope.row.is_file === '1'"
+                  >点选完成（附件）
+              </el-button>
+
             </div>
-            <div v-if="method_list.includes('PUT') && method_list.includes('POST') && !scope.row.complete_status "
-                 style="display: inline;">
-              <el-divider direction="vertical"></el-divider>
-            </div>
-            <div v-if="method_list.includes('POST') && !scope.row.complete_status" style="display: inline-block;">
-              <el-button size="mini" type="text" @click="OpenDelayApplyForDialog(scope.row)">申请延期</el-button>
+            <div v-else>
+              <!-- 完成后，隐藏申请延期按钮 -->
+              <div v-if="method_list.includes('PUT') && !scope.row.complete_status" style="display: inline-block;">
+                <el-button v-if="scope.row.is_file" size="mini" type="text" @click="OpenOrderWorkDialog(scope.row)">
+                  点选完成
+                </el-button>
+                <el-button size="mini" type="text" v-else @click="openCompleteMessageBox(scope.row)">点选完成</el-button>
+              </div>
+              <div v-if="method_list.includes('PUT') && method_list.includes('POST') && !scope.row.complete_status "
+                   style="display: inline;">
+                <el-divider direction="vertical"></el-divider>
+              </div>
+              <div v-if="method_list.includes('POST') && !scope.row.complete_status" style="display: inline-block;">
+                <el-button size="mini" type="text" @click="OpenDelayApplyForDialog(scope.row)">申请延期</el-button>
+              </div>
             </div>
           </template>
         </el-table-column>
@@ -359,6 +427,8 @@ export default {
       factory_info_list: [],
       order_id: null, // 查询的订单id
       factory_id: null, // 查询的工厂id
+      // 存储子节点的数据对象
+      mapData: new Map(),
     };
   },
   created() {
@@ -450,6 +520,8 @@ export default {
       this.order_id = null;
       this.factory_id = null;
       this.radio_criteria = 'all';
+      this.$set(this.$refs["table"].store.states, "lazyTreeNodeMap", {});
+      this.$set(this.$refs["table"].store.states, "treeData", {});
       this.getOrderWorkListData();
     },
     // 完成事项按钮 - 不需要上传附件弹窗
@@ -820,6 +892,85 @@ export default {
     dialogItemTableClose(done) {
       done(); // 关闭窗口
     },
+    // 节点展示
+    LoadChildren(tree, treeNode, resolve) {
+      // tree 当前行的数据信息
+      // treeNode 节点层级信息
+      // 加载对象 resolve
+      const data = {
+        index: tree.index,
+        matter_id: tree.id,
+        is_file: tree.is_file,
+        order_record_info_id: tree.order_record_info_id,
+        expected_completion_time: tree.expected_completion_time,
+      };
+      const url = `work/item_info_complete_time/?matter_id=${data.matter_id}&order_record_info_id=${data.order_record_info_id}&index=${data.index}&expected_completion_time=${data.expected_completion_time}&is_file=${data.is_file}`
+      this.$http
+          .get(url)
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              resolve(data.item_info_list);
+              // 存储值到map对象中
+              this.mapData.set(tree.id, {tree, treeNode, resolve});
+            } else {
+              resolve([]);
+            }
+          })
+          .catch((error) => {
+            resolve([]);
+            this.$message.error(error.message);
+          })
+    },
+    // 刷新子节点状态/父节点状态 LoadChildren 从而达到更新子节点信息的效果
+    ReloadChildNodes(row) {
+      // 通过row拿id值，根据这个id刷新子节点的完成状态
+      let matter_id;
+      if (row.matter_id) {
+        matter_id = row.matter_id;
+      } else {
+        matter_id = row.id;
+      }
+      const {tree, treeNode, resolve} = this.mapData.get(parseInt(matter_id))
+      this.$set(this.$refs.table.store.states.lazyTreeNodeMap, parseInt(matter_id), [])
+      this.LoadChildren(tree, treeNode, resolve);
+      this.getOrderWorkListData();
+    },
+    // 懒加载单条item点选完成--无附件
+    ItemOpenCompleteMessageBox(row) {
+      this.$confirm('确定只对当前ITEM选择完成？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.ItemCompleteSpecialMatter(row);
+      }).catch(() => {
+      });
+    },
+    ItemCompleteSpecialMatter(row) {
+      this.loading = true;
+      // 根据条件，父级id查找到保存在map对象中的节点信息
+      this.$http
+          .post("work/item_info_complete_time/?type=order", {
+            data: row,
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.$message.success(data.message);
+              // 刷新父节点数据/子节点状态
+              this.ReloadChildNodes(row)
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.loading = false;
+          })
+    },
   },
 };
 </script>
@@ -897,6 +1048,7 @@ export default {
   .order_work .el-button--text {
     padding: 1px !important;
   }
+
   .order_work .operation .cell {
     display: flex;
   }

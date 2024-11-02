@@ -49,6 +49,7 @@
     <div class="table_content">
       <el-table
           lazy
+          border
           ref="table"
           height="590"
           row-key="index"
@@ -123,6 +124,14 @@
           </template>
         </el-table-column>
         <el-table-column label="实际完成时间" align="center" width="180" prop="complete_time">
+          <template v-slot="{ row }">
+            <div v-if="row.child_node">
+              <span>{{ row.complete_time }}</span>
+            </div>
+            <div v-else>
+              <span v-if="row.complete_status === 1">{{ row.complete_time }}</span>
+            </div>
+          </template>
         </el-table-column>
         <el-table-column label="操作" align="center" width="90">
           <template v-slot="scope">
