@@ -72,7 +72,7 @@
             <span v-else>{{ row.matter_name }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="工厂名称" align="center" width="350" prop="factory_name">
+        <el-table-column label="工厂名称" align="center" width="300" prop="factory_name">
           <template v-slot="{ row }">
             <span v-if="row.child_node">--</span>
             <span v-else>{{ row.factory_name }}</span>
