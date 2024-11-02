@@ -119,7 +119,12 @@
       </el-dialog>
     </div>
     <div class="table_content">
-      <el-table :data="OrderMatterData" style="width: 100%" height="610">
+      <div style="margin: 5px 0">
+        <el-alert title="注意：" type="warning"
+                  description="如果事项绑定的是特殊规则，请勿将事务设置为可上传附件！"
+        ></el-alert>
+      </div>
+      <el-table :data="OrderMatterData" style="width: 100%" height="540">
         <el-table-column prop="index" label="#" align="center"></el-table-column>
         <el-table-column label="事项名称" align="center" width="500">
           <template v-slot="{ row }">
