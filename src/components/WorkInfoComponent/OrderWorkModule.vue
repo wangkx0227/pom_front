@@ -546,7 +546,8 @@ export default {
             let data = res.data;
             if (data.code === 200) {
               this.$message.success(data.message);
-              this.getOrderWorkListData();
+              // 刷新节点数据
+              this.ReloadChildNodes(row);
             } else {
               this.$message.error(data.message);
             }
