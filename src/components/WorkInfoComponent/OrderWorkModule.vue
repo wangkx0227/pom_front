@@ -4,6 +4,7 @@
       <el-radio-group v-model="radio_criteria" size="small">
         <el-radio-button label="all">全部</el-radio-button>
         <el-radio-button label="finish">完成</el-radio-button>
+        <el-radio-button label="perform">进行中</el-radio-button>
         <el-radio-button label="not_finish">未完成</el-radio-button>
       </el-radio-group>
     </div>
@@ -101,6 +102,7 @@
             </div>
             <div v-else>
               <el-tag v-if="row.complete_status === 1" effect="plain">已完成</el-tag>
+              <el-tag v-else-if="row.complete_status === 2" effect="plain" type="warning">进行中</el-tag>
               <el-tag type="info" effect="plain" v-else>未完成</el-tag>
             </div>
           </template>
