@@ -600,7 +600,6 @@ export default {
     completeOrderWorkFile() {
       if (this.fileList.length === 0) {
         this.$message.error("请上传文件后再进行提交！")
-
       } else {
         let formData = new FormData();
         this.fileList.forEach((fileItem, index) => {
@@ -618,6 +617,8 @@ export default {
               let data = res.data;
               if (data.code === 200) {
                 this.$message.success(data.message);
+                // 附件上传，刷新子节点与父节点状态
+                this.ReloadChildNodes(this.open_work_annex_row_data);
               } else {
                 this.$message.error(data.message);
               }
@@ -629,10 +630,8 @@ export default {
               this.fileList = [];
               this.OrderWorkDialogVisible = false
               this.open_work_annex_row_data = null;
-              this.getOrderWorkListData();
             });
       }
-
     },
     // 延期申请 - 打开弹窗
     OpenDelayApplyForDialog(row) {
@@ -972,6 +971,7 @@ export default {
             this.loading = false;
           })
     },
+    // 懒加载单条item点选完成--有附件与整条完成调用一个函数进行处理
   },
 };
 </script>
