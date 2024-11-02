@@ -163,7 +163,7 @@
                   size="mini"
                   type="text"
                   v-if="!scope.row.complete_time && scope.row.is_file === '1'"
-                  @click="OpenOrderWorkDialog(scope.row,'item')"
+                  @click="ItemOpenOrderWorkDialog(scope.row)"
               >点选完成（附件）
               </el-button>
 
@@ -172,7 +172,7 @@
               <!-- 完成后，隐藏申请延期按钮 -->
               <div v-if="method_list.includes('PUT') && !scope.row.complete_status" style="display: inline-block;">
                 <el-button v-if="scope.row.is_file" size="mini" type="text"
-                           @click="OpenOrderWorkDialog(scope.row,'order')">
+                           @click="OpenOrderWorkDialog(scope.row)">
                   点选完成
                 </el-button>
                 <el-button size="mini" type="text" v-else @click="openCompleteMessageBox(scope.row)">点选完成</el-button>
@@ -309,7 +309,10 @@
         </el-upload>
         <span slot="footer" class="dialog-footer">
           <el-button @click="OrderWorkDialogButtonClose">取消上传</el-button>
-          <el-button type="primary" @click="completeOrderWorkFile">确定上传</el-button>
+
+          <el-button v-if="!update_type" type="primary" @click="completeOrderWorkFile">确定上传</el-button>
+          <el-button v-else type="primary" @click="ItemCompleteOrderWorkFile">确定上传（单条）</el-button>
+
         </span>
       </el-dialog>
     </div>
@@ -431,7 +434,7 @@ export default {
       factory_id: null, // 查询的工厂id
       // 存储子节点的数据对象
       mapData: new Map(),
-      upload_type: null, // 是单条提交item附件上传，还是多条上传
+      update_type: null, // 上传方式
     };
   },
   created() {
@@ -567,10 +570,9 @@ export default {
           })
     },
     // 事项完成 - 打开上传附件弹窗
-    OpenOrderWorkDialog(row, status) {
+    OpenOrderWorkDialog(row) {
       this.OrderWorkDialogVisible = true;
       this.open_work_annex_row_data = row;
-      this.upload_type = status;
     },
     // 完成事项 - 关闭弹出进行回调，按钮
     OrderWorkDialogButtonClose() {
@@ -616,7 +618,7 @@ export default {
         let jsonData = JSON.stringify(this.open_work_annex_row_data);
         formData.append('data', jsonData);
         this.$http
-            .put(`work/order_matter_list/?upload_type=${this.upload_type}`, formData, {
+            .put(`work/order_matter_list/`, formData, {
               headers: {
                 'Content-Type': 'multipart/form-data', // 必须设置请求头
               }
@@ -642,7 +644,6 @@ export default {
               this.fileList = [];
               this.OrderWorkDialogVisible = false
               this.open_work_annex_row_data = null;
-              this.upload_type = null;
             });
       }
     },
@@ -984,7 +985,49 @@ export default {
             this.loading = false;
           })
     },
-    // 懒加载单条item点选完成--有附件与整条完成调用一个函数进行处理
+    // 懒加载单条item点选完成--上传附件
+    ItemOpenOrderWorkDialog(row) {
+      this.update_type = 'item'
+      this.OrderWorkDialogVisible = true;
+      this.open_work_annex_row_data = row;
+    },
+    ItemCompleteOrderWorkFile() {
+      if (this.fileList.length === 0) {
+        this.$message.error("请上传文件后再进行提交！")
+      } else {
+        let formData = new FormData();
+        this.fileList.forEach((fileItem, index) => {
+          formData.append(`file-${index}`, fileItem.raw);
+        });
+        let jsonData = JSON.stringify(this.open_work_annex_row_data);
+        formData.append('data', jsonData);
+        this.$http
+            .post(`work/item_info_complete_time/`, formData, {
+              headers: {
+                'Content-Type': 'multipart/form-data', // 必须设置请求头
+              }
+            })
+            .then((res) => {
+              let data = res.data;
+              if (data.code === 200) {
+                this.$message.success(data.message);
+                // 附件上传，刷新子节点与父节点状态
+                this.ReloadChildNodes(this.open_work_annex_row_data);
+              } else {
+                this.$message.error(data.message);
+              }
+            })
+            .catch((error) => {
+              this.$message.error(error.message);
+            })
+            .finally(() => {
+              this.fileList = [];
+              this.OrderWorkDialogVisible = false
+              this.open_work_annex_row_data = null;
+              this.update_type = null;
+            });
+      }
+    },
   },
 };
 </script>
