@@ -58,7 +58,7 @@
           :data="order_matter_list"
           :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
       >
-        <el-table-column prop="index" label="#" align="center"></el-table-column>
+        <el-table-column prop="index" label="#" align="center" width="100"></el-table-column>
         <el-table-column label="PO" align="center" width="180" prop="po">
           <template v-slot="{ row }">
             <span v-if="row.child_node">--</span>
@@ -84,7 +84,7 @@
             </el-button>
           </template>
         </el-table-column>
-        <el-table-column label="跟进人用户" align="center" width="180" prop="user_name">
+        <el-table-column label="跟进人" align="center" prop="user_name">
           <template v-slot="{ row }">
             <span v-if="row.child_node">--</span>
             <span v-else>{{ row.user_name }}</span>
@@ -986,9 +986,6 @@ export default {
           })
           .catch((error) => {
             this.$message.error(error.message);
-          })
-          .finally(() => {
-            this.loading = false;
           })
     },
     // 懒加载单条item点选完成--上传附件

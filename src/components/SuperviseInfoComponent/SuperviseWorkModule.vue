@@ -58,7 +58,7 @@
           :data="SuperviseMattersData"
           :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
       >
-        <el-table-column prop="index" label="#" align="center"></el-table-column>
+        <el-table-column prop="index" label="#" align="center" width="100"></el-table-column>
         <el-table-column prop="po" label="PO" align="center" width="180">
           <template v-slot="{ row }">
             <span v-if="row.child_node">--</span>
