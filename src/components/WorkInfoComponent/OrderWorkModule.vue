@@ -50,7 +50,6 @@
     <div class="table_content">
       <el-table
           lazy
-          border
           ref="table"
           height="590"
           row-key="index"
@@ -446,6 +445,11 @@ export default {
   methods: {
     // 获取数据
     getOrderWorkListData() {
+      // 添加如果展开了子节点，就进行闭合
+      if (this.$refs.table){
+        this.$set(this.$refs["table"].store.states, "lazyTreeNodeMap", {});
+        this.$set(this.$refs["table"].store.states, "treeData", {});
+      }
       let url = `work/order_matter_list/?page=${this.page}`
       // 条件1: radio_criteria
       if (this.radio_criteria && this.radio_criteria !== 'all') {
