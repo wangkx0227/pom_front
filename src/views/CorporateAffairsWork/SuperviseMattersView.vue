@@ -2,7 +2,7 @@
   <div class="supervise_info_list">
     <el-card class="box-card">
       <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="订单事务" name="supervise">
+        <el-tab-pane label="监督事务" name="supervise">
           <component :is="SuperviseInfoComponent" v-if="activeName === 'supervise'"/>
         </el-tab-pane>
       </el-tabs>

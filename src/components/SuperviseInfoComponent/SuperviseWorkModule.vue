@@ -4,6 +4,7 @@
       <el-radio-group v-model="radio_criteria" size="small">
         <el-radio-button label="all">全部</el-radio-button>
         <el-radio-button label="finish">完成</el-radio-button>
+        <el-radio-button label="perform">进行中</el-radio-button>
         <el-radio-button label="not_finish">未完成</el-radio-button>
       </el-radio-group>
     </div>
@@ -47,44 +48,96 @@
       </div>
     </div>
     <div class="table_content">
-      <el-table :data="SuperviseMattersData" style="width: 100%" height="590">
+      <el-table
+          lazy
+          ref="table"
+          height="590"
+          row-key="index"
+          style="width: 100%"
+          :load="LoadChildren"
+          :data="SuperviseMattersData"
+          :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+      >
         <el-table-column prop="index" label="#" align="center"></el-table-column>
-        <el-table-column prop="po" label="PO" align="center" width="180"></el-table-column>
-        <el-table-column prop="matter_name" label="事项名称" width="500" align="center"></el-table-column>
+        <el-table-column prop="po" label="PO" align="center" width="180">
+          <template v-slot="{ row }">
+            <span v-if="row.child_node">--</span>
+            <span v-else>{{ row.po }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="matter_name" label="事项名称" width="500" align="center">
+          <template v-slot="{ row }">
+            <span v-if="row.child_node">--</span>
+            <span v-else>{{ row.matter_name }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="监督事项详情" align="center" prop="" width="180">
           <template v-slot="{ row }">
-            <el-button size="mini" type="text" @click="getMatterInfo(row)"> 查看详情</el-button>
+            <span v-if="row.child_node">{{ row.item }}</span>
+            <el-button v-else size="mini" type="text" @click="getMatterInfo(row)"> 查看详情</el-button>
+          </template>
+        </el-table-column>
+        <el-table-column label="催跟进记录" align="center" width="180" prop="complete_time">
+          <template v-slot="{ row }">
+            <div v-if="row.child_node">
+              <span>--</span>
+            </div>
+            <div v-else>
+              <el-button size="mini" type="text" @click="getUrgeFollow(row)">查看记录</el-button>
+            </div>
           </template>
         </el-table-column>
         <el-table-column label="监督人" align="center" prop="user_name">
+          <template v-slot="{ row }">
+            <span v-if="row.child_node">--</span>
+            <span v-else>{{ row.user_name }}</span>
+          </template>
         </el-table-column>
         <el-table-column label="应完成时间" align="center" width="180" prop="expected_completion_time">
         </el-table-column>
         <el-table-column label="完成状态" align="center" width="180">
           <template v-slot="{ row }">
-            <el-tag effect="plain" v-if="row.complete_status === 1">已完成</el-tag>
-            <el-tag type="info" effect="plain" v-else>未完成</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column label="催跟进记录" align="center" width="180" prop="complete_time">
-          <template v-slot="{ row }">
-            <el-button size="mini" type="text" @click="getUrgeFollow(row)">查看记录</el-button>
+            <div v-if="row.child_node">
+              <el-tag v-if="row.complete_time" effect="plain">已完成</el-tag>
+              <el-tag type="info" effect="plain" v-else>未完成</el-tag>
+            </div>
+            <div v-else>
+              <el-tag v-if="row.complete_status === 1" effect="plain">已完成</el-tag>
+              <el-tag v-else-if="row.complete_status === 2" effect="plain" type="warning">进行中</el-tag>
+              <el-tag type="info" effect="plain" v-else>未完成</el-tag>
+            </div>
           </template>
         </el-table-column>
         <el-table-column label="实际完成时间" align="center" width="180" prop="complete_time">
+          <template v-slot="{ row }">
+            <div v-if="row.child_node">
+              <span>{{ row.complete_time }}</span>
+            </div>
+            <div v-else>
+              <span v-if="row.complete_status === 1">{{ row.complete_time }}</span>
+            </div>
+          </template>
         </el-table-column>
         <el-table-column label="操作" align="center" width="140" class-name="operation">
           <template v-slot="scope">
             <!-- 完成后，隐藏申请延期按钮 -->
-            <div v-if="method_list.includes('PUT') && !scope.row.complete_status" style="display: inline-block;">
-              <el-button size="mini" type="text" @click="openCompleteMessageBox(scope.row)">点选完成</el-button>
+            <div v-if="scope.row.child_node">
+              <el-button v-if="!scope.row.complete_time" size="mini" type="text"
+                         @click="ItemOpenCompleteMessageBox(scope.row)"
+                         >点选完成
+              </el-button>
             </div>
-            <div style="display: inline;" v-if="method_list.includes('PUT') && !scope.row.order_matter_status">
-              <el-divider direction="vertical"></el-divider>
-            </div>
-            <div style="display: inline-block;" v-if="!scope.row.order_matter_status">
-              <!--  如果跟进事务跟进人完成了就需要隐藏-->
-              <el-button size="mini" type="text" @click="UrgeFollow(scope.row)">催跟进</el-button>
+            <div v-else>
+              <div v-if="method_list.includes('PUT') && scope.row.complete_status !== 1" style="display: inline-block;">
+                <el-button size="mini" type="text" @click="openCompleteMessageBox(scope.row)">点选完成</el-button>
+              </div>
+              <div style="display: inline;" v-if="method_list.includes('PUT') && scope.row.order_matter_status !== 1 && scope.row.complete_status !== 1">
+                <el-divider direction="vertical"></el-divider>
+              </div>
+              <div style="display: inline-block;" v-if="scope.row.order_matter_status !== 1">
+                <!--  如果跟进事务跟进人完成了就需要隐藏-->
+                <el-button size="mini" type="text" @click="UrgeFollow(scope.row)">催跟进</el-button>
+              </div>
             </div>
           </template>
         </el-table-column>
@@ -192,7 +245,8 @@ export default {
       // 催促记录弹窗
       UrgeFollowDialogVisible: false,
       UrgeFollowLoading: false,
-      urge_follow_data: []
+      urge_follow_data: [],
+      mapData: new Map(),
     };
   },
   created() {
@@ -202,6 +256,11 @@ export default {
   methods: {
     // 获取数据
     getSuperviseMatters() {
+      // 添加如果展开了子节点，就进行闭合
+      if (this.$refs.table){
+        this.$set(this.$refs["table"].store.states, "lazyTreeNodeMap", {});
+        this.$set(this.$refs["table"].store.states, "treeData", {});
+      }
       let url = `work/supervise_matter_list/?page=${this.page}`
       // 条件1: radio_criteria
       if (this.radio_criteria && this.radio_criteria !== 'all') {
@@ -284,6 +343,8 @@ export default {
       this.search_start_time = null;
       this.search_end_time = null;
       this.radio_criteria = 'all';
+      this.$set(this.$refs["table"].store.states, "lazyTreeNodeMap", {});
+      this.$set(this.$refs["table"].store.states, "treeData", {});
       this.getSuperviseMatters();
     },
     openCompleteMessageBox(row) {
@@ -307,7 +368,12 @@ export default {
             let data = res.data;
             if (data.code === 200) {
               this.$message.success(data.message);
-              this.getSuperviseMatters();
+              // 刷新节点
+              if (this.mapData.size !== 0) {
+                this.ReloadChildNodes(row);
+              } else {
+                this.getSpecialMatterListData();
+              }
             } else {
               this.$message.error(data.message);
             }
@@ -428,6 +494,85 @@ export default {
       done();
       this.urge_follow_data = [];
     },
+    // 懒加载显示item完成情况
+    LoadChildren(tree, treeNode, resolve) {
+      // tree 当前行的数据信息
+      // treeNode 节点层级信息
+      // 加载对象 resolve
+      this.loading = true;
+      const data = {
+        index: tree.index,
+        matter_id: tree.id,
+        order_record_info_id: tree.order_record_info_id || null,
+        expected_completion_time: tree.expected_completion_time,
+      };
+      const url = `work/item_info_complete_time/?matter_id=${data.matter_id}&order_record_info_id=${data.order_record_info_id}&index=${data.index}&expected_completion_time=${data.expected_completion_time}`
+      this.$http
+          .get(url)
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              resolve(data.item_info_list);
+              // 存储值到map对象中
+              this.mapData.set(tree.id, {tree, treeNode, resolve});
+            } else {
+              resolve([]);
+            }
+          })
+          .catch((error) => {
+            resolve([]);
+            this.$message.error(error.message);
+          })
+          .finally(() => {
+            this.loading = false;
+          })
+    },
+    // 刷新子节点状态/父节点状态 LoadChildren 从而达到更新子节点信息的效果
+    ReloadChildNodes(row) {
+      // 通过row拿id值，根据这个id刷新子节点的完成状态
+      let matter_id;
+      if (row.matter_id) {
+        matter_id = row.matter_id;
+      } else {
+        matter_id = row.id;
+      }
+      const {tree, treeNode, resolve} = this.mapData.get(parseInt(matter_id))
+      this.$set(this.$refs.table.store.states.lazyTreeNodeMap, parseInt(matter_id), [])
+      this.LoadChildren(tree, treeNode, resolve);
+      this.getSuperviseMatters();
+    },
+    // 懒加载单条item点选完成
+    ItemOpenCompleteMessageBox(row) {
+      this.$confirm('确定只对当前ITEM选择完成？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.ItemCompleteSpecialMatter(row);
+      }).catch(() => {
+      });
+    },
+    ItemCompleteSpecialMatter(row) {
+      this.loading = true;
+      // 根据条件，父级id查找到保存在map对象中的节点信息
+      this.$http
+          .post("work/item_info_complete_time/?type=supervise", {
+            data: row,
+          })
+          .then((res) => {
+            let data = res.data;
+            if (data.code === 200) {
+              this.$message.success(data.message);
+              // 刷新父节点数据/子节点状态
+              this.ReloadChildNodes(row)
+            } else {
+              this.$message.error(data.message);
+            }
+          })
+          .catch((error) => {
+            this.$message.error(error.message);
+          })
+    },
   },
 }
 </script>
@@ -474,9 +619,11 @@ export default {
   .supervision_matters .head_filter_criteria, .head_search {
     margin-bottom: 4px;
   }
+
   .supervision_matters .el-button--text {
     padding: 1px !important;
   }
+
   .supervision_matters .operation .cell {
     display: flex;
   }
