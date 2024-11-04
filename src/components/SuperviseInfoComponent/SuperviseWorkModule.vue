@@ -326,8 +326,8 @@ export default {
     // 搜索功能
     searchData() {
       this.loading = true;
+      this.page = 1;
       if (this.time_frame_list.length > 0) {
-        this.page = 1;
         this.search_start_time = new Date(this.time_frame_list[0]).toISOString();
         this.search_end_time = new Date(this.time_frame_list[1]).toISOString();
         this.getSuperviseMatters();
