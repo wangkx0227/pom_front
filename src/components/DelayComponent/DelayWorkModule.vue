@@ -67,6 +67,7 @@
           <template v-slot="{ row }">
             <el-tag v-if="row.complete_status === 0" type="info" effect="plain">未完成</el-tag>
             <el-tag v-else-if="row.complete_status === 1" effect="plain">已完成</el-tag>
+            <el-tag v-else-if="row.complete_status === 2" effect="plain" type="warning">进行中</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="旧完成时间" align="center" width="180" prop="old_time">
