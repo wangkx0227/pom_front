@@ -167,22 +167,21 @@
                   @click="ItemOpenOrderWorkDialog(scope.row)"
               >点选完成（附件）
               </el-button>
-
             </div>
             <div v-else>
               <!-- 完成后，隐藏申请延期按钮 -->
-              <div v-if="method_list.includes('PUT') && !scope.row.complete_status" style="display: inline-block;">
+              <div v-if="method_list.includes('PUT') && scope.row.complete_status !== 1" style="display: inline-block;">
                 <el-button v-if="scope.row.is_file" size="mini" type="text"
                            @click="OpenOrderWorkDialog(scope.row)">
                   点选完成
                 </el-button>
                 <el-button size="mini" type="text" v-else @click="openCompleteMessageBox(scope.row)">点选完成</el-button>
               </div>
-              <div v-if="method_list.includes('PUT') && method_list.includes('POST') && !scope.row.complete_status "
+              <div v-if="method_list.includes('PUT') && method_list.includes('POST') && scope.row.complete_status !== 1 "
                    style="display: inline;">
                 <el-divider direction="vertical"></el-divider>
               </div>
-              <div v-if="method_list.includes('POST') && !scope.row.complete_status" style="display: inline-block;">
+              <div v-if="method_list.includes('POST') && scope.row.complete_status !== 1" style="display: inline-block;">
                 <el-button size="mini" type="text" @click="OpenDelayApplyForDialog(scope.row)">申请延期</el-button>
               </div>
             </div>

@@ -144,7 +144,7 @@
             </div>
             <div v-else>
               <el-button
-                  v-if="method_list.includes('PUT') && scope.row.complete_status === 0"
+                  v-if="method_list.includes('PUT') && scope.row.complete_status !== 1"
                   size="mini" type="text" @click="openCompleteMessageBox(scope.row)">点选完成
               </el-button>
             </div>
