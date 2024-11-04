@@ -58,7 +58,12 @@
           :data="special_matter_list"
           :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
       >
-        <el-table-column prop="index" label="#" align="center" width="100" fixed></el-table-column>
+        <el-table-column prop="index" label="#" align="center" width="120" fixed>
+          <template v-slot="{ row }">
+            <span v-if="row.child_node">└─{{ row.index }}</span>
+            <span v-else>{{ row.index }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="事项名称" align="center" width="500" prop="matter_name">
           <template v-slot="{ row }">
             <span v-if="row.child_node">--</span>
@@ -114,8 +119,8 @@
         <el-table-column label="完成状态" align="center" width="180">
           <template v-slot="{ row }">
             <div v-if="row.child_node">
-              <el-tag v-if="row.complete_time" effect="plain">已完成</el-tag>
-              <el-tag type="info" effect="plain" v-else>未完成</el-tag>
+              <span v-if="row.complete_time" >已完成</span>
+              <span v-else>未完成</span>
             </div>
             <div v-else>
               <el-tag v-if="row.complete_status === 1" effect="plain">已完成</el-tag>
@@ -210,7 +215,7 @@ export default {
     // 获取数据
     getSpecialMatterListData() {
       // 添加如果展开了子节点，就进行闭合
-      if (this.$refs.table){
+      if (this.$refs.table) {
         this.$set(this.$refs["table"].store.states, "lazyTreeNodeMap", {});
         this.$set(this.$refs["table"].store.states, "treeData", {});
       }
