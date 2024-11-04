@@ -58,7 +58,7 @@
           :data="special_matter_list"
           :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
       >
-        <el-table-column prop="index" label="#" align="center" width="100"></el-table-column>
+        <el-table-column prop="index" label="#" align="center" width="100" fixed></el-table-column>
         <el-table-column label="事项名称" align="center" width="500" prop="matter_name">
           <template v-slot="{ row }">
             <span v-if="row.child_node">--</span>

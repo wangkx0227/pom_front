@@ -58,7 +58,7 @@
           :data="SuperviseMattersData"
           :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
       >
-        <el-table-column prop="index" label="#" align="center" width="100"></el-table-column>
+        <el-table-column prop="index" label="#" align="center" width="100" fixed></el-table-column>
         <el-table-column prop="po" label="PO" align="center" width="180">
           <template v-slot="{ row }">
             <span v-if="row.child_node">--</span>
@@ -118,7 +118,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="140" class-name="operation">
+        <el-table-column label="操作" align="center" width="150" class-name="operation">
           <template v-slot="scope">
             <!-- 完成后，隐藏申请延期按钮 -->
             <div v-if="scope.row.child_node">
@@ -625,7 +625,7 @@ export default {
   }
 
   .supervision_matters .operation .cell {
-    display: flex;
+    /*display: flex;*/
   }
 }
 </style>
