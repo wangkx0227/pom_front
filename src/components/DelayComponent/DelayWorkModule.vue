@@ -87,7 +87,7 @@
         </el-table-column>
         <el-table-column label="操作" align="center" width="180">
           <template v-slot="scope">
-            <div v-if="scope.row.complete_status === 0">
+            <div v-if="scope.row.complete_status === 0 || scope.row.complete_status === 2">
               <el-popover
                   width="160"
                   placement="top"
