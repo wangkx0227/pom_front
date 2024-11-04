@@ -82,12 +82,12 @@
             <span v-if="row.complete_status === 1">{{ row.complete_time }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="140" class-name="operation">
+        <el-table-column label="操作" align="center" width="150" class-name="operation">
           <template v-slot="scope">
             <!-- 完成后，隐藏申请延期按钮 -->
             <div v-if="method_list.includes('PUT') && !scope.row.complete_status" style="display: inline-block;">
               <el-button v-if="scope.row.is_file" size="mini" type="text" @click="OpenNoOrderWorkDialog(scope.row)">
-                事务完成
+                点选完成
               </el-button>
               <el-button size="mini" type="text" v-else @click="openCompleteMessageBox(scope.row)">点选完成</el-button>
             </div>
@@ -831,7 +831,7 @@ export default {
     padding: 1px !important;
   }
   .no_work .operation .cell {
-    display: flex;
+    /*display: flex;*/
   }
 }
 </style>

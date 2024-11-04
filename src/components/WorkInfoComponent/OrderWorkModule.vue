@@ -151,7 +151,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="140" class-name="operation">
+        <el-table-column label="操作" align="center" width="150" class-name="operation">
           <template v-slot="scope">
             <div v-if="scope.row.child_node">
               <el-button
@@ -1110,7 +1110,7 @@ export default {
   }
 
   .order_work .operation .cell {
-    display: flex;
+    /*display: flex;*/
   }
 }
 </style>
